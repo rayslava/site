@@ -24,7 +24,7 @@
 ;;;;; page. This function will take 'name' as an argument and return a
 ;;;;; string with a greeting.
 (defun-ajax say-hi (name) (*ajax-processor*)
-  (concatenate 'string "Hi " name ", nice to meet you."))
+  (concatenate 'string "After server processing string is still " name))
 
 (defun-ajax lol () (*ajax-processor*)
   "OLOLOLO")
@@ -38,15 +38,24 @@
 		   :name "main" :type "css"
 		   :version nil :defaults
 		   (load-time-value
-		    (or #.*compile-file-pathname* *load-pathname*)))))
-    (print 'css-name)
-    (break)
+		    (or *load-pathname* #.*compile-file-pathname*))))
+	(ecmalisp-name (make-pathname
+		   :name "ecmalisp" :type "js"
+		   :version nil :defaults
+		   (load-time-value
+		    (or *load-pathname* #.*compile-file-pathname*)))))
+    (print css-name)
+    (print ecmalisp-name)
     (setq *dispatch-table*        
 	  (list
 	   (create-static-file-dispatcher-and-handler
 	    "/main.css"
 	    css-name
 	    "text/css")
+	   (create-static-file-dispatcher-and-handler
+	    "/ecmalisp.js"
+	    ecmalisp-name
+	    "text/javascript")
 	   'dispatch-easy-handlers
 	   (create-ajax-dispatcher *ajax-processor*)
 	   ;; catch all
@@ -75,8 +84,17 @@
     (:html
      (:head (:title "Hello, world!")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:script :type "text/javascript" :src "/ecmalisp.js")
 	    (princ (generate-prologue *ajax-processor*))
 	    (:script :type "text/javascript" "
+function pv(x) { return x==undefined? nil: x; }
+
+lisp.write = function(str){
+           document.getElementById('eval').innerHTML = str;
+           return str;
+        }
+lisp.evalString(pv, '(CL:PACKAGE-NAME CL:*PACKAGE*)');
+
 // will show the greeting in a message box
 function callback(response) {
   document.getElementById('answer').innerHTML = response.firstChild.firstChild.nodeValue;
@@ -84,15 +102,15 @@ function callback(response) {
 
 // calls our Lisp function with the value of the text field
 function sayHi() {
+  lisp.write(lisp.evalString(document.getElementById('name').value));
   ajax_say_hi(document.getElementById('name').value, callback);
-  document.body.style.background = document.getElementById('name').value;
 }
 ")))
     (:body
      (:h1 "Hello")
      (:p "This is my Lisp web server, running on Hunchentoot,")
-     (:p "Please enter your name: " 
+     (:p "Please enter lisp command: " 
 	 (:input :id "name" :type "text"))
-     (:p "Answer zone: " (:div :id "answer"))
+     (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
      (:p (:a :href "javascript:sayHi()" "Say Hi!"))
      (:b state-variable))))
