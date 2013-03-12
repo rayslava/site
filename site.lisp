@@ -102,15 +102,15 @@ function callback(response) {
 
 // calls our Lisp function with the value of the text field
 function sayHi() {
-  lisp.write(lisp.evalString(document.getElementById('name').value));
+  lisp.write(lisp.evalString(pv,document.getElementById('name').value));
   ajax_say_hi(document.getElementById('name').value, callback);
 }
 ")))
     (:body
      (:h1 "Hello")
      (:p "This is my Lisp web server, running on Hunchentoot,")
-     (:p "Please enter lisp command: " 
+     (:p "Please enter lisp string: " 
 	 (:input :id "name" :type "text"))
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
-     (:p (:a :href "javascript:sayHi()" "Say Hi!"))
+     (:p (:a :href "javascript:sayHi()" "Input"))
      (:b state-variable))))
