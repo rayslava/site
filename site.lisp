@@ -1,16 +1,12 @@
 ;; Main web-server file
 ;; (declaim (optimize (debug 3)))
 
-(asdf:oos 'asdf:load-op :hunchentoot)
-(asdf:oos 'asdf:load-op :cl-who)
-(asdf:oos 'asdf:load-op :ht-simple-ajax)
-
-
-(defpackage :piserv
-  (:use :cl :hunchentoot :cl-who :ht-simple-ajax)
+(defpackage :piserv.main
+  (:use :cl :hunchentoot :cl-who :ht-simple-ajax
+	:piserv.static)
   (:export :start-server :stop-server))
 
-(in-package :piserv)
+(in-package :piserv.main)
 (defvar *hunchentoot-server* nil
   "Hunchentoot server instance")
 
@@ -40,28 +36,22 @@
 		   (load-time-value
 		    (or *load-pathname* #.*compile-file-pathname*))))
 	(ecmalisp-name (make-pathname
-		   :name "ecmalisp" :type "js"
-		   :version nil :defaults
-		   (load-time-value
-		    (or *load-pathname* #.*compile-file-pathname*)))))
+			:name "ecmalisp" :type "js"
+			:version nil :defaults
+			(load-time-value
+			 (or *load-pathname* #.*compile-file-pathname*)))))
     (print css-name)
     (print ecmalisp-name)
     (setq *dispatch-table*        
-	  (list
-	   (create-static-file-dispatcher-and-handler
-	    "/main.css"
-	    css-name
-	    "text/css")
-	   (create-static-file-dispatcher-and-handler
-	    "/ecmalisp.js"
-	    ecmalisp-name
-	    "text/javascript")
-	   'dispatch-easy-handlers
-	   (create-ajax-dispatcher *ajax-processor*)
-	   ;; catch all
-	   (lambda (request)
-	     (declare (ignore request))
-	     (redirect "/main"))))))
+	  (concatenate 'list
+		       (piserv.static:generate-static-table)
+		       (list
+			'dispatch-easy-handlers
+			(create-ajax-dispatcher *ajax-processor*)
+			;; catch all
+			(lambda (request)
+			  (declare (ignore request))
+			  (redirect "/main")))))))
 
 (defun stop-server ()
   "Stops the server"
