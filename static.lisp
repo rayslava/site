@@ -4,23 +4,16 @@
 
 (in-package :piserv.static)
 
-(defparameter default-static-path 
-  (directory
-   (make-pathname
-    :version nil :defaults
-    (merge-pathnames
-     (make-pathname :directory '(:relative "static")
-		    :type :wild
-		    :name :wild
-		    :version :wild)
-     (load-time-value
-      (or *load-pathname* *default-pathname-defaults*)))))
+(defparameter *default-static-path* "static"
   "Default path where server should search for files that should be exported as is")
 
 (defun generate-files-list (path)
   "Prepares a list of files in directory"
-  (loop for file in (directory path)
-	 collect file))
+    (directory
+     (make-pathname :directory `(:relative ,path)
+		    :type :wild
+		    :name :wild
+		    :version :wild)))
 
 (defun get-file-name-type (file)
   "Gets file name.type from pathspec"
@@ -30,7 +23,7 @@
 	  (pathname-type file)))
 
 (defun generate-static-table ()
-  (loop for element in default-static-path
+  (loop for element in (generate-files-list *default-static-path*)
      collect (hunchentoot:create-static-file-dispatcher-and-handler
 	      (concatenate 'string "/" (get-file-name-type element))
 	      element)))

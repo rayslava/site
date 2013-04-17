@@ -4,7 +4,7 @@
 (defpackage :piserv.main
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
 	:piserv.static)
-  (:export :start-server :stop-server))
+  (:export :start-server :stop-server :refresh))
 
 (in-package :piserv.main)
 (defvar *hunchentoot-server* nil
@@ -30,28 +30,17 @@
 ;; or write to the output stream returned by write-headers
 
 (defun setup-dispatch-table ()
-  (let ((css-name (make-pathname
-		   :name "main" :type "css"
-		   :version nil :defaults
-		   (load-time-value
-		    (or *load-pathname* #.*compile-file-pathname*))))
-	(ecmalisp-name (make-pathname
-			:name "ecmalisp" :type "js"
-			:version nil :defaults
-			(load-time-value
-			 (or *load-pathname* #.*compile-file-pathname*)))))
-    (print css-name)
-    (print ecmalisp-name)
-    (setq *dispatch-table*        
-	  (concatenate 'list
-		       (piserv.static:generate-static-table)
-		       (list
-			'dispatch-easy-handlers
-			(create-ajax-dispatcher *ajax-processor*)
-			;; catch all
-			(lambda (request)
-			  (declare (ignore request))
-			  (redirect "/main")))))))
+  "Set up dispatch table with file handlers for hunchentoot"
+  (setq *dispatch-table*        
+	(concatenate 'list
+		     (piserv.static:generate-static-table)
+		     (list
+		      'dispatch-easy-handlers
+		      (create-ajax-dispatcher *ajax-processor*)
+		      ;; catch all
+		      (lambda (request)
+			(declare (ignore request))
+			(redirect "/main"))))))
 
 (defun stop-server ()
   "Stops the server"
@@ -104,3 +93,7 @@ function sayHi() {
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
      (:p (:a :href "javascript:sayHi()" "Input"))
      (:b state-variable))))
+
+(defun refresh ()
+  "This function should be used by user for regenerating caches"
+  (setup-dispatch-table))
