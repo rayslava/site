@@ -7,10 +7,15 @@
   (:export :start-server :stop-server :refresh))
 
 (in-package :piserv.main)
+
 (defvar *hunchentoot-server* nil
   "Hunchentoot server instance")
 
+(defvar *admin-login* "admin"
+  "Admin page password")
 
+(defvar *admin-password* "adminpassword"
+  "Admin page password")
 
 ;;;;; First we create an ajax processor that will handle our function calls
 (defvar *ajax-processor* 
@@ -47,22 +52,30 @@
     (stop *hunchentoot-server*)
     (setq *hunchentoot-server* nil)))
 
-(defun start-server (&optional (port 8080))
+(defun start-server (&optional (port 8080) (adminpass "adminpassword"))
   "Starts the server"
   (when *hunchentoot-server*
     (stop-server))
   (setup-dispatch-table)
+  (setf *admin-password* adminpass)
   (setq *hunchentoot-server*
 	(start (make-instance 'easy-acceptor :port port))))
+
+(defmacro with-http-authentication (&rest body)
+  `(multiple-value-bind (username password) (hunchentoot:authorization)
+     (cond ((and (string= username *admin-login*) (string= password *admin-password*))
+            ,@body)
+           (t (hunchentoot:require-authorization "admin-login")))))
 
 (define-easy-handler (admin :uri "/admin"
 			    :default-request-type :get)
     ((s))
-  (with-html-output-to-string (*standard-output* nil :prologue nil)
-    (:html
-     (:head (:title "Admin page"))
-     (:body (:h3 "It's only for administration")
-	    (:p "By the way, variable you wanted is " (str s))))))
+  (with-http-authentication
+      (with-html-output-to-string (*standard-output* nil :prologue nil)
+	(:html
+	 (:head (:title "Admin page"))
+	 (:body (:h3 "It's only for administration")
+		(:p "By the way, variable you wanted is " (str s)))))))
 
   
 
