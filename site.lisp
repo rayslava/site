@@ -25,7 +25,6 @@
 (defun-ajax lol () (*ajax-processor*)
   "OLOLOLO")
 
-
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
@@ -55,6 +54,17 @@
   (setup-dispatch-table)
   (setq *hunchentoot-server*
 	(start (make-instance 'easy-acceptor :port port))))
+
+(define-easy-handler (admin :uri "/admin"
+			    :default-request-type :get)
+    ((s))
+  (with-html-output-to-string (*standard-output* nil :prologue nil)
+    (:html
+     (:head (:title "Admin page"))
+     (:body (:h3 "It's only for administration")
+	    (:p "By the way, variable you wanted is " (str s))))))
+
+  
 
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
