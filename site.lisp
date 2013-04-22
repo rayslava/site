@@ -77,8 +77,6 @@
 	 (:body (:h3 "It's only for administration")
 		(:p "By the way, variable you wanted is " (str s)))))))
 
-  
-
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
     ((state-variable :parameter-type 'string))

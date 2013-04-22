@@ -1,3 +1,67 @@
+.primary-1 { background-color: #CCCCCC }
+.primary-2 { background-color: #999999 }
+.primary-3 { background-color: #333366 }
+.primary-4 { background-color: #CCCCCC }
+.primary-5 { background-color: #CCCCCC }
+
+.complement-1 { background-color: #FFFFFF }
+.complement-2 { background-color: #999999 }
+.complement-3 { background-color: #996633 }
+.complement-4 { background-color: #FFFFFF }
+.complement-5 { background-color: #FFFFFF }
+
 body {
-    background-color:#face8d;
+    margin:0; padding: 2em;
+    background:white;
+    color: #666;
+    font: 75%/1.33 Verdana, sans-serif;
+    text-align:left;
+}
+h1 {
+    margin: 0.5em 0;
+    font-size: 200%;
+}
+p {
+    margin: 0.5em 0;
+}
+
+.color-table {
+    margin: 2em 2em 5em;
+    border-collapse:collapse;
+    border:none;
+    border-spacing:0;
+    font-size:100%;
+}
+.color-table th {
+    padding: 0 1em 0 0;
+    text-align:right;
+    vertical-align: middle;
+    font-size:110%;
+    border: none;
+}
+.color-table td.sample {
+    width:10em; height:8em;
+    padding: 10px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:90%;
+    border: 1px solid white;
+    white-space:nowrap;
+}
+.color-table.small td.sample {
+    width:4em; height:4em;
+    padding:0;
+    border:none;
+}
+.color-table .white { margin-bottom:0.2em; color:white }
+.color-table .black { margin-top:0.2em; color:black }
+
+hr {
+    border:none;
+    border-bottom:1px solid silver;
+}
+#footer {
+    padding:1em;
+    text-align:center;
+    font-size:80%;
 }
