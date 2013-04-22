@@ -3,7 +3,7 @@
 
 (defpackage :piserv.main
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:piserv.static)
+	:trivial-shell :piserv.static)
   (:export :start-server :stop-server :refresh))
 
 (in-package :piserv.main)
@@ -69,14 +69,28 @@
 
 (define-easy-handler (admin :uri "/admin"
 			    :default-request-type :get)
-    ((s))
+    ((action))
   (with-http-authentication
       (with-html-output-to-string (*standard-output* nil :prologue nil)
 	(:html
 	 (:head (:title "Admin page"))
 	 (:body (:h3 "It's only for administration")
-		(:p "By the way, variable you wanted is " (str s)))))))
-
+		(:p (cond ((equalp action "refresh")
+			   (refresh)
+			   (str "Handlers refreshed"))
+			  ((equalp action "pull")
+			   (multiple-value-bind (values output error-output exit-status)
+			       (trivial-shell:shell-command "git pull" )
+			     (with-html-output (*standard-output* nil)
+			       (:p "Pull result: "
+				   (fmt "~d" exit-status))
+			       (:p "Pull values: "
+				   (str values))
+			       (:p "Pull errors: "
+				   (str error-output))
+			       (:p "Pull output: "
+				   (fmt "~d" output))))))))))))
+  
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
     ((state-variable :parameter-type 'string))
