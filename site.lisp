@@ -37,7 +37,7 @@
 (defun sh (cmd)
   (to-str
     #+clisp (shell cmd)
-    #+ecl (si:system cmd)
+    #+ecl (ext:system cmd)
     #+sbcl (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)
     #+clozure (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)))
 
