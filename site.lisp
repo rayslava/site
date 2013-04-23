@@ -143,16 +143,17 @@ function sayHi() {
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
-  (let ((in (make-string-input-stream
-	     (with-output-to-string (*standard-output* nil)
-	       (compile-file "static.lisp")
-	       (load "static.lisp")
-	       (compile-file "site.lisp")
-	       (load "site.lisp")
-	       (setup-dispatch-table))))
-	(s (make-array '(0) :element-type 'base-char
-                             :fill-pointer 0 :adjustable t)))
-    (loop for line = (read-line in nil)
-       while line do (format s "~a<br />~%" line))
-    s))
+  (with-html-output (*standard-output* nil)
+    (let ((in (make-string-input-stream
+	       (with-output-to-string (*standard-output* nil)
+		 (compile-file "static.lisp")
+		 (load "static.lisp")
+		 (compile-file "site.lisp")
+		 (load "site.lisp")
+		 (setup-dispatch-table))))
+	  (s (make-array '(0) :element-type 'base-char
+			 :fill-pointer 0 :adjustable t)))
+      (loop for line = (read-line in nil)
+	 while line do (format s "~a<br />~%" line))
+      s)))
 
