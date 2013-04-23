@@ -79,9 +79,8 @@
 			   (let ((exit-status (asdf:run-shell-command "git pull" )))
 			     (with-html-output (*standard-output* nil)
 			       (:p "Pull result: "
-				   (fmt "~d" exit-status))
-			       (:p "Output: "
-				   (str (asdf:*VERBOSE-OUT*)))))))))))))
+				   (fmt "~d" exit-status))))))))))))
+
 
   
 (define-easy-handler (easy-demo :uri "/main"
