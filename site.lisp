@@ -76,10 +76,9 @@
 			   (refresh)
 			   (str "Handlers refreshed"))
 			  ((equalp action "pull")
-			   (let ((exit-status (asdf:run-shell-command "git pull" )))
-			     (with-html-output (*standard-output* nil)
-			       (:p "Pull result: "
-				   (fmt "~d" exit-status))))))))))))
+			   (with-html-output (*standard-output* nil)
+			     (:p "Pull result: "
+				 (fmt "~d" (asdf:run-shell-command "git pull"))))))))))))
 
 
   
