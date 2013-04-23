@@ -30,19 +30,17 @@
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
-(defun to-str (&rest args)
-  (with-output-to-string (*standard-output*)
-    (dolist (s args) (princ s))))
-
 (defun sh (cmd)
-  (to-str
-    #+clisp (shell cmd)
-    #+ecl (ext:system cmd)
-    #+sbcl (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)
-    #+clozure (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)))
+  (let ((in 
+	 #+clisp (shell cmd)
+	 #+ecl (two-way-stream-input-stream (ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
+	 #+sbcl (two-way-stream-input-stream (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
+	 #+clozure (two-way-stream-input-stream (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))))
+    (with-output-to-string (s)
+      (loop for line = (read-line in nil)
+	 while line do (format s "~a~%" line))
+      s)))
 
-(defun update-sources-from-git ()
-    (sh "/usr/bin/git pull --quiet"))
 
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
@@ -92,7 +90,7 @@
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
-				 (fmt "~a" (update-sources-from-git))))))))))))
+				 (str (sh "git pull"))))))))))))
 
 
   
