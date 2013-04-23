@@ -31,11 +31,18 @@
 ;; or write to the output stream returned by write-headers
 
 (defun sh (cmd)
+  "A compiler-wide realization of running a shell command"
   (let ((in 
 	 #+clisp (shell cmd)
-	 #+ecl (two-way-stream-input-stream (ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
-	 #+sbcl (sb-ext:process-output (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
-	 #+clozure (two-way-stream-input-stream (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))))
+	 #+ecl (two-way-stream-input-stream
+		(ext:run-program "/bin/sh" (list "-c" cmd)
+				 :input nil :output :stream :error :output))
+	 #+sbcl (sb-ext:process-output
+		 (sb-ext:run-program "/bin/sh" (list "-c" cmd)
+				     :input nil :output :stream :error :output))
+	 #+clozure (two-way-stream-input-stream
+		    (ccl:run-program "/bin/sh" (list "-c" cmd) :
+				     input nil :output :stream :error :output))))
     (with-output-to-string (s)
       (loop for line = (read-line in nil)
 	 while line do (format s "~a<br />~%" line))
@@ -76,6 +83,8 @@
             ,@body)
            (t (hunchentoot:require-authorization "admin-login")))))
 
+
+; Generates an administration page
 (define-easy-handler (admin :uri "/admin"
 			    :default-request-type :get)
     ((action))
@@ -95,15 +104,19 @@
 			   (with-html-output (*standard-output* nil)
 			     (:h3 "Actions:")
 			     (:p (:ul
-				  (:li (:a :href "/admin?action=list" "list"))
-				  (:li (:a :href "/admin?action=pull" "pull"))
-				  (:li (:a :href "/admin?action=refresh" "refresh"))))))
+				  (:li (:a :href "/admin?action=list"
+					   "List actions (this page)"))
+				  (:li (:a :href "/admin?action=pull"
+					   "Pull fresh from deploy"))
+				  (:li (:a :href "/admin?action=refresh"
+					   "Recompile and reload .lisp files"))))))
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
 				 (str (sh "git pull")))
 			     (:a :href "/admin?action=list" "back to list"))))))))))
-  
+
+; Main page goes here
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
     ((state-variable :parameter-type 'string))
