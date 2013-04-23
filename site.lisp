@@ -155,5 +155,5 @@ function sayHi() {
 			 :fill-pointer 0 :adjustable t)))
       (loop for line = (read-line in nil)
 	 while line do (format s "~a<br />~%" line))
-      s)))
+      (str s))))
 
