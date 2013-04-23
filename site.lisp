@@ -30,10 +30,15 @@
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
+(defun sh (cmd)
+  (with-output-to-string (*standard-output*)
+    #+clisp (shell cmd)
+    #+ecl (si:system cmd)
+    #+sbcl (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)
+    #+clozure (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)))
+
 (defun update-sources-from-git ()
-  (with-output-to-string (asdf::*verbose-out*)
-    (asdf:run-shell-command "git pull"))
-  asdf:*verbose-out*)
+    (sh "git pull"))
 
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
