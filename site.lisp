@@ -142,5 +142,7 @@ function sayHi() {
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
-  (ql:quickload "piserv")
+  (compile-file "site.lisp")
+  (compile-file "static.lisp")
+  (asdf:oos 'asdf:load-op :piserv)
   (setup-dispatch-table))
