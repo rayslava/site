@@ -142,6 +142,8 @@ function sayHi() {
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
-  (compile-file "site.lisp")
   (compile-file "static.lisp")
+  (load "static.lisp")
+  (compile-file "site.lisp")
+  (load "site.lisp")  
   (setup-dispatch-table))
