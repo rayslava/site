@@ -34,7 +34,7 @@
   (let ((in 
 	 #+clisp (shell cmd)
 	 #+ecl (two-way-stream-input-stream (ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
-	 #+sbcl (two-way-stream-input-stream (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
+	 #+sbcl (sb-ext:process-output (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))
 	 #+clozure (two-way-stream-input-stream (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))))
     (with-output-to-string (s)
       (loop for line = (read-line in nil)
@@ -83,12 +83,14 @@
       (with-html-output-to-string (*standard-output* nil :prologue nil)
 	(:html
 	 (:head (:title "Admin page")
-	 (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	 (:script :type "text/javascript" :src "/ecmalisp.js"))
-	 (:body (:h3 "It's only for administration")
+		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
+		(:script :type "text/javascript" :src "/ecmalisp.js"))
+	 (:body (:h2 "Admin interface")
 		(:p (cond ((equalp action "refresh")
-			   (refresh)
-			   (str "Handlers refreshed"))
+			   (with-html-output (*standard-output* nil)
+			     (refresh)
+			     (:h4 "Handlers refreshed")
+			     (:a :href "/admin?action=list" "back to list")))
 			  ((equalp action "list")
 			   (with-html-output (*standard-output* nil)
 			     (:h3 "Actions:")
@@ -99,9 +101,8 @@
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
-				 (str (sh "git pull"))))))))))))
-
-
+				 (str (sh "git pull")))
+			     (:a :href "/admin?action=list" "back to list"))))))))))
   
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
@@ -156,4 +157,3 @@ function sayHi() {
       (loop for line = (read-line in nil)
 	 while line do (format s "~a<br />~%" line))
       (str s))))
-
