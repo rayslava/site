@@ -30,8 +30,12 @@
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
-(defun sh (cmd)
+(defun to-str (&rest args)
   (with-output-to-string (*standard-output*)
+    (dolist (s args) (princ s))))
+
+(defun sh (cmd)
+  (to-str
     #+clisp (shell cmd)
     #+ecl (si:system cmd)
     #+sbcl (sb-ext:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)
