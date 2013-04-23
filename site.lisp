@@ -82,7 +82,8 @@
   (with-http-authentication
       (with-html-output-to-string (*standard-output* nil :prologue nil)
 	(:html
-	 (:head (:title "Admin page"))
+	 (:head (:title "Admin page")
+	 (:link :rel "stylesheet" :type "text/css" :href "/main.css"))
 	 (:body (:h3 "It's only for administration")
 		(:p (cond ((equalp action "refresh")
 			   (refresh)
