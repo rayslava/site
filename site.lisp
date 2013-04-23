@@ -42,7 +42,7 @@
     #+clozure (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output *standard-output*)))
 
 (defun update-sources-from-git ()
-    (sh "/usr/bin/git pull"))
+    (sh "/usr/bin/git pull --quiet"))
 
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
