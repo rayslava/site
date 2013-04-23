@@ -122,4 +122,5 @@ function sayHi() {
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
+  (asdf:run-shell-command "git pull")
   (setup-dispatch-table))
