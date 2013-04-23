@@ -30,6 +30,9 @@
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
+(defun update-sources-from-git ()
+  (asdf:run-shell-command "git pull"))
+
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
   (setq *dispatch-table*        
@@ -78,7 +81,7 @@
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
-				 (fmt "~d" (asdf:run-shell-command "git pull"))))))))))))
+				 (fmt "~d" (update-sources-from-git))))))))))))
 
 
   
@@ -122,5 +125,4 @@ function sayHi() {
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
-  (asdf:run-shell-command "git pull")
   (setup-dispatch-table))
