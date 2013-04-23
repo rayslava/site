@@ -87,6 +87,13 @@
 		(:p (cond ((equalp action "refresh")
 			   (refresh)
 			   (str "Handlers refreshed"))
+			  ((equalp action "list")
+			   (with-html-output (*standard-output* nil)
+			     (:h3 "Actions:")
+			     (:p (:ul
+				  (:li (:a :href "/admin?action=list" "list"))
+				  (:li (:a :href "/admin?action=pull" "pull"))
+				  (:li (:a :href "/admin?action=refresh" "refresh"))))))
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
