@@ -31,7 +31,9 @@
 ;; or write to the output stream returned by write-headers
 
 (defun update-sources-from-git ()
-  (asdf:run-shell-command "git pull"))
+  (with-output-to-string (asdf::*verbose-out*)
+    (asdf:run-shell-command "git pull"))
+  asdf:*verbose-out*)
 
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
@@ -81,7 +83,7 @@
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
-				 (fmt "~d" (update-sources-from-git))))))))))))
+				 (fmt "~a" (update-sources-from-git))))))))))))
 
 
   
