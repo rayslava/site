@@ -3,7 +3,7 @@
 
 (defpackage :piserv.main
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:trivial-shell :piserv.static)
+	:asdf :piserv.static)
   (:export :start-server :stop-server :refresh))
 
 (in-package :piserv.main)
@@ -26,9 +26,6 @@
 ;;;;; string with a greeting.
 (defun-ajax say-hi (name) (*ajax-processor*)
   (concatenate 'string "After server processing string is still " name))
-
-(defun-ajax lol () (*ajax-processor*)
-  "OLOLOLO")
 
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
@@ -79,17 +76,13 @@
 			   (refresh)
 			   (str "Handlers refreshed"))
 			  ((equalp action "pull")
-			   (multiple-value-bind (values output error-output exit-status)
-			       (trivial-shell:shell-command "git pull" )
+			   (let ((exit-status (asdf:run-shell-command "git pull" )))
 			     (with-html-output (*standard-output* nil)
 			       (:p "Pull result: "
 				   (fmt "~d" exit-status))
-			       (:p "Pull values: "
-				   (str values))
-			       (:p "Pull errors: "
-				   (str error-output))
-			       (:p "Pull output: "
-				   (fmt "~d" output))))))))))))
+			       (:p "Output: "
+				   (str (asdf:*VERBOSE-OUT*)))))))))))))
+
   
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)

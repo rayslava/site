@@ -11,7 +11,7 @@
   :licence "BSD"
   :description "The homepage server"
   :long-description "Lisp implementation of my home page"
-  :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "trivial-shell")
+  :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "asdf")
   :components ((:file "site"
                       :depends-on ("static"))
                (:file "static")))
