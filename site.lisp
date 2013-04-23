@@ -38,7 +38,7 @@
 	 #+clozure (two-way-stream-input-stream (ccl:run-program "/bin/sh" (list "-c" cmd) :input nil :output :stream :error :output))))
     (with-output-to-string (s)
       (loop for line = (read-line in nil)
-	 while line do (format s "~a~<br />%" line))
+	 while line do (format s "~a<br />~%" line))
       s)))
 
 
@@ -152,6 +152,6 @@ function sayHi() {
 	(s (make-array '(0) :element-type 'base-char
                              :fill-pointer 0 :adjustable t)))
     (loop for line = (read-line in nil)
-       while line do (format s "~a~<br />%" line))
+       while line do (format s "~a<br />~%" line))
     s))
 
