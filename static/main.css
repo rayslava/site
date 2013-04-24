@@ -34,7 +34,8 @@ body {
 @media screen and (max-width: 720px) {
     body {
 	font-size: 120%;
-	max-width: 100%;
+	width: 100%;
+	margin: x;
 	}
 
     .social-link {
@@ -55,7 +56,6 @@ p {
 .social-link {
     padding: 4px;
     display: inline-block;
-    height: 36px;
     }
 
 .color-table {
