@@ -76,3 +76,14 @@ function sayHi() {
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
      (:p (:a :href "javascript:sayHi()" "Input"))
      (:b (str state-variable)))))
+
+(define-easy-handler (about-page :uri "/about"
+				 :default-request-type :get)
+    ()
+  (with-html-output-to-string (*standard-output* nil :prologue nil)
+    (:html
+     (:head (:title "Hello, world!")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:script :type "text/javascript" :src "/ecmalisp.js"))
+     (:body (:h2 "About me")))))
+	    
