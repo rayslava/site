@@ -104,4 +104,4 @@ function sayHi() {
 		(:div :class "social-link"
 		      (:iframe :src "http://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
 			       :scrolling "0" :frameborder "0"
-			       :width "120" :height "20" :allowTransparency "true")))))))
+			       :width "120" :height "20" :allowTransparency "true"))))))
