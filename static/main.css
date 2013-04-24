@@ -15,8 +15,8 @@ body {
     max-width: 90%;
     background:white;
     color: #666;
-    font: 75%/1.33 Verdana, sans-serif;
-    text-align:left;
+    font: 75%/1.33 Serif;
+    text-align: justify;
 }
 
 @media screen and (max-width: 850px) {
@@ -33,9 +33,11 @@ body {
 
 @media screen and (max-width: 720px) {
     body {
+	padding: 1em;
 	font-size: 120%;
 	width: 100%;
-	margin: x;
+	max-width: 100%;
+	box-sizing: border-box;
 	}
 
     .social-link {

@@ -44,9 +44,10 @@
     ((state-variable :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
-     (:head (:title "Hello, world!")
+     (:head (:title "rayslava's test page")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/ecmalisp.js")
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
 	    (princ (generate-prologue *ajax-processor*))
 	    (:script :type "text/javascript" "
 function pv(x) { return x==undefined? nil: x; }
@@ -71,6 +72,7 @@ function sayHi() {
     (:body
      (:h1 "Hello")
      (:p "This is my Lisp web server, running on Hunchentoot,")
+     (:p "For now you can have a look on my " (:a :href "/about" "personal page"))
      (:p "Please enter lisp string: " 
 	 (:input :id "name" :type "text"))
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
@@ -86,7 +88,7 @@ function sayHi() {
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/ecmalisp.js")
 	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
-	    (:meta :name "viewport" :content "initial-scale=1,width=device-width"))
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
      (:body (:h2 "About me")
 	    (:p "I was born on the day when Morris Worm devoured ten percent of Internet and that predetermined my life&hellip;")
 	    (:p "Several social profiles:"
