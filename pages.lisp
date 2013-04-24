@@ -85,6 +85,7 @@ function sayHi() {
      (:head (:title "About me")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/ecmalisp.js")
+	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:meta :name "viewport" :content "initial-scale=1,width=device-width"))
      (:body (:h2 "About me")
 	    (:p "Several social profiles:"
@@ -92,7 +93,9 @@ function sayHi() {
 		      (:iframe
 		       :src "http://ghbtns.com/github-btn.html?user=rayslava&type=follow&count=true"
 		       :allowtransparency "true" :frameborder "0" :scrolling "0"
-		       :width "165"
-		       :height "20")))))))
-		
+		       :width "164"
+		       :height "20"))
+		(:div :class "social-link"
+		      (:a :href "https://twitter.com/Rayslava" :class "twitter-follow-button"
+			  :data-show-count "true" "Follow @Rayslava")))))))		
 	    

@@ -30,24 +30,9 @@ body {
 	}
 }
 
-@media screen and (max-width: 450px) {
-	.main-header h1 {
-		font-size: 1.3em;
-	}
-	.main-header h2 {
-		font-size: 0.78em;
-		margin: .1em 0;
-	}
-	.doc-nav li {
-		width: 46%;
-		text-align: center;
-	}
-	.doc-nav ul {
-		overflow: hidden;
-		width: 100%;
-	}
-	.doc-nav li:nth-child(2n) {
-		float: right;
+@media screen and (max-width: 720px) {
+    body {
+	font-size: 120%;
 	}
 }
 
@@ -58,6 +43,10 @@ h1 {
 p {
     margin: 0.5em 0;
 }
+
+.social-link {
+    padding: 4px;
+    }
 
 .color-table {
     margin: 2em 2em 5em;
