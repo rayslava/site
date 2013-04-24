@@ -68,7 +68,7 @@ function sayHi() {
   lisp.write(lisp.evalString(pv,document.getElementById('name').value));
   ajax_say_hi(document.getElementById('name').value, callback);
 }
-")))
+")
     (:body
      (:h1 "Hello")
      (:p "This is my Lisp web server, running on Hunchentoot,")
@@ -77,7 +77,7 @@ function sayHi() {
 	 (:input :id "name" :type "text"))
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
      (:p (:a :href "javascript:sayHi()" "Input"))
-     (:b (str state-variable)))))
+     (:b (str state-variable))))))
 
 (define-easy-handler (about-page :uri "/about"
 				 :default-request-type :get)
