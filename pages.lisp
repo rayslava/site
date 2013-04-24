@@ -88,6 +88,7 @@ function sayHi() {
 	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:meta :name "viewport" :content "initial-scale=1,width=device-width"))
      (:body (:h2 "About me")
+	    (:p "I was born on the day when Morris Worm devoured ten percent of Internet and that predetermined my life&hellip;")
 	    (:p "Several social profiles:"
 		(:div :class "social-link"
 		      (:iframe
