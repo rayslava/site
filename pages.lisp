@@ -85,5 +85,13 @@ function sayHi() {
      (:head (:title "Hello, world!")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/ecmalisp.js"))
-     (:body (:h2 "About me")))))
+     (:body (:h2 "About me")
+	    (:p "Several social profiles:"
+		(:div :class "social-link"
+		      (:iframe
+		       :src "http://ghbtns.com/github-btn.html?user=rayslava&type=follow&count=true"
+		       :allowtransparency "true" :frameborder "0" :scrolling "0"
+		       :width "165"
+		       :height "20")))))))
+		
 	    
