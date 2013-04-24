@@ -17,6 +17,40 @@ body {
     font: 75%/1.33 Verdana, sans-serif;
     text-align:left;
 }
+
+@media screen and (max-width: 850px) {
+	.main-header {
+		width: 90%;
+	}
+	.main-header h1 {
+		font-size: 1.8em;
+	}
+	.main-header h2 {
+		font-size: 1.105em;
+	}
+}
+
+@media screen and (max-width: 450px) {
+	.main-header h1 {
+		font-size: 1.3em;
+	}
+	.main-header h2 {
+		font-size: 0.78em;
+		margin: .1em 0;
+	}
+	.doc-nav li {
+		width: 46%;
+		text-align: center;
+	}
+	.doc-nav ul {
+		overflow: hidden;
+		width: 100%;
+	}
+	.doc-nav li:nth-child(2n) {
+		float: right;
+	}
+}
+
 h1 {
     margin: 0.5em 0;
     font-size: 200%;

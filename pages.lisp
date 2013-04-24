@@ -82,9 +82,10 @@ function sayHi() {
     ()
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
-     (:head (:title "Hello, world!")
+     (:head (:title "About me")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/ecmalisp.js"))
+	    (:script :type "text/javascript" :src "/ecmalisp.js")
+	    (:meta :name "viewport" :content "initial-scale=1,width=device-width"))
      (:body (:h2 "About me")
 	    (:p "Several social profiles:"
 		(:div :class "social-link"
