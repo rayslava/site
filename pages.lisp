@@ -96,10 +96,9 @@ function sayHi() {
 		       :width "164"
 		       :height "20"))
 		(:div :class "social-link"
+		      (:a :href "https://twitter.com/Rayslava" :class "twitter-follow-button"
+			  :data-show-count "true" "Follow @Rayslava"))
+		(:div :class "social-link"
 		      (:iframe :src "http://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
 			       :scrolling "0" :frameborder "0"
-			       :width "164" :height "28" :allowTransparency "true"))
-		(:div :class "social-link"
-		      (:a :href "https://twitter.com/Rayslava" :class "twitter-follow-button"
-			  :data-show-count "true" "Follow @Rayslava")))))))		
-	    
+			       :width "120" :height "20" :allowTransparency "true")))))))

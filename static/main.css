@@ -55,6 +55,7 @@ p {
 .social-link {
     padding: 4px;
     display: inline-block;
+    height: 36px;
     }
 
 .color-table {
