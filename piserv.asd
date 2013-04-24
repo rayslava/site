@@ -14,4 +14,6 @@
   :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "asdf")
   :components ((:file "site"
                       :depends-on ("static"))
-               (:file "static")))
+               (:file "static")
+	       (:file "pages"
+		      :depends-on ("site"))))
