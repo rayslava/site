@@ -23,13 +23,14 @@ body {
   
 a {   
    color:#000;   
-   -webkit-transition:color 0.5s ease-in;  
-   -moz-transition:color 0.5s ease-in;  
-   -o-transition:color 0.5s ease-in;  
-   transition:color 0.5s ease-in;  
+   -webkit-transition:color 0.2s ease-in;  
+   -moz-transition:color 0.2s ease-in;  
+   -o-transition:color 0.2s ease-in;  
+   transition:color 0.2s ease-in;
+   transition-timing-function: linear;
 }
 
-a:hover {color:#f00;}  
+a:hover {color:#c00;}  
 
 @media screen and (max-width: 850px) {
 	.main-header {
