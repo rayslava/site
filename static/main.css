@@ -18,10 +18,11 @@ body {
     font: 75%/1.33 Serif;
     text-align: justify;
 }
-
+  
 a {   
-    color:#000;   
-    transition-timing-function: linear;
+   color:#000;
+   transition: color 0.2s ease-in;
+   transition-timing-function: linear;
 }
 
 a:hover { color:#c00; }
@@ -33,7 +34,7 @@ a:hover { color:#c00; }
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;
-    }
+	}
 
     .social-link {
 	padding: 2px;
@@ -54,7 +55,7 @@ p {
 .social-link {
     padding: 4px;
     display: inline-block;
-}
+    }
 
 hr {
     border:none;
