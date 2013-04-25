@@ -19,6 +19,18 @@ body {
     text-align: justify;
 }
 
+  
+  
+a {   
+   color:#000;   
+   -webkit-transition:color 0.5s ease-in;  
+   -moz-transition:color 0.5s ease-in;  
+   -o-transition:color 0.5s ease-in;  
+   transition:color 0.5s ease-in;  
+}
+
+a:hover {color:#f00;}  
+
 @media screen and (max-width: 850px) {
 	.main-header {
 		width: 90%;
