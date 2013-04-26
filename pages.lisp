@@ -45,7 +45,7 @@
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
      (:head (:title "rayslava's test page")
-	    (:link :rel "stylesheet" :type "text/css" :href "http://davazp.net/jscl/jscl.js")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/ecmalisp.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
 	    (princ (generate-prologue *ajax-processor*))
