@@ -46,7 +46,7 @@
     (:html
      (:head (:title "rayslava's test page")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/ecmalisp.js")
+	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
 	    (princ (generate-prologue *ajax-processor*))
 	    (:script :type "text/javascript" "
@@ -87,7 +87,7 @@ function sayHi() {
     (:html
      (:head (:title "About me")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/ecmalisp.js")
+	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
 	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
      (:body (:h2 "About me")
