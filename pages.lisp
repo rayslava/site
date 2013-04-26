@@ -73,7 +73,8 @@ function sayHi() {
      (:h1 "Hello")
      (:p "This is my Lisp web server, running on Hunchentoot,")
      (:p "For now you can take a look on my " (:a :href "/about" "personal page"))
-     (:p "Or try to evaluate a lisp expression: " 
+     (:p "Or try to evaluate a lisp expression on "
+	 (:a :href "https://github.com/davazp/jscl" "jscl") ":"
 	 (:input :id "name" :type "text"))
      (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
      (:p (:a :href "javascript:sayHi()" "Input"))
