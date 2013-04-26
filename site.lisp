@@ -90,6 +90,8 @@
 	       (with-output-to-string (*standard-output* nil)
 		 (compile-file "static.lisp")
 		 (load "static.lisp")
+		 (compile-file "style.lisp")
+		 (load "style.lisp")
 		 (compile-file "pages.lisp")
 		 (load "pages.lisp")
 		 (compile-file "site.lisp")

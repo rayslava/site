@@ -15,7 +15,7 @@
 	(:html
 	 (:head (:title "Admin page")
 		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
-		(:script :type "text/javascript" :src "/ecmalisp.js"))
+		(:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js"))
 	 (:body (:h2 "Admin interface")
 		(:p (cond ((equalp action "refresh")
 			   (with-html-output (*standard-output* nil)
