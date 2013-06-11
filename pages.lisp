@@ -36,7 +36,9 @@
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
 				 (str (sh "git pull")))
-			     (:a :href "/admin?action=list" "back to list"))))))))))
+			     (:a :href "/admin?action=list" "back to list")))
+			  (t (with-html-output (*standard-output* nil)
+			       (:a :href "/admin?action=list" "List actions"))))))))))
 
 ; Main page goes here
 (define-easy-handler (easy-demo :uri "/main"
