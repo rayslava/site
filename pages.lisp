@@ -80,6 +80,32 @@ function sayHi() {
      (:p (:a :href "javascript:sayHi()" "Input"))
      (:b (str state-variable))))))
 
+(define-easy-handler (contacts-page :uri "/contacts"
+				 :default-request-type :get)
+    ()
+  (with-html-output-to-string (*standard-output* nil :prologue nil)
+    (:html
+     (:head (:title "Contacts")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
+	    (:script :type "text/javascript"
+		     "document.addEventListener( \"DOMContentLoaded\", loaded, false )
+
+function loaded() {
+document.getElementById('mail-addr').innerHTML = \"<a href=\\\"mailto:rayslava@gmail.com\\\">rayslava@gmail.com<\/a>\";
+}
+")
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
+     (:body (:h2 "Contacts")
+	    (:p "If you want to contact me you may want to:"
+		(:ul
+		 (:li "Write me a letter to my GMail: " (:span :id "mail-addr" (:b "rayslava") (:em "[at]") (:b "gmail.com"))
+		      (:p "By the way you can use PGP to write me something personal. Public key can be found at " (:a :href "http://pgp.mit.edu:11371/pks/lookup?search=rayslava&op=index" "pgp.mit.edu")))
+		 (:li "Connect me in chat at jabber: "
+		      (:a :href "xmpp:rayslava@jabber.ru?message;type=chat" "rayslava@jabber.ru"))
+		 (:li "Follow me at personal jabber blog at "
+		      (:a :href "xmpp:point@point.im?message;type=chat;body=S%20@rayslava" "point.im"))))))))
+
 (define-easy-handler (about-page :uri "/about"
 				 :default-request-type :get)
     ()
@@ -92,6 +118,7 @@ function sayHi() {
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
      (:body (:h2 "About me")
 	    (:p "I was born on the day when Morris Worm devoured ten percent of Internet and that predetermined my life&hellip;")
+	    (:p "I've graduated from BMSTU and now I work in Samsung Electronics Moscow")
 	    (:p "Several social profiles:"
 		(:div :class "social-link"
 		      (:iframe
