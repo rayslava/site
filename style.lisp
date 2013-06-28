@@ -21,6 +21,7 @@
 (define-easy-handler (admin :uri "/main.css"
 			    :default-request-type :get)
 ()
+(setf (hunchentoot:content-type*) "text/css")
   (css
    `(("body"
       :max-width "90%"

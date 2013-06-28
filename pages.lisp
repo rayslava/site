@@ -15,7 +15,7 @@
 	(:html
 	 (:head (:title "Admin page")
 		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
-		(:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js"))
+		(:script :type "text/javascript" :src "/jscl.js"))
 	 (:body (:h2 "Admin interface")
 		(:p (cond ((equalp action "refresh")
 			   (with-html-output (*standard-output* nil)
@@ -48,17 +48,18 @@
     (:html
      (:head (:title "rayslava's test page")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
+	    (:script :type "text/javascript" :src "/x-cl.js")
+	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
 	    (princ (generate-prologue *ajax-processor*))
 	    (:script :type "text/javascript" "
-function pv(x) { return x==undefined? nil: x; }
+document.addEventListener( \"DOMContentLoaded\", parselisp, false )
 
 lisp.write = function(str){
            document.getElementById('eval').innerHTML = str;
            return str;
         }
-lisp.evalString(pv, '(CL:PACKAGE-NAME CL:*PACKAGE*)');
+lisp.evalString('(CL:PACKAGE-NAME CL:*PACKAGE*)');
 
 // will show the greeting in a message box
 function callback(response) {
@@ -67,7 +68,7 @@ function callback(response) {
 
 // calls our Lisp function with the value of the text field
 function sayHi() {
-  lisp.write(lisp.evalString(pv,document.getElementById('name').value));
+  lisp.write(lisp.evalString(document.getElementById('name').value));
   ajax_say_hi(document.getElementById('name').value, callback);
 }
 ")
@@ -89,15 +90,16 @@ function sayHi() {
     (:html
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
-	    (:script :type "text/javascript"
-		     "document.addEventListener( \"DOMContentLoaded\", loaded, false )
-
+	    (:script :type "text/javascript" """
 function loaded() {
-document.getElementById('mail-addr').innerHTML = \"<a href=\\\"mailto:rayslava@gmail.com\\\">rayslava@gmail.com<\/a>\";
-}
-")
-	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
+document.getElementById('mail-addr').innerHTML = '<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>';
+};
+""")
+	    (:script :type "text/javascript" :src "/x-cl.js")
+	    (:script :type "text/javascript" :src "/jscl.js")
+	    (:script :type "text/x-common-lisp" "(setf (#j:document:getElementById 'mail-addr'):innerHTML = '<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>'")
+;                                         
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "Contacts")
 	    (:p "If you want to contact me you may want to:"
 		(:ul
@@ -115,7 +117,7 @@ document.getElementById('mail-addr').innerHTML = \"<a href=\\\"mailto:rayslava@g
     (:html
      (:head (:title "About me")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "http://davazp.net/jscl/jscl.js")
+	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
      (:body (:h2 "About me")
