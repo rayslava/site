@@ -90,15 +90,9 @@ function sayHi() {
     (:html
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" """
-function loaded() {
-document.getElementById('mail-addr').innerHTML = '<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>';
-};
-""")
 	    (:script :type "text/javascript" :src "/x-cl.js")
 	    (:script :type "text/javascript" :src "/jscl.js")
-	    (:script :type "text/x-common-lisp" "(setf (#j:document:getElementById 'mail-addr'):innerHTML = '<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>'")
-;                                         
+	    (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "Contacts")
 	    (:p "If you want to contact me you may want to:"
