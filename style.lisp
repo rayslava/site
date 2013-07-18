@@ -29,7 +29,7 @@
       :padding "2em"
       :background "white"
       :color "#666"
-      :font "75%/1.33 Serif"
+      :font "100%/1.33 Serif"
       :text-align "justify")
      ("a"
       :color "#000"

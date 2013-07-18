@@ -61,7 +61,7 @@
 		" under " (:a :href "http://ecls.sourceforge.net" "ecl")
 		" on " (:a :href "http://archlinuxarm.org" "Arch Linux ARM")
 		" installed on " (:a :href "http://www.raspberrypi.org" "Rasbberry Pi"))
-	    (:p "All the source  will be placed on my github when it is ready and I'm not feeling myself guilty for injuring readers' sense of beauty")
+	    (:p "All the source  will be placed on my github when it is ready and I'm not feeling myself guilty for injuring readers' sense of beauty.")
 	    (:p "Also I created a nearly useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (contacts-page :uri "/contacts"
