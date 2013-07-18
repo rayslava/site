@@ -52,17 +52,17 @@
 	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "About site")
-	    (:p "This site is just my first try to build the whole site using a stack of LISP technologies."
+	    (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies."
 		(:ul
 		 (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
 		 (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
 		 (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
-		"All it works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
+		"It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
 		" under " (:a :href "http://ecls.sourceforge.net" "ecl")
 		" on " (:a :href "http://archlinuxarm.org" "Arch Linux ARM")
 		" installed on " (:a :href "http://www.raspberrypi.org" "Rasbberry Pi"))
 	    (:p "All the source  will be placed on my github when it is ready and I'm not feeling myself guilty for injuring readers' sense of beauty.")
-	    (:p "Also I created a nearly useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
+	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (contacts-page :uri "/contacts"
 				 :default-request-type :get)
@@ -80,9 +80,9 @@
 		(:ul
 		 (:li "Write me a letter to my GMail: " (:span :id "mail-addr" (:b "rayslava") (:em "[at]") (:b "gmail.com"))
 		      (:p "By the way you can use PGP to write me something personal. Public key can be found at " (:a :href "http://pgp.mit.edu:11371/pks/lookup?search=rayslava&op=index" "pgp.mit.edu")))
-		 (:li "Connect me in chat at jabber: "
+		 (:li "Chat me via jabber: "
 		      (:a :href "xmpp:rayslava@jabber.ru?message;type=chat" "rayslava@jabber.ru"))
-		 (:li "Follow me at personal jabber blog at "
+		 (:li "Follow my personal " (:a :href "http://point.im" "Point.im") " blog at "
 		      (:a :href "xmpp:point@point.im?message;type=chat;body=S%20@rayslava" "point.im"))))))))
 
 (define-easy-handler (about-page :uri "/about"
