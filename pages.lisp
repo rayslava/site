@@ -46,42 +46,23 @@
     ((state-variable :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
-     (:head (:title "rayslava's test page")
+     (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/x-cl.js")
 	    (:script :type "text/javascript" :src "/jscl.js")
-	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0;"))
-	    (princ (generate-prologue *ajax-processor*))
-	    (:script :type "text/javascript" "
-document.addEventListener( \"DOMContentLoaded\", parselisp, false )
-
-lisp.write = function(str){
-           document.getElementById('eval').innerHTML = str;
-           return str;
-        }
-lisp.evalString('(CL:PACKAGE-NAME CL:*PACKAGE*)');
-
-// will show the greeting in a message box
-function callback(response) {
-  document.getElementById('answer').innerHTML = response.firstChild.firstChild.nodeValue;
-}
-
-// calls our Lisp function with the value of the text field
-function sayHi() {
-  lisp.write(lisp.evalString(document.getElementById('name').value));
-  ajax_say_hi(document.getElementById('name').value, callback);
-}
-")
-    (:body
-     (:h1 "Hello")
-     (:p "This is my Lisp web server, running on Hunchentoot,")
-     (:p "For now you can take a look on my " (:a :href "/about" "personal page"))
-     (:p "Or try to evaluate a lisp expression on "
-	 (:a :href "https://github.com/davazp/jscl" "jscl") ":"
-	 (:input :id "name" :type "text"))
-     (:p "Answer zone: " (:div :id "answer") (:div :id "eval"))
-     (:p (:a :href "javascript:sayHi()" "Input"))
-     (:b (str state-variable))))))
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
+     (:body (:h2 "About site")
+	    (:p "This site is just my first try to build the whole site using a stack of LISP technologies."
+		(:ul
+		 (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
+		 (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
+		 (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
+		"All it works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
+		" under " (:a :href "http://ecls.sourceforge.net" "ecl")
+		" on " (:a :href "http://archlinuxarm.org" "Arch Linux ARM")
+		" installed on " (:a :href "http://www.raspberrypi.org" "Rasbberry Pi"))
+	    (:p "All the source  will be placed on my github when it is ready and I'm not feeling myself guilty for injuring readers' sense of beauty")
+	    (:p "Also I created a nearly useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (contacts-page :uri "/contacts"
 				 :default-request-type :get)
