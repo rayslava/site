@@ -9,7 +9,7 @@
 ; Generates an administration page
 (define-easy-handler (admin :uri "/admin"
 			    :default-request-type :get)
-    ((action))
+    ((action :parameter-type 'string))
   (with-http-authentication
       (with-html-output-to-string (*standard-output* nil :prologue nil)
 	(:html
@@ -43,7 +43,7 @@
 ; Main page goes here
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
-    ((state-variable :parameter-type 'string))
+    ()
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
      (:head (:title "About site")

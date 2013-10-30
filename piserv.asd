@@ -13,8 +13,10 @@
   :long-description "Lisp implementation of my home page"
   :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "cl-css")
   :components ((:file "site"
-                      :depends-on ("static"))
-               (:file "static")
+                      :depends-on ("static" "config"))
+               (:file "static"
+		      :depends-on ("config"))
+	       (:file "config")
 	       (:file "pages"
 		      :depends-on ("site"))
 	       (:file "style"

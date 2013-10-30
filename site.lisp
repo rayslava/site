@@ -3,7 +3,7 @@
 
 (defpackage :piserv
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv.static)
+	:asdf :piserv.static :piserv.config)
   (:export :start-server :stop-server :refresh :sh
 	   :with-http-authentication :*ajax-processor*))
 
@@ -11,12 +11,6 @@
 
 (defvar *hunchentoot-server* nil
   "Hunchentoot server instance")
-
-(defvar *admin-login* "admin"
-  "Admin page password")
-
-(defvar *admin-password* "adminpassword"
-  "Admin page password")
 
 ;;;;; First we create an ajax processor that will handle our function calls
 (defvar *ajax-processor* 
@@ -68,34 +62,30 @@
     (stop *hunchentoot-server*)
     (setq *hunchentoot-server* nil)))
 
-(defun start-server (&optional (port 8080) (adminpass "adminpassword"))
+(defun start-server (&optional (port *server-port*) (adminpass *admin-password*))
   "Starts the server"
   (when *hunchentoot-server*
     (stop-server))
   (setup-dispatch-table)
   (setf *admin-password* adminpass)
   (setq *hunchentoot-server*
-	(start (make-instance 'easy-acceptor :port port))))
+	(start (make-instance 'easy-acceptor :port port
+			      :access-log-destination *access-log-file*
+			      :message-log-destination *message-log-file*))))
 
 (defmacro with-http-authentication (&rest body)
   `(multiple-value-bind (username password) (hunchentoot:authorization)
      (cond ((and (string= username *admin-login*) (string= password *admin-password*))
             ,@body)
-           (t (hunchentoot:require-authorization "admin-login")))))
+           (t (hunchentoot:require-authorization *admin-login-message*)))))
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
   (with-html-output (*standard-output* nil)
     (let ((in (make-string-input-stream
 	       (with-output-to-string (*standard-output* nil)
-		 (compile-file "static.lisp")
-		 (load "static.lisp")
-		 (compile-file "style.lisp")
-		 (load "style.lisp")
-		 (compile-file "pages.lisp")
-		 (load "pages.lisp")
-		 (compile-file "site.lisp")
-		 (load "site.lisp")
+		 (asdf:operate 'compile-op :piserv)
+		 (asdf:operate 'load-op :piserv)
 		 (setup-dispatch-table))))
 	  (s (make-array '(0) :element-type 'base-char
 			 :fill-pointer 0 :adjustable t)))

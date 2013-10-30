@@ -1,11 +1,8 @@
 (defpackage :piserv.static
-  (:use :cl :cl-who :hunchentoot)
+  (:use :cl :cl-who :hunchentoot :piserv.config)
   (:export :generate-static-table))
 
 (in-package :piserv.static)
-
-(defparameter *default-static-path* "static"
-  "Default path where server should search for files that should be exported as is")
 
 (defun generate-files-list (path)
   "Prepares a list of files in directory"
