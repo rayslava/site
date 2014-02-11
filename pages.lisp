@@ -64,6 +64,15 @@
 	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
+(define-easy-handler (robots-page :uri "/robots.txt"
+				  :default-request-type :get)
+    ()
+  (string "Host: rayslava.tk
+User-agent: *
+Allow: /main
+Allow: /contacts
+"))
+
 (define-easy-handler (contacts-page :uri "/contacts"
 				 :default-request-type :get)
     ()
