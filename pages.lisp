@@ -67,7 +67,7 @@
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
     ()
-  (string "Host: rayslava.tk
+  (string "Host: rayslava.com
 User-agent: *
 Allow: /main
 Allow: /contacts
