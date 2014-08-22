@@ -20,4 +20,4 @@ Sample
 ------
 
 My site [rayslava.com](http://rayslava.com) uses this engine for web.
-Also it runs on Raspberry Pi. I can't imagine more geek example :)
+Also it runs on ODroid U2 with Gentoo. I can't imagine more geek example :)
