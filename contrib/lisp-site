@@ -1,0 +1,39 @@
+#!/sbin/runscript
+# Copyright (C) 2014 Slava Barinov <rayslava@gmail.com>
+# Distributed under the terms of the Simplified BSD License.
+
+NAME="LISP site engine"
+LISP_SITE_NAME="site"
+LISP_SITE_BINARY="/usr/bin/ecl"
+LISP_SITE_OPTS="${LISP_SITE_BINARY} -load ${LISP_SITE_PATH} \
+${LISP_SITE_ADDITIONAL_OPTS}"
+LISP_SITE_PIDFILE="/var/run/${LISP_SITE_NAME}.pid"
+
+start() {
+	ebegin "Starting ${NAME}"
+
+	start-stop-daemon --start --exec "${LISP_SITE_BINARY}" \
+	   --pidfile "${LISP_SITE_PIDFILE}" --background \
+	   --user "${LISP_SITE_USER}" --group "${LISP_SITE_GROUP}" \
+	   -- ${LISP_SITE_OPTS}
+
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping ${NAME}"
+
+	start-stop-daemon --stop --exec "${LISP_SITE_BINARY}" \
+	    --pidfile "${LISP_SITE_PIDFILE}"
+
+	eend $?
+}
+
+reload() {
+	ebegin "Reloading ${NAME}"
+
+	start-stop-daemon --signal HUP --exec "${LISP_SITE_BINARY}" \
+	    --pidfile "${LISP_SITE_PIDFILE}"
+
+	eend $?
+}

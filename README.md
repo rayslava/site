@@ -16,6 +16,11 @@ $ ecl -load piserv.asd
 > (piserv:start-server 80)
 ```
 
+Installation
+------------
+
+`contrib` directory contains simple script for openrc and config file for my machine.
+
 Sample
 ------
 
