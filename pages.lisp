@@ -80,7 +80,6 @@ Allow: /contacts
     (:html
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/x-cl.js")
 	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")
