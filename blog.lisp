@@ -29,7 +29,7 @@
 	 :documentation "Function which returns a post")))
 
 (defmethod print-object ((post blog-post) (output stream))
-  (format output "Blog post ID:~d" (id post)))
+  (format output "Blog post ID:~d (~a)" (id post) (tags post)))
 
 (defmethod less ((fst blog-post) (snd blog-post))
   (< (id fst) (id snd)))
@@ -48,10 +48,29 @@
 				     ,@(when tags `(:tags ,tags))))
 		#'less)))
 
+(defun split-by-comma (string)
+    "Returns a list of substrings of string
+divided by comma each.
+Note: Two consecutive spaces will be seen as
+if there were an empty string between them."
+    (loop for i = 0 then (1+ j)
+          as j = (position #\Comma string :start i)
+          collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
+          while j))
+
+(defun posts-by-tags (tags)
+  "Returns only posts containing tags
+TAGS is comma-separated string"
+  (let ((taglist (split-by-comma tags)))
+    (print taglist)
+	(remove-if (lambda (post)
+			 (set-difference taglist (tags post) :test #'equal))
+	  blog-posts)))
+
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
-     (tag :parameter-type 'string))
+     (tags :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
      (:head (:title "Blog")
@@ -65,8 +84,8 @@
 		(text (post post)))
 	   (htm (:body (:h2 (format t "~a" subject))
 		       (format t "~a" (funcall text)))))
-	 (let ((postlist (if tag
-			     (remove-if-not (lambda (post) (member tag (tags post) :test #'equal)) blog-posts)
+	 (let ((postlist (if tags
+			     (posts-by-tags tags)
 			     blog-posts)))
 	   (htm (:body (:h2 "Blog list")
 		       (:p "Posts:"
