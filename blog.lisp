@@ -50,7 +50,8 @@
 
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
-    ((id :parameter-type 'integer))
+    ((id :parameter-type 'integer)
+     (tag :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:html
      (:head (:title "Blog")
@@ -64,11 +65,13 @@
 		(text (post post)))
 	   (htm (:body (:h2 (format t "~a" subject))
 		       (format t "~a" (funcall text)))))
-	 (htm (:body (:h2 "Blog")
-		     (:p "Here will be the blog")
-		     (:p "Posts:"
-			 (:ul
-			  (dolist (post (reverse blog-posts))
-			       (htm
-				(:li (:a :href (format nil "/blog?id=~a" (id post))
-					 (format t "~a" (subject post))))))))))))))
+	 (let ((postlist (if tag
+			     (remove-if-not (lambda (post) (member tag (tags post) :test #'equal)) blog-posts)
+			     blog-posts)))
+	   (htm (:body (:h2 "Blog list")
+		       (:p "Posts:"
+			   (:ul
+			    (dolist (post postlist)
+			      (htm
+			       (:li (:a :href (format nil "/blog?id=~a" (id post))
+					(format t "~a" (subject post)))))))))))))))
