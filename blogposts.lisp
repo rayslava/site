@@ -2,8 +2,9 @@
 (defpackage :piserv.blogposts
   (:use :piserv.blog))
 
-(defblogpost 3649652480 "Blog created"
-  (:p "Okay, I've created a blog and will post something here one day"))
-
-(defblogpost 3649653431 "Blog test post"
-  (:p "Check sorting"))
+(defblogpost 3649655845 "Blog created"
+  (:div
+   (:p "Okay, I've created a blog engline and will post something here.")
+   (:p "As usual it's written in neat Common Lisp and can be seen at my "
+       (:a :href "https://github.com/rayslava" "GitHub profile")))
+  '("en" "site" "news" "lisp"))
