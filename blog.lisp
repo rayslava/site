@@ -62,7 +62,6 @@ if there were an empty string between them."
   "Returns only posts containing tags
 TAGS is comma-separated string"
   (let ((taglist (split-by-comma tags)))
-    (print taglist)
 	(remove-if (lambda (post)
 			 (set-difference taglist (tags post) :test #'equal))
 	  blog-posts)))
@@ -75,15 +74,40 @@ TAGS is comma-separated string"
     (:html
      (:head (:title "Blog")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
 	    (:script :type "text/javascript" :src "/x-cl.js")
 	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (if id
 	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) blog-posts)))
 		(subject (subject post))
-		(text (post post)))
+		(taglist (tags post))
+		(text (post post))
+		(timestamp (multiple-value-list (decode-universal-time (id post))))
+		(hour (nth 2 timestamp))
+		(minute (nth 1 timestamp))
+		(day (nth 3 timestamp))
+		(month (nth 4 timestamp))
+		(year (nth 5 timestamp))
+		(tz (nth 8 timestamp))
+		(posted-at (format nil "~2,'0d:~2,'0d ~d-~2,'0d-~d (GMT~@d)"
+				   hour
+				   minute
+				   year
+				   month
+				   day
+				   (- tz))))
 	   (htm (:body (:h2 (format t "~a" subject))
-		       (format t "~a" (funcall text)))))
+		       (format t "~a" (funcall text))
+		       (htm (:div :id "postinfo"
+				  (:span :id "taglist"
+					 (dolist (tag taglist)
+					   (htm (:a :href (format nil "/blog?tags=~a" tag)
+						    (:span :class "tag"
+							   (format t "~a" tag))))))
+				  (:span :id "timeinfo"
+					 (htm (format t "~a" posted-at))))))))
+
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
 			     blog-posts)))

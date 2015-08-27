@@ -18,8 +18,8 @@
 
 (in-package :piserv.styles)
 
-(define-easy-handler (admin :uri "/main.css"
-			    :default-request-type :get)
+(define-easy-handler (main :uri "/main.css"
+			   :default-request-type :get)
 ()
 (setf (hunchentoot:content-type*) "text/css")
   (css
@@ -36,7 +36,7 @@
       ,@(transition 'color :timing-function "ease-in" :duration 0.2)
       :transition-timing-function "linear")
      ("a:hover" :color "#c00")
-     
+
      ("@media screen and (max-width: 720px)"
       ("body"
        :padding "1em"	:font-size "120%"
@@ -49,4 +49,13 @@
      ("p" :margin "0.5em 0")
      (".social-link" :padding "4px" :display "inline-block")
      ("hr" :border "none" :border-bottom "1px solid silver"))))
-      
+
+(define-easy-handler (blog :uri "/blog.css"
+			    :default-request-type :get)
+()
+(setf (hunchentoot:content-type*) "text/css")
+  (css
+   `(("#taglist" :padding "4px" :display "inline-block" :max-height "32")
+     (".tag" :padding "4px" :border "1px solid silver" :margin "4px"
+	     :border-radius "8px")
+     ("#timeinfo" :padding "4px" :font-size "80%" :float "right"))))
