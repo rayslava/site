@@ -49,22 +49,22 @@
 		#'less)))
 
 (defun split-by-comma (string)
-    "Returns a list of substrings of string
+  "Returns a list of substrings of string
 divided by comma each.
 Note: Two consecutive spaces will be seen as
 if there were an empty string between them."
-    (loop for i = 0 then (1+ j)
-          as j = (position #\Comma string :start i)
-          collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
-          while j))
+  (loop for i = 0 then (1+ j)
+     as j = (position #\Comma string :start i)
+     collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
+     while j))
 
 (defun posts-by-tags (tags)
   "Returns only posts containing tags
 TAGS is comma-separated string"
   (let ((taglist (split-by-comma tags)))
-	(remove-if (lambda (post)
-			 (set-difference taglist (tags post) :test #'equal))
-	  blog-posts)))
+    (remove-if (lambda (post)
+		 (set-difference taglist (tags post) :test #'equal))
+	       blog-posts)))
 
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
@@ -75,8 +75,6 @@ TAGS is comma-separated string"
      (:head (:title "Blog")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
-	    (:script :type "text/javascript" :src "/x-cl.js")
-	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (if id
 	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) blog-posts)))
@@ -111,10 +109,9 @@ TAGS is comma-separated string"
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
 			     blog-posts)))
-	   (htm (:body (:h2 "Blog list")
-		       (:p "Posts:"
-			   (:ul
-			    (dolist (post postlist)
-			      (htm
-			       (:li (:a :href (format nil "/blog?id=~a" (id post))
-					(format t "~a" (subject post)))))))))))))))
+	   (htm (:body (:h2 "Blog posts")
+		       (:ul
+			(dolist (post postlist)
+			  (htm
+			   (:li (:a :href (format nil "/blog?id=~a" (id post))
+				    (format t "~a" (subject post))))))))))))))

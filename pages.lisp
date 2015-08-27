@@ -48,7 +48,6 @@
     (:html
      (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/x-cl.js")
 	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "About site")

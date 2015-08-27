@@ -2,7 +2,7 @@
 (defpackage :piserv.blogposts
   (:use :piserv.blog))
 
-(in-package :piserv.blog)
+(in-package :piserv.blogposts)
 
 (defblogpost 3649655845 "Blog created"
   (:div
