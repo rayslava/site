@@ -2,6 +2,8 @@
 (defpackage :piserv.blogposts
   (:use :piserv.blog))
 
+(in-package :piserv.blog)
+
 (defblogpost 3649655845 "Blog created"
   (:div
    (:p "Okay, I've created a blog engline and will post something here.")
