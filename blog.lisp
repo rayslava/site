@@ -1,7 +1,8 @@
 ;;; A personal blog engine main file
 (defpackage :piserv.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv))
+	:asdf :piserv)
+  (:export :defblogpost))
 
 (in-package :piserv.blog)
 
@@ -39,10 +40,35 @@
 	 (merge 'list
 		blog-posts
 		(list (make-instance 'blog-post :id ,id
-				     :subject subject
+				     :subject ,subject
 				     :post (lambda ()
 					     (with-html-output-to-string (*standard-output* nil :prologue nil)
 					       (:div :class "blog-post"
 						     ,post)))
 				     ,@(when tags `(:tags ,tags))))
 		#'less)))
+
+(define-easy-handler (blog-page :uri "/blog"
+				:default-request-type :get)
+    ((id :parameter-type 'integer))
+  (with-html-output-to-string (*standard-output* nil :prologue nil)
+    (:html
+     (:head (:title "Blog")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:script :type "text/javascript" :src "/x-cl.js")
+	    (:script :type "text/javascript" :src "/jscl.js")
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
+     (if id
+	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) blog-posts)))
+		(subject (subject post))
+		(text (post post)))
+	   (htm (:body (:h2 (format t "~a" subject))
+		       (format t "~a" (funcall text)))))
+	 (htm (:body (:h2 "Blog")
+		     (:p "Here will be the blog")
+		     (:p "Posts:"
+			 (:ul
+			  (dolist (post (reverse blog-posts))
+			       (htm
+				(:li (:a :href (format nil "/blog?id=~a" (id post))
+					 (format t "~a" (subject post))))))))))))))

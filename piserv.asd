@@ -17,9 +17,10 @@
                (:file "static"
 		      :depends-on ("config"))
 	       (:file "config")
+	       (:file "blog")
 	       (:file "pages"
-		      :depends-on ("site"))
+		      :depends-on ("site" "blog"))
 	       (:file "style"
 		      :depends-on ("site"))
-	       (:file "blog"
-		      :depends-on ("style"))))
+	       (:file "blogposts"
+		      :depends-on ("blog"))))
