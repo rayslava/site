@@ -20,5 +20,6 @@
 	       (:file "pages"
 		      :depends-on ("site"))
 	       (:file "style"
-		      :depends-on ("site"))))
-
+		      :depends-on ("site"))
+	       (:file "blog"
+		      :depends-on ("style"))))
