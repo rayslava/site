@@ -46,23 +46,25 @@
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html :xmlns "http://www.w3.org/1999/xhtml"
-     (:head (:title "About site")
-	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:script :type "text/javascript" :src "/jscl.js")
-	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
-	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
-     (:body (:h2 "About site")
-	    (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies."
-		(:ul
-		 (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
-		 (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
-		 (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
-		"It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
-		" under " (:a :href "http://ecls.sourceforge.net" "ecl")
-		" on " (:a :href "http://gentoo.org" "Gentoo Linux")
-		" installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
-	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
-	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
+	   (:head (:title "About site")
+		  (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+		  (:link :rel "alternate"  :type "application/rss+xml" :title "RSS" :href "/rss")
+		  (:script :type "text/javascript" :src "/jscl.js")
+		  (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
+		  (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
+	   (:body (:h2 "About site")
+		  (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies.")
+		  (:ul
+		   (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
+		   (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
+		   (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
+		  (:p
+		   "It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
+		   " under " (:a :href "http://ecls.sourceforge.net" "ecl")
+		   " on " (:a :href "http://gentoo.org" "Gentoo Linux")
+		   " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
+		  (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
+		  (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
