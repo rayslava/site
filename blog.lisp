@@ -8,7 +8,7 @@
 
 ;;; Creating class system to use for blog posts
 
-(defvar blog-posts '() "List of all blog posts sorted by ID")
+(defvar *blog-posts* '() "List of all blog posts sorted by ID")
 
 (defclass blog-post ()
   ((id :accessor id
@@ -35,10 +35,10 @@
   (< (id fst) (id snd)))
 
 (defmacro defblogpost (id subject post &optional tags)
-  "Create new blog post inside blog-posts with ID, POST and TAGS"
-  `(setf blog-posts
+  "Create new blog post inside *blog-posts* with ID, POST and TAGS"
+  `(setf *blog-posts*
 	 (merge 'list
-		blog-posts
+		*blog-posts*
 		(list (make-instance 'blog-post :id ,id
 				     :subject ,subject
 				     :post (lambda ()
@@ -64,7 +64,7 @@ TAGS is comma-separated string"
   (let ((taglist (split-by-comma tags)))
     (remove-if (lambda (post)
 		 (set-difference taglist (tags post) :test #'equal))
-	       blog-posts)))
+	       *blog-posts*)))
 
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
@@ -79,7 +79,7 @@ TAGS is comma-separated string"
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (if id
-	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) blog-posts)))
+	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
 		(subject (subject post))
 		(taglist (tags post))
 		(text (post post))
@@ -98,7 +98,7 @@ TAGS is comma-separated string"
 
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
-			     blog-posts)))
+			     *blog-posts*)))
 	   (htm (:body (:h2 "Blog posts")
 		       (:ul
 			(dolist (post postlist)
@@ -116,7 +116,7 @@ TAGS is comma-separated string"
 	   (:title "rayslava's blog")
 	   (:link "http://rayslava.com")
 	   (:description "Blog feed")
-	   (dolist (post blog-posts)
+	   (dolist (post *blog-posts*)
 	     (let ((title (subject post))
 		   (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
 		   (description (post post)))
