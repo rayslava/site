@@ -48,7 +48,7 @@
     (:html :xmlns "http://www.w3.org/1999/xhtml"
 	   (:head (:title "About site")
 		  (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-		  (:link :rel "alternate"  :type "application/rss+xml" :title "RSS" :href "/rss")
+		  (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
 		  (:script :type "text/javascript" :src "/jscl.js")
 		  (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 		  (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
