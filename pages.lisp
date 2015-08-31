@@ -11,7 +11,7 @@
 			    :default-request-type :get)
     ((action :parameter-type 'string))
   (with-http-authentication
-      (with-html-output-to-string (*standard-output* nil :prologue nil)
+      (with-html-output-to-string (*standard-output* nil :prologue t)
 	(:html
 	 (:head (:title "Admin page")
 		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
@@ -44,7 +44,7 @@
 (define-easy-handler (easy-demo :uri "/main"
                                 :default-request-type :get)
     ()
-  (with-html-output-to-string (*standard-output* nil :prologue nil)
+  (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html
      (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
@@ -75,7 +75,7 @@ Allow: /contacts
 (define-easy-handler (contacts-page :uri "/contacts"
 				 :default-request-type :get)
     ()
-  (with-html-output-to-string (*standard-output* nil :prologue nil)
+  (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")

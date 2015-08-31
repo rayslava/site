@@ -1,7 +1,7 @@
 ;;; A personal blog engine main file
 (defpackage :piserv.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv)
+	:asdf :piserv :local-time)
   (:export :defblogpost))
 
 (in-package :piserv.blog)
@@ -70,7 +70,7 @@ TAGS is comma-separated string"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
-  (with-html-output-to-string (*standard-output* nil :prologue nil)
+  (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html
      (:head (:title "Blog")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
@@ -81,20 +81,8 @@ TAGS is comma-separated string"
 		(subject (subject post))
 		(taglist (tags post))
 		(text (post post))
-		(timestamp (multiple-value-list (decode-universal-time (id post))))
-		(hour (nth 2 timestamp))
-		(minute (nth 1 timestamp))
-		(day (nth 3 timestamp))
-		(month (nth 4 timestamp))
-		(year (nth 5 timestamp))
-		(tz (nth 8 timestamp))
-		(posted-at (format nil "~2,'0d:~2,'0d ~d-~2,'0d-~d (GMT~@d)"
-				   hour
-				   minute
-				   year
-				   month
-				   day
-				   (- tz))))
+		(timestamp (universal-to-timestamp (id post)))
+		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
 	   (htm (:body (:h2 (format t "~a" subject))
 		       (format t "~a" (funcall text))
 		       (htm (:div :id "postinfo"
@@ -115,3 +103,23 @@ TAGS is comma-separated string"
 			  (htm
 			   (:li (:a :href (format nil "/blog?id=~a" (id post))
 				    (format t "~a" (subject post))))))))))))))
+
+;;; The RSS feed
+(define-easy-handler (rss-page :uri "/rss"
+			       :default-request-type :get)
+    ()
+  (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent t)
+    (:rss :|version| "2.0"
+	  (:channel
+	   (:title "rayslava's blog")
+	   (:link "http://rayslava.com")
+	   (:description "Blog feed")
+	   (dolist (post blog-posts)
+	     (let ((title (subject post))
+		   (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
+		   (description (post post)))
+	       (cl-who:htm (:item
+			    (cl-who:htm (:title (cl-who:str title))
+					(:link (cl-who:str link))
+					(:pubDate (cl-who:str (format-timestring nil (universal-to-timestamp (id post)) :format +rfc-1123-format+)))
+					(:description (cl-who:str (funcall description))))))))))))
