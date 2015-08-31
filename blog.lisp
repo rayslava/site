@@ -75,6 +75,8 @@ TAGS is comma-separated string"
      (:head (:title "Blog")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
+	    (:link :rel "alternate"  :type "application/rss+xml" :title "RSS" :href "/rss")
+	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (if id
 	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) blog-posts)))
