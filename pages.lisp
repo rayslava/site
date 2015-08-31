@@ -41,11 +41,11 @@
 			       (:a :href "/admin?action=list" "List actions"))))))))))
 
 ; Main page goes here
-(define-easy-handler (easy-demo :uri "/main"
+(define-easy-handler (main-page :uri "/main"
                                 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html
+    (:html :xmlns "http://www.w3.org/1999/xhtml"
      (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/jscl.js")
@@ -76,11 +76,11 @@ Allow: /contacts
 				 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html
+    (:html :xmlns "http://www.w3.org/1999/xhtml"
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:script :type "text/javascript" :src "/jscl.js")
-	    (:script "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
+	    (:script :type "text/javascript" "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
 	    (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "Contacts")

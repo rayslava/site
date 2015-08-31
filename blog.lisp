@@ -71,7 +71,7 @@ TAGS is comma-separated string"
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html
+    (:html :xmlns "http://www.w3.org/1999/xhtml"
      (:head (:title "Blog")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
