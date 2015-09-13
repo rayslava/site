@@ -103,17 +103,20 @@ TAGS is comma-separated string"
 			 (when meta
 			   (format t "~a" (funcall meta))))
 		       
-	   (htm (:body (:h2 (format t "~a" subject))
-		       (format t "~a" (funcall text))
-		       (htm (:div :id "postinfo"
-				  (:span :id "taglist"
-					 (dolist (tag taglist)
-					   (htm (:a :href (format nil "/blog?tags=~a" tag)
-						    (:span :class "tag"
-							   (format t "~a" tag))))))
-				  (:span :id "timeinfo"
-					 (htm (format t "~a" posted-at))))))))))
-	 
+	   (htm (:body
+		 (:article
+		  (:h2 (format t "~a" subject))
+		  (format t "~a" (funcall text))
+		  (htm (:div :id "postinfo"
+			     (:nav
+			     (:span :id "taglist"
+				    (dolist (tag taglist)
+				      (htm (:a :href (format nil "/blog?tags=~a" tag)
+					       (:span :class "tag"
+						      (format t "~a" tag))))))))
+			     (:span :id "timeinfo"
+				    (htm (:time :datetime (format-timestring nil timestamp) (format t "~a" posted-at)))))))))))
+	   
 
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
