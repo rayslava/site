@@ -88,48 +88,50 @@ TAGS is comma-separated string"
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue t)
-     (if id
-	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
-		(subject (subject post))
-		(taglist (tags post))
-		(text (post post))
-		(meta (meta post))
-		(timestamp (universal-to-timestamp (id post)))
-		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
-	   (htm (:html
-		       (:head (:title (format t "~a" subject)subject)
-			      
-			 (format t "~a" (blog-page-head))
-			 (when meta
-			   (format t "~a" (funcall meta))))
+    (if id
+	(let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
+	       (subject (subject post))
+	       (taglist (tags post))
+	       (text (post post))
+	       (meta (meta post))
+	       (timestamp (universal-to-timestamp (id post)))
+	       (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
+	  (htm (:html
+		(:head (:title (format t "~a" subject)subject)
 		       
-	   (htm (:body
-		 (:article
-		  (:h2 (format t "~a" subject))
-		  (format t "~a" (funcall text))
-		  (htm (:div :id "postinfo"
+		       (format t "~a" (blog-page-head))
+		       (when meta
+			 (format t "~a" (funcall meta))))
+		
+		(htm (:body
+		      (:article
+		       (:h2 (format t "~a" subject))
+		       (format t "~a" (funcall text))
+		       (htm (:div
+			     :id "postinfo"
 			     (:nav
-			     (:span :id "taglist"
-				    (dolist (tag taglist)
-				      (htm (:a :href (format nil "/blog?tags=~a" tag)
-					       (:span :class "tag"
-						      (format t "~a" tag))))))))
-			     (:span :id "timeinfo"
-				    (htm (:time :datetime (format-timestring nil timestamp) (format t "~a" posted-at)))))))))))
-	   
+			      (:span :id "taglist"
+				     (dolist (tag taglist)
+				       (htm (:a :href (format nil "/blog?tags=~a" tag)
+						(:span :class "tag"
+						       (format t "~a" tag))))))))
+			    (:span :id "timeinfo"
+				   (:time
+				    :datetime (format-timestring nil timestamp)
+				    (format t "~a" posted-at))))))))))
 
-	 (let ((postlist (if tags
-			     (posts-by-tags tags)
-			     *blog-posts*)))
-	   (htm (:html
-		       (:head (:title "Blog")
-			      (format t "~a" (blog-page-head))
-		(:body (:h2 "Blog posts")
-		       (:ul
-			(dolist (post postlist)
-			  (htm
-			   (:li (:a :href (format nil "/blog?id=~a" (id post))
-				    (format t "~a" (subject post)))))))))))))))
+	(let ((postlist (if tags
+			    (posts-by-tags tags)
+			    *blog-posts*)))
+	  (htm (:html
+		(:head (:title "Blog")
+		       (format t "~a" (blog-page-head))
+		       (:body (:h2 "Blog posts")
+			      (:ul
+			       (dolist (post postlist)
+				 (htm
+				  (:li (:a :href (format nil "/blog?id=~a" (id post))
+					   (format t "~a" (subject post)))))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"

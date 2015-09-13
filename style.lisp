@@ -1,17 +1,3 @@
-; Here are css files
-; Colors
-; .primary-1 { background-color: #CCCCCC }
-; .primary-2 { background-color: #999999 }
-; .primary-3 { background-color: #333366 }
-; .primary-4 { background-color: #CCCCCC }
-; .primary-5 { background-color: #CCCCCC }
-
-; .complement-1 { background-color: #FFFFFF }
-; .complement-2 { background-color: #999999 }
-; .complement-3 { background-color: #996633 }
-; .complement-4 { background-color: #FFFFFF }
-; .complement-5 { background-color: #FFFFFF }
-
 (defpackage :piserv.styles
   (:use :cl :hunchentoot :cl-css
 	:asdf :piserv))
@@ -20,8 +6,8 @@
 
 (define-easy-handler (main :uri "/main.css"
 			   :default-request-type :get)
-()
-(setf (hunchentoot:content-type*) "text/css")
+    ()
+  (setf (hunchentoot:content-type*) "text/css")
   (css
    `(("body"
       :max-width "90%"
@@ -51,9 +37,9 @@
      ("hr" :border "none" :border-bottom "1px solid silver"))))
 
 (define-easy-handler (blog :uri "/blog.css"
-			    :default-request-type :get)
-()
-(setf (hunchentoot:content-type*) "text/css")
+			   :default-request-type :get)
+    ()
+  (setf (hunchentoot:content-type*) "text/css")
   (css
    `(("#taglist" :padding "4px" :display "inline-block" :max-height "32")
      (".tag" :padding "4px" :border "1px solid silver" :margin "4px"

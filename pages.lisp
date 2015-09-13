@@ -1,13 +1,13 @@
-; Here are "static" pages
+					; Here are "static" pages
 (defpackage :piserv.pages
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
 	:asdf :piserv))
-;  (:export :generate-pages))
+					;  (:export :generate-pages))
 
 (in-package :piserv.pages)
 (setf (html-mode) :html5)
 
-; Generates an administration page
+					; Generates an administration page
 (define-easy-handler (admin :uri "/admin"
 			    :default-request-type :get)
     ((action :parameter-type 'string))
@@ -41,31 +41,31 @@
 			  (t (with-html-output (*standard-output* nil)
 			       (:a :href "/admin?action=list" "List actions"))))))))))
 
-; Main page goes here
+					; Main page goes here
 (define-easy-handler (main-page :uri "/main"
                                 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html
-	   (:head (:title "About site")
-		  (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-		  (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
-		  (:script :type "text/javascript" :src "/jscl.js")
-		  (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
-		  (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
-	   (:body (:h2 "About site")
-		  (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies.")
-		  (:ul
-		   (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
-		   (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
-		   (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
-		  (:p
-		   "It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
-		   " under " (:a :href "http://ecls.sourceforge.net" "ecl")
-		   " on " (:a :href "http://gentoo.org" "Gentoo Linux")
-		   " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
-		  (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
-		  (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
+     (:head (:title "About site")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
+	    (:script :type "text/javascript" :src "/jscl.js")
+	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
+     (:body (:h2 "About site")
+	    (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies.")
+	    (:ul
+	     (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
+	     (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
+	     (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
+	    (:p
+	     "It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
+	     " under " (:a :href "http://ecls.sourceforge.net" "ecl")
+	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
+	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
+	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
+	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
@@ -77,7 +77,7 @@ Allow: /contacts
 "))
 
 (define-easy-handler (contacts-page :uri "/contacts"
-				 :default-request-type :get)
+				    :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html

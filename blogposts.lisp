@@ -18,8 +18,8 @@
   :tags '("en" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "Blog created")
 	  (:meta :property "og:type" :content "blog")
-	 (:meta :property "og:description" :content "A note about blog creation")
-  	 (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
+	  (:meta :property "og:description" :content "A note about blog creation")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
 
 (defblogpost 3649996316 "Сделал блог"
   (:div
@@ -40,5 +40,5 @@
   :tags '("ru" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "Сделал блог")
 	  (:meta :property "og:type" :content "blog")
-	 (:meta :property "og:description" :content "Заметка о том, что у меня теперь есть бложик")
-  	 (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))
+	  (:meta :property "og:description" :content "Заметка о том, что у меня теперь есть бложик")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))
