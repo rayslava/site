@@ -17,6 +17,7 @@
        (:a :href "/rss" "the feed") "."))
   :tags '("en" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "Blog created")
+	  (:meta :property "og:type" :content "blog")
 	 (:meta :property "og:description" :content "A note about blog creation")
   	 (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
 
@@ -36,4 +37,8 @@
        (:a :href "https://github.com/rayslava" "GitHub") ".")
    (:p "Для особых людей, знающих, что такое RSS, сделана " (:a :href "/rss" "лента, на
    которую можно подписаться.")))
-  :tags '("ru" "site" "news" "lisp"))
+  :tags '("ru" "site" "news" "lisp")
+  :meta  ((:meta :property "og:title" :content "Сделал блог")
+	  (:meta :property "og:type" :content "blog")
+	 (:meta :property "og:description" :content "Заметка о том, что у меня теперь есть бложик")
+  	 (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))

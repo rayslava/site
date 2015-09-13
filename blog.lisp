@@ -53,7 +53,7 @@
 						     ,post)))
 				     ,@(when meta `(:meta
 						    (lambda ()
-						      (with-html-output-to-string (*standard-output* nil) (htm ,meta)))))
+						      (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
 				     ,@(when tags `(:tags ,tags)))) #'less)))
 
 (defun split-by-comma (string)
@@ -97,10 +97,12 @@ TAGS is comma-separated string"
 		(timestamp (universal-to-timestamp (id post)))
 		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
 	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
-		  (:head (:title (format t "~a" subject))
+		       (:head (:title (format t "~a" subject)subject)
+			      
 			 (format t "~a" (blog-page-head))
 			 (when meta
 			   (format t "~a" (funcall meta))))
+		       
 	   (htm (:body (:h2 (format t "~a" subject))
 		       (format t "~a" (funcall text))
 		       (htm (:div :id "postinfo"
@@ -111,6 +113,7 @@ TAGS is comma-separated string"
 							   (format t "~a" tag))))))
 				  (:span :id "timeinfo"
 					 (htm (format t "~a" posted-at))))))))))
+	 
 
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
@@ -123,7 +126,8 @@ TAGS is comma-separated string"
 			(dolist (post postlist)
 			  (htm
 			   (:li (:a :href (format nil "/blog?id=~a" (id post))
-				    (format t "~a" (subject post)))))))))))))
+				    (format t "~a" (subject post)))))))))))
+     ))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
