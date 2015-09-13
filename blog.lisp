@@ -97,7 +97,7 @@ TAGS is comma-separated string"
 		(timestamp (universal-to-timestamp (id post)))
 		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
 	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
-		  (:head (:title subject)
+		  (:head (:title (format t "~a" subject))
 			 (format t "~a" (blog-page-head))
 			 (when meta
 			   (format t "~a" (funcall meta))))
