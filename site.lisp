@@ -9,6 +9,8 @@
 
 (in-package :piserv)
 
+(setf (html-mode) :html5)
+
 (defvar *hunchentoot-server* nil
   "Hunchentoot server instance")
 

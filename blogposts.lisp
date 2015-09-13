@@ -15,7 +15,10 @@
        (:a :href "https://github.com/rayslava" "GitHub profile") ".")
    (:p "Also if you know what RSS is you might be interested in subscribing "
        (:a :href "/rss" "the feed") "."))
-  '("en" "site" "news" "lisp"))
+  :tags '("en" "site" "news" "lisp")
+  :meta  ((:meta :property "og:title" :content "Blog created")
+	 (:meta :property "og:description" :content "A note about blog creation")
+  	 (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
 
 (defblogpost 3649996316 "Сделал блог"
   (:div
@@ -33,4 +36,4 @@
        (:a :href "https://github.com/rayslava" "GitHub") ".")
    (:p "Для особых людей, знающих, что такое RSS, сделана " (:a :href "/rss" "лента, на
    которую можно подписаться.")))
-  '("ru" "site" "news" "lisp"))
+  :tags '("ru" "site" "news" "lisp"))

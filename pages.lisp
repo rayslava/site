@@ -5,6 +5,7 @@
 ;  (:export :generate-pages))
 
 (in-package :piserv.pages)
+(setf (html-mode) :html5)
 
 ; Generates an administration page
 (define-easy-handler (admin :uri "/admin"

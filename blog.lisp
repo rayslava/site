@@ -6,6 +6,8 @@
 
 (in-package :piserv.blog)
 
+(setf (html-mode) :html5)
+
 ;;; Creating class system to use for blog posts
 
 (defvar *blog-posts* '() "List of all blog posts sorted by ID")
@@ -23,6 +25,10 @@
 	 :initarg :tags
 	 :initform '()
 	 :documentation "Post TAGS. A list of strings")
+   (meta :accessor meta
+	 :initarg :meta
+	 :initform '()
+	 :documentation "Metadata to be embedded into head of html. A cl-who S-form.")
    (post :accessor post
 	 :initarg :post
 	 :initform (error "Must supply a POST")
@@ -34,7 +40,7 @@
 (defmethod less ((fst blog-post) (snd blog-post))
   (< (id fst) (id snd)))
 
-(defmacro defblogpost (id subject post &optional tags)
+(defmacro defblogpost (id subject post &key meta tags)
   "Create new blog post inside *blog-posts* with ID, POST and TAGS"
   `(setf *blog-posts*
 	 (merge 'list
@@ -45,8 +51,10 @@
 					     (with-html-output-to-string (*standard-output* nil :prologue nil)
 					       (:div :class "blog-post"
 						     ,post)))
-				     ,@(when tags `(:tags ,tags))))
-		#'less)))
+				     ,@(when meta `(:meta
+						    (lambda ()
+						      (with-html-output-to-string (*standard-output* nil) (htm ,meta)))))
+				     ,@(when tags `(:tags ,tags)))) #'less)))
 
 (defun split-by-comma (string)
   "Returns a list of substrings of string
@@ -66,25 +74,33 @@ TAGS is comma-separated string"
 		 (set-difference taglist (tags post) :test #'equal))
 	       *blog-posts*)))
 
+(defun blog-page-head ()
+  "Common head part for all blog pages"
+  (with-html-output-to-string (*standard-output* nil :prologue nil)
+    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
+    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
+    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
+    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0")))
+
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html :xmlns "http://www.w3.org/1999/xhtml"
-     (:head (:title "Blog")
-	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	    (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
-	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
-	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
-	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (if id
 	 (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
 		(subject (subject post))
 		(taglist (tags post))
 		(text (post post))
+		(meta (meta post))
 		(timestamp (universal-to-timestamp (id post)))
 		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
+	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
+		  (:head (:title subject)
+			 (format t "~a" (blog-page-head))
+			 (when meta
+			   (format t "~a" (funcall meta))))
 	   (htm (:body (:h2 (format t "~a" subject))
 		       (format t "~a" (funcall text))
 		       (htm (:div :id "postinfo"
@@ -94,17 +110,20 @@ TAGS is comma-separated string"
 						    (:span :class "tag"
 							   (format t "~a" tag))))))
 				  (:span :id "timeinfo"
-					 (htm (format t "~a" posted-at))))))))
+					 (htm (format t "~a" posted-at))))))))))
 
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
 			     *blog-posts*)))
-	   (htm (:body (:h2 "Blog posts")
+	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
+		       (:head (:title "Blog")
+			 (format t "~a" (blog-page-head))))
+		(:body (:h2 "Blog posts")
 		       (:ul
 			(dolist (post postlist)
 			  (htm
 			   (:li (:a :href (format nil "/blog?id=~a" (id post))
-				    (format t "~a" (subject post))))))))))))))
+				    (format t "~a" (subject post)))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
