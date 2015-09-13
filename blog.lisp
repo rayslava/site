@@ -127,7 +127,6 @@ TAGS is comma-separated string"
 			  (htm
 			   (:li (:a :href (format nil "/blog?id=~a" (id post))
 				    (format t "~a" (subject post)))))))))))))))
-     ))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
