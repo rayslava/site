@@ -96,7 +96,7 @@ TAGS is comma-separated string"
 		(meta (meta post))
 		(timestamp (universal-to-timestamp (id post)))
 		(posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
-	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
+	   (htm (:html
 		       (:head (:title (format t "~a" subject)subject)
 			      
 			 (format t "~a" (blog-page-head))
@@ -118,15 +118,15 @@ TAGS is comma-separated string"
 	 (let ((postlist (if tags
 			     (posts-by-tags tags)
 			     *blog-posts*)))
-	   (htm (:html :xmlns "http://www.w3.org/1999/xhtml"
+	   (htm (:html
 		       (:head (:title "Blog")
-			 (format t "~a" (blog-page-head))))
+			      (format t "~a" (blog-page-head))
 		(:body (:h2 "Blog posts")
 		       (:ul
 			(dolist (post postlist)
 			  (htm
 			   (:li (:a :href (format nil "/blog?id=~a" (id post))
-				    (format t "~a" (subject post)))))))))))
+				    (format t "~a" (subject post)))))))))))))))
      ))
 
 ;;; The RSS feed

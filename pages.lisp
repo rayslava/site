@@ -46,7 +46,7 @@
                                 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html :xmlns "http://www.w3.org/1999/xhtml"
+    (:html
 	   (:head (:title "About site")
 		  (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 		  (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
@@ -80,7 +80,7 @@ Allow: /contacts
 				 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
-    (:html :xmlns "http://www.w3.org/1999/xhtml"
+    (:html
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
