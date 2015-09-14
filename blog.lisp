@@ -95,14 +95,15 @@ TAGS is comma-separated string"
 	       (text (post post))
 	       (meta (meta post))
 	       (timestamp (universal-to-timestamp (id post)))
+	       (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
 	       (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
 	  (htm (:html
 		(:head (:title (format t "~a" subject)subject)
-		       
+
 		       (format t "~a" (blog-page-head))
 		       (when meta
 			 (format t "~a" (funcall meta))))
-		
+
 		(htm (:body
 		      (:article
 		       (:h2 (format t "~a" subject))
@@ -117,7 +118,7 @@ TAGS is comma-separated string"
 						       (format t "~a" tag))))))))
 			    (:span :id "timeinfo"
 				   (:time
-				    :datetime (format-timestring nil timestamp)
+				    :datetime (format nil "~a" datetime-tag)
 				    (format t "~a" posted-at))))))))))
 
 	(let ((postlist (if tags
