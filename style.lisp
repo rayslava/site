@@ -14,7 +14,7 @@
       :margin "auto"
       :padding "2em"
       :background "white"
-      :color "#666"
+      :color "#333"
       :font "100%/1.33 Serif"
       :text-align "justify")
      ("a"
