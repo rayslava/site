@@ -64,7 +64,7 @@
 	     " under " (:a :href "http://ecls.sourceforge.net" "ecl")
 	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
 	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
-	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
+	    (:p "If you are curious about how it's made, you are free to look through the sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
 
 (define-easy-handler (robots-page :uri "/robots.txt"
