@@ -147,3 +147,71 @@
 	  (:meta :property "og:description" :content "Mourning the web design and the
           whole web itself while looking on modern sites.")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209733")))
+
+(defblogpost 3678124120 "On Doom"
+  (:div
+   (:p "I've finished
+      the " (:a :href "https://store.steampowered.com/app/379720/" "Doom (2016)")
+      " game lately and it triggered my Doom admiration again. Coincidentally I've
+      got the "
+       (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
+	   "Masters of Doom") " book inside my Kindle and could read it as well nearly the same.")
+   (:h3 "The Game")
+   (:p "So to begin with the game: I liked it! Yeah, I mean " (:strong "liked") ". Not so new
+   experience and genre-breaking gameplay but still exactly that slightly nervous feeling during
+   pressing the buttons and good old friends starting right from the great big fat Mancubus. The two
+   major things changed to classic Doom (and nearly everyone noted that) — the game became easier
+   and the arenas appeared.")
+   (:p "The first part is " (:a :href "https://www.youtube.com/watch?v=W1ZtBCpo0eU" "not surprising
+   at all") ": since video games became the massively produced entertainment and gained the huge
+   industry around they're becoming easier year to year and the difference
+   between " (:em "Ultraviolence") " then and " (:em "Ultraviolence") " now can be seen by anyone
+   without any efforts. But it looks like there's several levels above in the new Doom so there's
+   possibly a place for training.")
+   (:p "The second part is questionable: on the one hand arena is the Quake III attribute while Doom
+   has always been the rather large world (divided into levels due to technical limitations
+   sometimes) with place to retreat if monsters push you too hard; on the other hand these new
+   arenas are planned well and the design is done great not only in terms of level design with
+   paths, walls, jumpers and portals on their places but even from aesthetic point of view:
+   textures, colors, sinners dangling around… However I'd still like good old levels with space for
+   maneuver better.")
+   (:p "Monsters are rebalanced greatly but the visual style is still recognizable: when you see a
+   shotgun guy you know who he is and when you meet pinkie you'll even shout \"- Hey!\" but only
+   until it rush you. From my point of view monsters are weaker now but deal more damage and you
+   have to move, move and move around without pauses. The first stop usually means death for
+   you. And again this game speed is more quake-like than doom, but still fun. And rebalance is
+   quite irritating if you remember your feelings of the classical Doom. Now the first time you meet
+   the Baron of Hell you'll " (:s "shit bricks") " be surprised how he beats you to death by two or
+   three heavy punches but on the last levels he'll receive no more attention than zombies.
+   Situation with the Imp is quite the opposite: in classical Doom to beat one or two or squad of
+   them was not even a noticeable event; now they're one of the most dangerous enemies in the game
+   especially due to numbers. There's lots of imps, they're everywhere, they run walls and ceilings
+   and they shoot you with their fireballs right when you're going to retreat and find a little
+   medicine.")
+   (:p "Weapon set seems good to me and I don't really care much about fitting the classical set:
+   Gauss gun seems strange and not very effective, but shotgun with burst is fine. Double-barrel
+   shotgun is still the logo and the main device to use throughout the game, balance between "
+   (:strong "power") " and ammo is beautiful. And of course there's the chainsaw. And of course
+   it's the great thing!  Even greater you can imagine — it'll split nearly anyone into two (or
+   more) pieces in a second but looking for fuel is the main quest of the game.")
+   (:p "Summarizing: I definitely advice you to try the game if you still didn't do it and make your
+   own opinion. At least killing hellish creatures with the shotgun is as fun as always!")
+   (:hr)
+   (:h3 "The Book")
+   (:p "And two words about the book: " (:strong "must read") ". Yep. These two ones. David Kushner
+   did a great job collecting all the information and gathering it into the book. The most exciting
+   thing is all the history from the book just happened in front of us. Russian video game world had
+   been late by couple of years but the situation in the video games industry was very alike.")
+   (:p "From the professional point of view I marked out for myself the moments of initial id
+   company creation when the programmers needed a manager who could deal with negotiation and
+   barbecue supplying and situation with Ion Storm rise and fall: sad but usual story. The great
+   professional is not always capable of organizing a team and running business even if he thinks he
+   is. The team (or person) who constantly delivers (which is John Carmack is all about) always
+   beats colossal but unimplemented plans. The great discoveries are based not only on genius on the
+   dull meetings and everyday work.")
+   (:p "Anyway the books get 5/5 stars from me and I do not regret a cent spent."))
+  :tags '("en" "games" "dev" "thoughts" "books")
+  :meta  ((:meta :property "og:title" :content "On Doom")
+	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:description" :content "My personal opinion about the Doom game")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124120")))
