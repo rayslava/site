@@ -74,6 +74,7 @@
 User-agent: *
 Allow: /main
 Allow: /contacts
+Allow: /blog
 "))
 
 (define-easy-handler (contacts-page :uri "/contacts"

@@ -17,7 +17,8 @@
        (:a :href "/rss" "the feed") "."))
   :tags '("en" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "On blog creation")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "A note about blog creation")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
 
@@ -39,7 +40,8 @@
    которую можно подписаться.")))
   :tags '("ru" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "О блоге")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Заметка о том, что у меня теперь
 	  есть бложик")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))
@@ -94,7 +96,8 @@
    post"))
   :tags '("ru" "web" "design")
   :meta  ((:meta :property "og:title" :content "О веб-дизайне")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Плач и стенания о том, как
 	  веб-дизайн катится в бездну ужаса")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209732")))
@@ -143,7 +146,8 @@
   post"))
   :tags '("en" "web" "design")
   :meta  ((:meta :property "og:title" :content "On web design")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Mourning the web design and the
           whole web itself while looking on modern sites.")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209733")))
@@ -215,7 +219,8 @@
 	   " этого поста"))
   :tags '("en" "games" "dev" "thoughts" "books")
   :meta  ((:meta :property "og:title" :content "On Doom")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "My personal opinion about the Doom (2016) game")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124120")))
 
@@ -296,6 +301,7 @@
 	   " of this post"))
   :tags '("ru" "games" "dev" "thoughts" "books")
   :meta  ((:meta :property "og:title" :content "О Doom")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Моё личное мнение об игре Doom (2016)")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124121")))
