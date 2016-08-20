@@ -95,7 +95,7 @@ Allow: /blog
 		 (:li "Write me a letter to my GMail: " (:span :id "mail-addr" (:b "rayslava") (:em "[at]") (:b "gmail.com"))
 		      (:p "By the way you can use PGP to write me something personal. Public key can be found at " (:a :href "http://pgp.mit.edu:11371/pks/lookup?search=rayslava&op=index" "pgp.mit.edu")))
 		 (:li "Chat me via jabber: "
-		      (:a :href "xmpp:rayslava@jabber.ru?message;type=chat" "rayslava@jabber.ru"))
+		      (:a :href "xmpp:rayslava@rayslava.com?message;type=chat" "rayslava@rayslava.com"))
 		 (:li "Follow my personal " (:a :href "http://point.im" "Point.im") " blog at "
 		      (:a :href "xmpp:point@point.im?message;type=chat;body=S%20@rayslava" "point.im"))))
 	    (:p "Also here are several social profiles:"
@@ -108,6 +108,10 @@ Allow: /blog
 		(:div :class "social-link"
 		      (:a :href "https://twitter.com/Rayslava" :class "twitter-follow-button"
 			  :data-show-count "true" "Follow @Rayslava"))
+		(:div :class "social-link"
+		      (:a :href "https://linkedin.com/in/rayslava"
+			  (:img :src "https://static.licdn.com/scds/common/u/img/webpromo/btn_profile_greytxt_80x15.png"
+				:width "80" :height "15" :border "0" :alt "View my LinkedIn profile")))
 		(:div :class "social-link"
 		      (:iframe :src "http://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
 			       :scrolling "0" :frameborder "0"
