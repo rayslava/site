@@ -56,7 +56,7 @@
 		      ;; catch all
 		      (lambda (request)
 			(declare (ignore request))
-			(redirect "/main"))))))
+			(redirect "/main" :protocol :https))))))
 
 (defun stop-server ()
   "Stops the server"
