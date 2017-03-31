@@ -101,7 +101,7 @@ Allow: /blog
 	    (:p "Also here are several social profiles:"
 		(:div :class "social-link"
 		      (:iframe
-		       :src "http://ghbtns.com/github-btn.html?user=rayslava&type=follow&count=true"
+		       :src "https://ghbtns.com/github-btn.html?user=rayslava&type=follow&count=true"
 		       :allowtransparency "true" :frameborder "0" :scrolling "0"
 		       :width "164"
 		       :height "20"))
@@ -113,6 +113,6 @@ Allow: /blog
 			  (:img :src "https://static.licdn.com/scds/common/u/img/webpromo/btn_profile_greytxt_80x15.png"
 				:width "80" :height "15" :border "0" :alt "View my LinkedIn profile")))
 		(:div :class "social-link"
-		      (:iframe :src "http://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
+		      (:iframe :src "https://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
 			       :scrolling "0" :frameborder "0"
 			       :width "120" :height "20" :allowTransparency "true")))))))
