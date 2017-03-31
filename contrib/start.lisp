@@ -1,3 +1,5 @@
+(ql:update-client)
+(ql:update-all-dists)
 (ql:quickload "quicklisp-slime-helper")
 (let ((swank::*loopback-interface* (sb-unix:unix-gethostname)))
   (swank:create-server :dont-close t))
