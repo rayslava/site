@@ -1,6 +1,7 @@
 (ql:quickload "quicklisp-slime-helper")
 (let ((swank::*loopback-interface* (sb-unix:unix-gethostname)))
   (swank:create-server :dont-close t))
+(sb-posix:chdir #P"/piserv/")
 (load "/piserv/piserv.asd")
 (ql:quickload "piserv")
 (piserv:start-server 8080)
