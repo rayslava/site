@@ -14,4 +14,4 @@
 	     :initarg :subject
 	     :accessor file-location))
   (:dyna *dyna*)
-  (:metaclass <dyna-table-class>))
+  (:metaclass dyna.table-operation::<dyna-table-class>))
