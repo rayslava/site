@@ -1,5 +1,5 @@
 (defpackage :site.db-storage
-  (:use :cl :site.config :dyna))
+  (:use :cl :site.config :dyna.table-operation))
 
 ;;; Static storage procedure
 (defclass static-file ()
