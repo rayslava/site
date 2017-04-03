@@ -6,7 +6,8 @@
 	   :*message-log-file*
 	   :*default-static-path*
 	   :*server-port*
-	   :*admin-login-message*))
+	   :*admin-login-message*
+	   :*dyna*))
 
 (in-package :site.config)
 
