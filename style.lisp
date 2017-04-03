@@ -1,8 +1,8 @@
-(defpackage :piserv.styles
+(defpackage :site.styles
   (:use :cl :hunchentoot :cl-css
-	:asdf :piserv))
+	:asdf :site))
 
-(in-package :piserv.styles)
+(in-package :site.styles)
 
 (define-easy-handler (main :uri "/main.css"
 			   :default-request-type :get)

@@ -1,4 +1,4 @@
-(defpackage :piserv.config
+(defpackage :site.config
   (:use :cl :asdf)
   (:export :*admin-login*
 	   :*admin-password*
@@ -8,7 +8,7 @@
 	   :*server-port*
 	   :*admin-login-message*))
 
-(in-package :piserv.config)
+(in-package :site.config)
 
 (defvar *admin-login* "admin"
   "Admin page password")
@@ -30,3 +30,6 @@
 
 (defvar *default-static-path* "static"
   "Default path where server should search for files that should be exported as is")
+
+(defvar *dyna* (dyna:make-dyna :region "local")
+  "Local connection to dynamodb")

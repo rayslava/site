@@ -1,13 +1,13 @@
 ;; Main web-server file
 ;; (declaim (optimize (debug 3)))
 
-(defpackage :piserv
+(defpackage :site
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv.static :piserv.config)
+	:asdf :site.static :site.config)
   (:export :start-server :stop-server :refresh :sh
 	   :with-http-authentication :*ajax-processor*))
 
-(in-package :piserv)
+(in-package :site)
 
 (setf (html-mode) :html5)
 
@@ -49,7 +49,7 @@
   "Set up dispatch table with file handlers for hunchentoot"
   (setq *dispatch-table*        
 	(concatenate 'list
-		     (piserv.static:generate-static-table)
+		     (site.static:generate-static-table)
 		     (list
 		      'dispatch-easy-handlers
 		      (create-ajax-dispatcher *ajax-processor*)
@@ -86,8 +86,8 @@
   (with-html-output (*standard-output* nil)
     (let ((in (make-string-input-stream
 	       (with-output-to-string (*standard-output* nil)
-		 (asdf:operate 'compile-op :piserv)
-		 (asdf:operate 'load-op :piserv)
+		 (asdf:operate 'compile-op :site)
+		 (asdf:operate 'load-op :site)
 		 (setup-dispatch-table))))
 	  (s (make-array '(0) :element-type 'base-char
 			 :fill-pointer 0 :adjustable t)))

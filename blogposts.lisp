@@ -1,8 +1,8 @@
 ;;; A personal blog engine main file
-(defpackage :piserv.blogposts
-  (:use :piserv.blog))
+(defpackage :site.blogposts
+  (:use :site.blog))
 
-(in-package :piserv.blogposts)
+(in-package :site.blogposts)
 
 (defblogpost 3649655845 "On blog creation"
   (:div

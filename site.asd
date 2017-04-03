@@ -1,17 +1,17 @@
-(defpackage #:piserv-asd
+(defpackage #:site-asd
   (:use :cl :asdf))
 
-(in-package :piserv-asd)
+(in-package :site-asd)
 
-(defsystem piserv
-  :name "piserv"
+(defsystem site
+  :name "site"
   :version "0.1"
   :maintainer "rayslava"
   :author "rayslava"
   :licence "BSD"
   :description "The homepage server"
   :long-description "Lisp implementation of my home page"
-  :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "cl-css" "local-time")
+  :depends-on ("hunchentoot" "cl-who" "ht-simple-ajax" "cl-css" "local-time" "dyna" "cl-json")
   :components ((:file "site"
                       :depends-on ("static" "config"))
                (:file "static"
@@ -23,4 +23,6 @@
 	       (:file "style"
 		      :depends-on ("site"))
 	       (:file "blogposts"
-		      :depends-on ("blog"))))
+		      :depends-on ("blog"))
+	       (:file "db-storage"
+		      :depends-on ("config"))))

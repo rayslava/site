@@ -1,10 +1,10 @@
 					; Here are "static" pages
-(defpackage :piserv.pages
+(defpackage :site.pages
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv))
+	:asdf :site))
 					;  (:export :generate-pages))
 
-(in-package :piserv.pages)
+(in-package :site.pages)
 (setf (html-mode) :html5)
 
 					; Generates an administration page

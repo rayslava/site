@@ -11,8 +11,8 @@ You need a common lisp interpeter (I tried ECL and SBCL) and quicklisp.
 All the needed packages should be downloaded by quicklisp.
 
 ```
-$ ecl -load piserv.asd
-> (ql:quickload "piserv")
+$ ecl -load site.asd
+> (ql:quickload "site")
 > (piserv:start-server 80)
 ```
 
