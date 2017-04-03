@@ -1,5 +1,5 @@
 (defpackage :site.config
-  (:use :cl :asdf)
+  (:use :cl :asdf :zs3 :dyna)
   (:export :*admin-login*
 	   :*admin-password*
 	   :*access-log-file*
@@ -7,7 +7,12 @@
 	   :*default-static-path*
 	   :*server-port*
 	   :*admin-login-message*
-	   :*dyna*))
+	   :environment-credentials
+	   :*credentials*
+	   :*dyna*
+	   :*static-bucket*
+	   :*aws-region*
+	   :*distribution*))
 
 (in-package :site.config)
 
@@ -32,5 +37,47 @@
 (defvar *default-static-path* "static"
   "Default path where server should search for files that should be exported as is")
 
-(defvar *dyna* (dyna:make-dyna :region "local")
+;;; AWS Setup
+(defparameter *aws-region* "eu-west-1")
+(setf zs3:*s3-endpoint* (concatenate 'string "s3-" *aws-region* ".amazonaws.com"))
+(setf zs3:*s3-region* *aws-region*)
+(setf zs3:*use-ssl* t)
+(setf zs3:*signed-payload* nil)
+
+(defclass environment-credentials () ())
+
+(defmethod access-key ((credentials environment-credentials))
+  (declare (ignore credentials))
+  (asdf::getenv "AWS_ACCESS_KEY"))
+
+(defmethod secret-key ((credentials environment-credentials))
+  (declare (ignore credentials))
+  (asdf::getenv "AWS_SECRET_KEY"))
+
+(defmethod loaded ((credentials environment-credentials))
+  (and (not (eq (access-key credentials) nil))
+       (not (eq (secret-key credentials) nil))))
+
+(defmethod print-object ((credentials environment-credentials) out)
+  (print-unreadable-object (credentials out :type t)
+    (if (loaded credentials)
+	(format out "Environment credentials ~A:~A" (access-key credentials) (secret-key credentials))
+	(format out "Empty credentials (envvars not set up)"))))
+
+(defvar *credentials* nil  "AWS credentials")
+(setf *credentials* (make-instance 'environment-credentials))
+
+(defvar *dyna*
+  (if (and *credentials*
+	   (loaded *credentials*))
+      (dyna:make-dyna :credentials (cons (access-key *credentials*)
+				    (secret-key *credentials*))
+		 :region *aws-region*)
+      (dyna:make-dyna :region "local"))
   "Local connection to dynamodb")
+
+(defparameter *static-bucket* "rayslava-statics"
+  "Name of AWS S3 bucket with static files")
+
+(defvar *distribution* nil
+  "CloudFront distribution to share the static files")
