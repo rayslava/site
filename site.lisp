@@ -5,7 +5,7 @@
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
 	:asdf :site.static :site.config)
   (:export :start-server :stop-server :refresh :sh
-	   :with-http-authentication :*ajax-processor*))
+	   :with-http-authentication :*ajax-processor* :say-hi))
 
 (in-package :site)
 
@@ -15,21 +15,23 @@
   "Hunchentoot server instance")
 
 ;;;;; First we create an ajax processor that will handle our function calls
-(defvar *ajax-processor* 
+(defvar *ajax-processor*
   (make-instance 'ajax-processor :server-uri "/ajax"))
 
 ;;;;; Now we can define a function that we want to call from a web
 ;;;;; page. This function will take 'name' as an argument and return a
 ;;;;; string with a greeting.
 (defun-ajax say-hi (name) (*ajax-processor*)
-  (concatenate 'string "After server processing string is still " name))
+  (format nil "~A" (concatenate 'string "After server processing string is still " name)))
+
+(push (ht-simple-ajax:create-ajax-dispatcher *ajax-processor*) hunchentoot:*dispatch-table*)
 
 ;; Handler functions either return generated Web pages as strings,
 ;; or write to the output stream returned by write-headers
 
 (defun sh (cmd)
   "A compiler-wide realization of running a shell command"
-  (let ((in 
+  (let ((in
 	 #+clisp (shell cmd)
 	 #+ecl (two-way-stream-input-stream
 		(ext:run-program "/bin/sh" (list "-c" cmd)
@@ -47,7 +49,7 @@
 
 (defun setup-dispatch-table ()
   "Set up dispatch table with file handlers for hunchentoot"
-  (setq *dispatch-table*        
+  (setq *dispatch-table*
 	(concatenate 'list
 		     (site.static:generate-static-table)
 		     (list

@@ -34,7 +34,7 @@
 (defvar *admin-login-message* "Please enter admin credentials"
   "Message which will appear if user tries to get access to admin page")
 
-(defvar *default-static-path* "static"
+(defvar *default-static-path* (concatenate 'string (namestring  (sb-posix::getcwd)) "/" "static")
   "Default path where server should search for files that should be exported as is")
 
 ;;; AWS Setup

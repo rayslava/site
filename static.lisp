@@ -7,7 +7,7 @@
 (defun generate-files-list (path)
   "Prepares a list of files in directory"
   (directory
-   (make-pathname :directory `(:relative ,path)
+   (make-pathname :directory path
 		  :type :wild
 		  :name :wild
 		  :version :wild)))
