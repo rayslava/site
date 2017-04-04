@@ -78,6 +78,3 @@
 
 (defparameter *static-bucket* "rayslava-statics"
   "Name of AWS S3 bucket with static files")
-
-(defvar *distribution* nil
-  "CloudFront distribution to share the static files")

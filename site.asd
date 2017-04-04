@@ -11,7 +11,7 @@
   :licence "BSD"
   :description "The homepage server"
   :long-description "Lisp implementation of my home page"
-  :depends-on (:hunchentoot :cl-who :ht-simple-ajax :cl-css :local-time :dyna :cl-json :zs3)
+  :depends-on (:hunchentoot :cl-who :ht-simple-ajax :cl-css :local-time :dyna :zs3 :jonathan :trivial-mimes)
   :components ((:file "site"
                       :depends-on ("static" "config"))
                (:file "static"
@@ -25,4 +25,6 @@
 	       (:file "blogposts"
 		      :depends-on ("blog"))
 	       (:file "db-storage"
-		      :depends-on ("config"))))
+		      :depends-on ("config"))
+	       (:file "db-manage"
+		      :depends-on ("db-storage"))))
