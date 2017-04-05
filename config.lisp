@@ -26,10 +26,10 @@
 	"adminpassword"))
   "Admin page password")
 
-(defvar *access-log-file* "access.log"
+(defvar *access-log-file* *error-output*
   "Server access log file")
 
-(defvar *message-log-file* "message.log"
+(defvar *message-log-file* *error-output*
   "Server message log file")
 
 (defvar *server-port* 8080

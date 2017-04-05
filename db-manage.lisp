@@ -95,7 +95,6 @@
 
 (define-easy-handler (upload-work :uri "/admin/do-upload")
     (uploaded tags)
-  (print uploaded)
   (let ((attrs `(:tags ,(mapcar
 			 (lambda (s)
 			   (string-trim '(#\Space #\Newline #\Backspace #\Tab
@@ -103,5 +102,4 @@
 					s))
 			 (split-sequence:split-sequence #\, tags))
 		       :filename ,(cadr uploaded))))
-    (print (format nil "Uploading: ~a ~a" (car uploaded) attrs))
     (upload-file (car uploaded) attrs)))
