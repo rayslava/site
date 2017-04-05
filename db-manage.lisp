@@ -54,7 +54,12 @@
 				 (:td :colspan 2 (:input :type :text :id "tags" :name "tags" :style "width:100%")))
 			    (:tr (:td :style "text-align: right" (str "File:"))
 				 (:td (:input :type :file :name "uploaded" :id "uploaded"))
-				 (:td (:input :type :button :id "send" :value "Send" :disabled "true")))))))
+				 (:td (:input :type :button :id "send" :value "Send" :disabled "true" :style "width:85%")))
+			    (:tr (:td :style "text-align: right" (str "Progress:"))
+				 (:td :colspan 2
+				      (:div :id "progress" :style "width:100%"
+					    (:div :id "bar" :style "text-align:center;width:1%;height=16px;background-color:#DCDCDC;"))))))))
+
 	 (:script :type "text/javascript"
 		  "document.getElementById('send').addEventListener('click', function(e) {
     var uploaded = document.getElementById('uploaded').files[0];
@@ -66,16 +71,19 @@
     (xhr.upload || xhr).addEventListener('progress', function(e) {
         var done = e.position || e.loaded
         var total = e.totalSize || e.total;
+        document.getElementById('bar').style.width = Math.round(done/total*100) + '%';
+        document.getElementById('bar').innerHTML = Math.round(done/total*100) + '%';
         console.log('xhr progress: ' + Math.round(done/total*100) + '%');
     });
     xhr.addEventListener('load', function(e) {
         console.log('xhr upload complete', e, this.responseText);
+        document.getElementById('send').disabled = 0;
     });
     xhr.open('POST', '/admin/do-upload', true);
+    document.getElementById('send').disabled = 1;
     xhr.send(fd);
 });")
-	 (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"send\") \"disabled\") \"false\")")
-	 )))))
+	 (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"send\") \"disabled\") 0)")))))
 
 
 (define-easy-handler (upload-work :uri "/admin/do-upload")
