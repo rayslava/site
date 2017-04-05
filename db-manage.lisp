@@ -1,5 +1,5 @@
 (defpackage :site.db-manage
-  (:use :cl :site :site.config :site.db-storage :hunchentoot :cl-who :jonathan))
+  (:use :cl :site :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna))
 
 (in-package :site.db-manage)
 (setf (html-mode) :html5)
@@ -16,6 +16,15 @@
       (mapcar #'(lambda (e) (fmt "~a " e))
 	      (getf attrlist :tags)))))
 
+(define-easy-handler (image :uri "/img"
+			    :default-request-type :get)
+    (name)
+  (let* ((s3obj (car (select-dyna 'static-file
+				  (sxql:where
+				   (:= :s3name (compute-s3-name name))))))
+	 (link (format-link (s3name s3obj))))
+    (redirect link)))
+
 (define-easy-handler (staticlist :uri "/admin/statics"
 				 :default-request-type :get)
     ()
@@ -30,7 +39,7 @@
 		 (:tr (:td "Filename") (:td "Attrs"))
 		 (mapcar (lambda (e)
 			   (htm (:tr (:td
-				      (:a :href (format nil "~A" (format-link (filename e)))
+				      (:a :href (format nil "/img?name=~A" (filename e))
 					  (fmt "~A" (filename e))))
 				     (:td (fmt "~A" (beautify-attrs (attr e)))))))
 			 (site.db-storage:list-available-statics))))))))
@@ -73,10 +82,8 @@
         var total = e.totalSize || e.total;
         document.getElementById('bar').style.width = Math.round(done/total*100) + '%';
         document.getElementById('bar').innerHTML = Math.round(done/total*100) + '%';
-        console.log('xhr progress: ' + Math.round(done/total*100) + '%');
     });
     xhr.addEventListener('load', function(e) {
-        console.log('xhr upload complete', e, this.responseText);
         document.getElementById('send').disabled = 0;
     });
     xhr.open('POST', '/admin/do-upload', true);
@@ -89,8 +96,12 @@
 (define-easy-handler (upload-work :uri "/admin/do-upload")
     (uploaded tags)
   (print uploaded)
-  (print tags)
-  (rename-file (car uploaded)
-	       (concatenate 'string "/tmp/"
-			    (cl-base64:string-to-base64-string (cadr uploaded))))
-  (format nil "SUCCESS ~A ~A" uploaded tags))
+  (let ((attrs `(:tags ,(mapcar
+			 (lambda (s)
+			   (string-trim '(#\Space #\Newline #\Backspace #\Tab
+					  #\Linefeed #\Page #\Return #\Rubout)
+					s))
+			 (split-sequence:split-sequence #\, tags))
+		       :filename ,(cadr uploaded))))
+    (print (format nil "Uploading: ~a ~a" (car uploaded) attrs))
+    (upload-file (car uploaded) attrs)))

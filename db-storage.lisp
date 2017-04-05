@@ -4,19 +4,28 @@
    :list-available-statics
    :static-file
    :filename
-   :attr))
+   :attr
+   :s3name
+   :upload-file
+   :compute-s3-name))
 
 (in-package :site.db-storage)
 
 ;;; Static storage procedure
 (defclass static-file ()
-  ((filename :key-type :hash
-	     :attr-name "Filename"
+  ((s3name   :key-type :hash
+	     :attr-name "s3name"
+	     :attr-type :S
+	     :initarg :s3name
+	     :accessor s3name
+	     :documentation "The name in s3 storage.")
+   (filename :key-type :range
+	     :attr-name "filename"
 	     :attr-type :S
 	     :initarg :filename
 	     :accessor filename
 	     :documentation "The initial file name. Unique and is primary key.")
-   (attr     :attr-name "Attr"
+   (attr     :attr-name "attr"
 	     :attr-type :S
 	     :initarg :attr
 	     :key-type :range
@@ -36,15 +45,20 @@
   "Store the static file reference to DynamoDB taking data from `file' object"
   (save-dyna file))
 
+(defun compute-s3-name (name)
+  "Generate the md5 hash of `name' for S3 storage"
+  (ironclad:byte-array-to-hex-string
+   (ironclad:digest-sequence :md5 (ironclad:ascii-string-to-byte-array name))))
+
 (defun upload-file (file &optional attr)
   "Upload `file' into S3 and create `static-file' record for it in DynamoDB"
-  (let* ((key (concatenate 'string
-			   (pathname-name file) "." (pathname-type file)))
+  (let* ((name (getf attr :filename))
+	 (key (compute-s3-name name))
 	 (response (put-file file *static-bucket* key
 			     :public t :content-type (mime file))))
     (if (not (eq (http-code response) 200))
 	(format nil "Couldn't upload :(")
-	(let ((obj (make-instance 'static-file :filename key)))
+	(let ((obj (make-instance 'static-file :filename name :s3name key)))
 	  (when attr
 	    (setf (attr obj)
 		  (to-json attr)))
