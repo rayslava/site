@@ -19,7 +19,11 @@
 (defvar *admin-login* "admin"
   "Admin page password")
 
-(defvar *admin-password* "adminpassword"
+(defvar *admin-password*
+  (let ((envpass (asdf::getenv "ADMIN_PASSWORD")))
+    (if envpass
+	envpass
+	"adminpassword"))
   "Admin page password")
 
 (defvar *access-log-file* "access.log"
