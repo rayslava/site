@@ -16,14 +16,23 @@
       (mapcar #'(lambda (e) (fmt "~a " e))
 	      (getf attrlist :tags)))))
 
-(define-easy-handler (image :uri "/img"
-			    :default-request-type :get)
-    (name)
-  (let* ((s3obj (car (select-dyna 'static-file
-				  (sxql:where
-				   (:= :s3name (compute-s3-name name))))))
-	 (link (format-link (s3name s3obj))))
-    (redirect link)))
+(defmacro defstatic-handler (url)
+  "Create handler for static file stored in S3"
+  `(lambda ()
+     (let* ((full-url (request-uri* *request*))
+	    (static-name (subseq full-url (length ,url)))
+	    (s3objs (select-dyna 'static-file
+				 (sxql:where
+				  (:= :s3name (compute-s3-name static-name))))))
+       (if (= (length s3objs) 1)
+	   (redirect (format-link (s3name (car s3objs))))
+	   (progn (setf (return-code*) +http-not-found+)
+		  (abort-request-handler))))))
+
+(mapcar (lambda (url) (push
+		       (create-prefix-dispatcher url  (defstatic-handler url))
+		       *dispatch-table*))
+	'("/s/" "/i/" "/static/" "/image/" "/img/"))
 
 (define-easy-handler (staticlist :uri "/admin/statics"
 				 :default-request-type :get)
@@ -39,7 +48,7 @@
 		 (:tr (:td "Filename") (:td "Attrs"))
 		 (mapcar (lambda (e)
 			   (htm (:tr (:td
-				      (:a :href (format nil "/img?name=~A" (filename e))
+				      (:a :href (format nil "/i/~A" (filename e))
 					  (fmt "~A" (filename e))))
 				     (:td (fmt "~A" (beautify-attrs (attr e)))))))
 			 (site.db-storage:list-available-statics))))))))

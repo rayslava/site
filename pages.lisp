@@ -32,7 +32,11 @@
 				  (:li (:a :href "/admin?action=pull"
 					   "Pull fresh from deploy"))
 				  (:li (:a :href "/admin?action=refresh"
-					   "Recompile and reload .lisp files"))))))
+					   "Recompile and reload .lisp files"))
+				  (:li (:a :href "/admin/statics"
+					   "List of available static files in S3"))
+				  (:li (:a :href "/admin/upload"
+					   "Upload new file into S3 storage"))))))
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
