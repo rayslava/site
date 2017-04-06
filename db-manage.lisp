@@ -1,9 +1,15 @@
 (defpackage :site.db-manage
   (:use :cl :hunchentoot :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
-  (:export :init-static-handlers))
+  (:export :init-static-handlers :with-http-authentication))
 
 (in-package :site.db-manage)
 (setf (html-mode) :html5)
+
+(defmacro with-http-authentication (&rest body)
+  `(multiple-value-bind (username password) (hunchentoot:authorization)
+     (cond ((and (string= username *admin-login*) (string= password *admin-password*))
+            ,@body)
+           (t (hunchentoot:require-authorization *admin-login-message*)))))
 
 (defun format-link (name)
   "Generate the s3 link to required `name'"

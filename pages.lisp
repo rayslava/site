@@ -5,6 +5,7 @@
 					;  (:export :generate-pages))
 
 (in-package :site.pages)
+
 (setf (html-mode) :html5)
 
 					; Generates an administration page

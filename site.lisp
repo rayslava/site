@@ -5,7 +5,7 @@
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
 	:asdf :site.static :site.config :site.db-manage)
   (:export :start-server :stop-server :refresh :sh
-	   :with-http-authentication :*ajax-processor* :say-hi))
+	   :*ajax-processor* :say-hi))
 
 (in-package :site)
 
@@ -77,12 +77,6 @@
 	(start (make-instance 'easy-acceptor :port port
 			      :access-log-destination *access-log-file*
 			      :message-log-destination *message-log-file*))))
-
-(defmacro with-http-authentication (&rest body)
-  `(multiple-value-bind (username password) (hunchentoot:authorization)
-     (cond ((and (string= username *admin-login*) (string= password *admin-password*))
-            ,@body)
-           (t (hunchentoot:require-authorization *admin-login-message*)))))
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"
