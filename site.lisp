@@ -3,7 +3,7 @@
 
 (defpackage :site
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site.static :site.config)
+	:asdf :site.static :site.config :site.db-manage)
   (:export :start-server :stop-server :refresh :sh
 	   :with-http-authentication :*ajax-processor* :say-hi))
 
@@ -71,6 +71,7 @@
   (when *hunchentoot-server*
     (stop-server))
   (setup-dispatch-table)
+  (init-static-handlers)
   (setf *admin-password* adminpass)
   (setq *hunchentoot-server*
 	(start (make-instance 'easy-acceptor :port port

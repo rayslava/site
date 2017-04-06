@@ -1,5 +1,6 @@
 (defpackage :site.db-manage
-  (:use :cl :site :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna))
+  (:use :cl :site :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
+  (:export :init-static-handlers))
 
 (in-package :site.db-manage)
 (setf (html-mode) :html5)
@@ -29,10 +30,12 @@
 	   (progn (setf (return-code*) +http-not-found+)
 		  (abort-request-handler))))))
 
-(mapcar (lambda (url) (push
-		       (create-prefix-dispatcher url  (defstatic-handler url))
-		       *dispatch-table*))
-	'("/s/" "/i/" "/static/" "/image/" "/img/"))
+(defun init-static-handlers ()
+  (mapcar (lambda (url) (push
+			 (create-prefix-dispatcher url  (defstatic-handler url))
+			 *dispatch-table*))
+	  '("/s/" "/i/" "/static/" "/image/" "/img/"))
+  (print (format nil "~A ~A" "Static handlers created, current table: " *dispatch-table*)))
 
 (define-easy-handler (staticlist :uri "/admin/statics"
 				 :default-request-type :get)
