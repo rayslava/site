@@ -1,9 +1,8 @@
 					; Here are "static" pages
 (defpackage :site.pages
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site))
+	:asdf :site :site.db-manage))
 					;  (:export :generate-pages))
-
 (in-package :site.pages)
 
 (setf (html-mode) :html5)

@@ -19,7 +19,7 @@
 	       (:file "config")
 	       (:file "blog")
 	       (:file "pages"
-		      :depends-on ("site" "blog"))
+		      :depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
 		      :depends-on ("site"))
 	       (:file "blogposts"
