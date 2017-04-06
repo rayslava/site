@@ -13,9 +13,9 @@
   :long-description "Lisp implementation of my home page"
   :depends-on (:hunchentoot :cl-who :ht-simple-ajax :cl-css :local-time :dyna :zs3 :jonathan :trivial-mimes :ironclad)
   :components ((:file "site"
-                      :depends-on ("static" "config" "db-manage"))
+                      :depends-on ("static" "config"))
                (:file "static"
-		      :depends-on ("config"))
+		      :depends-on ("config" "db-manage"))
 	       (:file "config")
 	       (:file "blog")
 	       (:file "pages"
