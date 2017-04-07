@@ -54,7 +54,6 @@
      (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
-	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "About site")
@@ -70,7 +69,9 @@
 	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
 	    (:p "Now I'm working on migration to AWS and preparing the docker-compose image though.")
 	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
-	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
+	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
+     	    (:script :type "text/javascript" :src "/jscl.js")))))
+
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
