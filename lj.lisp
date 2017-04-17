@@ -89,7 +89,7 @@
  (:div
    (:p "Мда. Реклама задрала.")
    (:p "")
-   (:p "<img src="http://udaff.com/image/221/22144.jpg"/> "))
+   (:p (:img :src "http://udaff.com/image/221/22144.jpg"))
   :tags '("lj")
   :meta ((:meta :property "og:title" :content "")
          (:meta :property "og:type" :content "article")
