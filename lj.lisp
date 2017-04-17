@@ -85,18 +85,6 @@
          (:meta :property "og:description" :content "Утро")
          (:meta :property "og:url" :content "https://rayslava.com/blog?id=3350973600")))
 
-(defblogpost 3352874040 ""
- (:div
-   (:p "Мда. Реклама задрала.")
-   (:p "")
-   (:p (:img :src "http://udaff.com/image/221/22144.jpg"))
-  :tags '("lj")
-  :meta ((:meta :property "og:title" :content "")
-         (:meta :property "og:type" :content "article")
-         (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
-         (:meta :property "og:description" :content "")
-         (:meta :property "og:url" :content "https://rayslava.com/blog?id=3352874040")))
-
 (defblogpost 3409930080 "Вышел на работу"
  (:div
    (:p "Сегодня вышел на работу на полный день. Нашлась работа :)")
