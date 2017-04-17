@@ -24,6 +24,8 @@
 		      :depends-on ("site"))
 	       (:file "blogposts"
 		      :depends-on ("blog"))
+	       (:file "lj"
+		      :depends-on ("blogposts"))
 	       (:file "db-storage"
 		      :depends-on ("config"))
 	       (:file "db-manage"
