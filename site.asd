@@ -15,15 +15,17 @@
   :components ((:file "site"
                       :depends-on ("static" "config"))
                (:file "static"
-		      :depends-on ("config"))
+		      :depends-on ("config" "db-manage"))
 	       (:file "config")
 	       (:file "blog")
 	       (:file "pages"
-		      :depends-on ("site" "blog"))
+		      :depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
 		      :depends-on ("site"))
 	       (:file "blogposts"
 		      :depends-on ("blog"))
+	       (:file "lj"
+		      :depends-on ("blogposts"))
 	       (:file "db-storage"
 		      :depends-on ("config"))
 	       (:file "db-manage"

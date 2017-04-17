@@ -1,8 +1,15 @@
 (defpackage :site.db-manage
-  (:use :cl :site :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna))
+  (:use :cl :hunchentoot :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
+  (:export :init-static-handlers :with-http-authentication))
 
 (in-package :site.db-manage)
 (setf (html-mode) :html5)
+
+(defmacro with-http-authentication (&rest body)
+  `(multiple-value-bind (username password) (hunchentoot:authorization)
+     (cond ((and (string= username *admin-login*) (string= password *admin-password*))
+            ,@body)
+           (t (hunchentoot:require-authorization *admin-login-message*)))))
 
 (defun format-link (name)
   "Generate the s3 link to required `name'"
@@ -16,14 +23,25 @@
       (mapcar #'(lambda (e) (fmt "~a " e))
 	      (getf attrlist :tags)))))
 
-(define-easy-handler (image :uri "/img"
-			    :default-request-type :get)
-    (name)
-  (let* ((s3obj (car (select-dyna 'static-file
-				  (sxql:where
-				   (:= :s3name (compute-s3-name name))))))
-	 (link (format-link (s3name s3obj))))
-    (redirect link)))
+(defmacro defstatic-handler (url)
+  "Create handler for static file stored in S3"
+  `(lambda ()
+     (let* ((full-url (request-uri* *request*))
+	    (static-name (subseq full-url (length ,url)))
+	    (s3objs (select-dyna 'static-file
+				 (sxql:where
+				  (:= :s3name (compute-s3-name static-name))))))
+       (if (= (length s3objs) 1)
+	   (redirect (format-link (s3name (car s3objs))))
+	   (progn (setf (return-code*) +http-not-found+)
+		  (abort-request-handler))))))
+
+(defun init-static-handlers ()
+  (mapcar (lambda (url) (push
+			 (create-prefix-dispatcher url  (defstatic-handler url))
+			 *dispatch-table*))
+	  '("/s/" "/i/" "/static/" "/image/" "/img/"))
+  (print (format nil "~A ~A" "Static handlers created, current table: " *dispatch-table*)))
 
 (define-easy-handler (staticlist :uri "/admin/statics"
 				 :default-request-type :get)
@@ -39,7 +57,7 @@
 		 (:tr (:td "Filename") (:td "Attrs"))
 		 (mapcar (lambda (e)
 			   (htm (:tr (:td
-				      (:a :href (format nil "/img?name=~A" (filename e))
+				      (:a :href (format nil "/i/~A" (filename e))
 					  (fmt "~A" (filename e))))
 				     (:td (fmt "~A" (beautify-attrs (attr e)))))))
 			 (site.db-storage:list-available-statics))))))))

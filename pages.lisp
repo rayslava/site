@@ -1,10 +1,10 @@
 					; Here are "static" pages
 (defpackage :site.pages
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site))
+	:asdf :site :site.db-manage))
 					;  (:export :generate-pages))
-
 (in-package :site.pages)
+
 (setf (html-mode) :html5)
 
 					; Generates an administration page
@@ -32,7 +32,11 @@
 				  (:li (:a :href "/admin?action=pull"
 					   "Pull fresh from deploy"))
 				  (:li (:a :href "/admin?action=refresh"
-					   "Recompile and reload .lisp files"))))))
+					   "Recompile and reload .lisp files"))
+				  (:li (:a :href "/admin/statics"
+					   "List of available static files in S3"))
+				  (:li (:a :href "/admin/upload"
+					   "Upload new file into S3 storage"))))))
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
@@ -50,7 +54,6 @@
      (:head (:title "About site")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
-	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "About site")
@@ -66,7 +69,9 @@
 	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
 	    (:p "Now I'm working on migration to AWS and preparing the docker-compose image though.")
 	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
-	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")))))
+	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
+     	    (:script :type "text/javascript" :src "/jscl.js")))))
+
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
@@ -86,9 +91,6 @@ Allow: /blog
      (:head (:title "Contacts")
 	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
-	    (:script :type "text/javascript" :src "/jscl.js")
-	    (:script :type "text/javascript" "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
-	    (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
      (:body (:h2 "Contacts")
 	    (:p "If you want to contact me you may want to:"
@@ -116,4 +118,7 @@ Allow: /blog
 		(:div :class "social-link"
 		      (:iframe :src "https://www.facebook.com/plugins/follow.php?href=https%3A%2F%2Fwww.facebook.com%2Frayslava&amp;layout=button_count&amp;show_faces=false&amp;colorscheme=light&amp;font&amp;width=164"
 			       :scrolling "0" :frameborder "0"
-			       :width "120" :height "20" :allowTransparency "true")))))))
+			       :width "120" :height "20" :allowTransparency "true")))
+     (:script :type "text/javascript" :src "/jscl.js")
+     (:script :type "text/javascript" "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
+     (:script :type "text/x-common-lisp" "(setf (cl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")))))
