@@ -2,6 +2,7 @@ FROM sbcl
 LABEL maintainer "Slava Barinov <rayslava@gmail.com>"
 EXPOSE 4005 8080
 
+RUN apt-get update && apt-get upgrade
 RUN apt-get install --yes git curl file
 RUN cd ~/quicklisp/local-projects && git clone https://github.com/Rudolph-Miller/dyna.git
 RUN echo "\n\n\n\n\n" | sbcl --eval "(ql:update-client)" --eval "(ql:update-all-dists)"
