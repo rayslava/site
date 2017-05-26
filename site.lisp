@@ -73,6 +73,10 @@
   (setup-dispatch-table)
   (init-static-handlers)
   (setf *admin-password* adminpass)
+  (setf *log-lisp-errors-p* t)
+  (setf *log-lisp-backtraces-p* t)
+  (setf *log-lisp-warnings-p* t)
+  (setf *lisp-warnings-log-level* :info)
   (setq *hunchentoot-server*
 	(start (make-instance 'easy-acceptor :port port
 			      :access-log-destination *access-log-file*
