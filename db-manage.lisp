@@ -51,7 +51,6 @@
 	(:html
 	 (:head (:title "List of available static files")
 		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
-		(:script :type "text/javascript" :src "/jscl.js"))
 	 (:body (:h2 "Statics")
 		(:table
 		 (:tr (:td "Filename") (:td "Attrs"))
@@ -60,7 +59,8 @@
 				      (:a :href (format nil "/i/~A" (filename e))
 					  (fmt "~A" (filename e))))
 				     (:td (fmt "~A" (beautify-attrs (attr e)))))))
-			 (site.db-storage:list-available-statics))))))))
+			 (site.db-storage:list-available-statics)))
+		(:script :type "text/javascript" :src "/jscl.js")))))))
 
 (define-easy-handler (upload-req :uri "/admin/upload"
 				 :default-request-type :get)
@@ -85,8 +85,8 @@
 			    (:tr (:td :style "text-align: right" (str "Progress:"))
 				 (:td :colspan 2
 				      (:div :id "progress" :style "width:100%"
-					    (:div :id "bar" :style "text-align:center;width:1%;height=16px;background-color:#DCDCDC;"))))))))
-
+					    (:div :id "bar" :style "text-align:center;width:1%;height=16px;background-color:#DCDCDC;")))))))
+		(:script :type "text/javascript" :src "/jscl.js"))
 	 (:script :type "text/javascript"
 		  "document.getElementById('send').addEventListener('click', function(e) {
     var uploaded = document.getElementById('uploaded').files[0];
