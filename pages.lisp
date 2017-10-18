@@ -60,7 +60,7 @@
 	    (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies.")
 	    (:ul
 	     (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
-	     (:li (:a :href "http://github.com/Inaimathi/cl-css" "cs-css"))
+	     (:li (:a :href "http://github.com/Inaimathi/cl-css" "cl-css"))
 	     (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
 	    (:p
 	     "It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
