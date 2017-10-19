@@ -1,8 +1,8 @@
 ;;; A personal blog engine main file
-(defpackage :piserv.blogposts
-  (:use :piserv.blog))
+(defpackage :site.blogposts
+  (:use :site.blog))
 
-(in-package :piserv.blogposts)
+(in-package :site.blogposts)
 
 (defblogpost 3649655845 "On blog creation"
   (:div
@@ -17,7 +17,8 @@
        (:a :href "/rss" "the feed") "."))
   :tags '("en" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "On blog creation")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "A note about blog creation")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
 
@@ -39,7 +40,8 @@
    которую можно подписаться.")))
   :tags '("ru" "site" "news" "lisp")
   :meta  ((:meta :property "og:title" :content "О блоге")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Заметка о том, что у меня теперь
 	  есть бложик")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))
@@ -94,7 +96,8 @@
    post"))
   :tags '("ru" "web" "design")
   :meta  ((:meta :property "og:title" :content "О веб-дизайне")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Плач и стенания о том, как
 	  веб-дизайн катится в бездну ужаса")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209732")))
@@ -143,7 +146,162 @@
   post"))
   :tags '("en" "web" "design")
   :meta  ((:meta :property "og:title" :content "On web design")
-	  (:meta :property "og:type" :content "blog")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Mourning the web design and the
           whole web itself while looking on modern sites.")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209733")))
+
+(defblogpost 3678124120 "On Doom"
+  (:div
+   (:p "I've finished
+      the " (:a :href "https://store.steampowered.com/app/379720/" "Doom (2016)")
+      " game lately and it triggered my Doom admiration again. Coincidentally I've
+      got the "
+       (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
+	   "Masters of Doom") " book inside my Kindle and could read it as well nearly the
+	   same time.")
+   (:h3 "The Game")
+   (:p "So to begin with the game: I liked it! Yeah, I mean " (:strong "liked") ". Not so new
+   experience and genre-breaking gameplay but still exactly that slightly nervous feeling during
+   pressing the buttons and good old friends starting right from the great big fat Mancubus. The two
+   major things changed to classic Doom (and nearly everyone noted that) — the game became easier
+   and the arenas appeared.")
+   (:p "The first part is " (:a :href "https://www.youtube.com/watch?v=W1ZtBCpo0eU" "not surprising
+   at all") ": since video games became the massively produced entertainment and gained the huge
+   industry around they're becoming easier year to year and the difference
+   between " (:em "Ultraviolence") " then and " (:em "Ultraviolence") " now can be seen by anyone
+   without any efforts. But it looks like there's several levels above in the new Doom so there's
+   possibly a place for training.")
+   (:p "The second part is questionable: on the one hand arena is the Quake III attribute while Doom
+   has always been the rather large world (divided into levels due to technical limitations
+   sometimes) with place to retreat if monsters push you too hard; on the other hand these new
+   arenas are planned well and the design is done great not only in terms of level design with
+   paths, walls, jumpers and portals on their places but even from aesthetic point of view:
+   textures, colors, sinners dangling around… However I'd still like good old levels with space for
+   maneuver better.")
+   (:p "Monsters are rebalanced greatly but the visual style is still recognizable: when you see a
+   shotgun guy you know who he is and when you meet pinkie you'll even shout \"- Hey!\" but only
+   until it rush you. From my point of view monsters are weaker now but deal more damage and you
+   have to move, move and move around without pauses. The first stop usually means death for
+   you. And again this game speed is more quake-like than doom, but still fun. And rebalance is
+   quite irritating if you remember your feelings of the classical Doom. Now the first time you meet
+   the Baron of Hell you'll " (:s "shit bricks") " be surprised how he beats you to death by two or
+   three heavy punches but on the last levels he'll receive no more attention than zombies.
+   Situation with the Imp is quite the opposite: in classical Doom to beat one or two or squad of
+   them was not even a noticeable event; now they're one of the most dangerous enemies in the game
+   especially due to numbers. There's lots of imps, they're everywhere, they run walls and ceilings
+   and they shoot you with their fireballs right when you're going to retreat and find a little
+   medicine.")
+   (:p "Weapon set seems good to me and I don't really care much about fitting the classical set:
+   Gauss gun seems strange and not very effective, but shotgun with burst is fine. Double-barrel
+   shotgun is still the logo and the main device to use throughout the game, balance between "
+   (:strong "power") " and ammo is beautiful. And of course there's the chainsaw. And of course
+   it's the great thing!  Even greater you can imagine — it'll split nearly anyone into two (or
+   more) pieces in a second but looking for fuel is the main quest of the game.")
+   (:p "Summarizing: I definitely advice you to try the game if you still didn't do it and make your
+   own opinion. At least killing hellish creatures with the shotgun is as fun as always!")
+   (:hr)
+   (:h3 "The Book")
+   (:p "And two words about the book: " (:strong "must read") ". Yep. These two ones. David Kushner
+   did a great job collecting all the information and gathering it into the book. The most exciting
+   thing is all the history from the book just happened in front of us. Russian video game world had
+   been late by couple of years but the situation in the video games industry was very alike.")
+   (:p "From the professional point of view I marked out for myself the moments of initial id
+   company creation when the programmers needed a manager who could deal with negotiation and
+   barbecue supplying and situation with Ion Storm rise and fall: sad but usual story. The great
+   professional is not always capable of organizing a team and running business even if he thinks he
+   is. The team (or person) who constantly delivers (which is John Carmack is all about) always
+   beats colossal but unimplemented plans. The great discoveries are based not only on genius on the
+   dull meetings and everyday work.")
+   (:p "Anyway the book gets 5/5 stars from me and it worths money and time.")
+   (:small "Есть " (:a :href "/blog?id=3678124121" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "games" "dev" "thoughts" "books")
+  :meta  ((:meta :property "og:title" :content "On Doom")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "My personal opinion about the Doom (2016) game")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124120")))
+
+(defblogpost 3678124121 "О Doom"
+  (:div
+   (:p "Недавно допрошёл
+   игру " (:a :href "https://store.steampowered.com/app/379720/" "Doom (2016)")
+      " и снова проникся восхищением ко всей серии. И как раз в это же время вспомнил, что
+      у меня в Kindle есть книга "
+      (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
+	        "Masters of Doom") " и как раз в это же время я её и прочёл.")
+   (:h3 "Игра")
+   (:p "Начну с игры: игра понравилась. Да, прямо вот " (:strong "понравилась") ". Не
+   сказать, что это такой уж новый опыт и революция в жанре, но то самоё слегка
+   нервирующее ощущение при нажатии на кнопки присутствует, ну и присутствуют все наши
+   старые друзья, начиная прямо с замечательного жирного Манкубуса. Две основные вещи,
+   которые поменялись с классического Doom (что, впрочем, заметили почти все) — игра стала
+   проще и появились арены.")
+   (:p "Ну, первая часть "
+   (:a :href "https://www.youtube.com/watch?v=W1ZtBCpo0eU" "совершенно не удивляет") ":
+   игры стали реально массовым развлечением, собрали вокруг себя огромную индустрию и
+   становятся проще с каждым годом. Разницу между " (:em "Ultraviolence") " тогда
+   и " (:em "Ultraviolence") " сейчас можно заметить без всяких усилий. Впрочем, после
+   первого прохождения там добавилось несколько уровней сложности сверху, поэтому вполне
+   возможно, что там ещё есть, где поупражняться.")
+   (:p "Со вторым пунктом несколько сложнее: с одной стороны арены — неотъемлемая часть
+   Quake III, а Doom всегда был про большой мир (пусть даже и разделённый на уровни из-за
+   технических ограничений) с пространством, куда можно отступить, если монстры давят
+   чересчур сильно; с другой стороны эти новые арены неплохо спроектированы и хорошо
+   смотрятся не только с точки зрения гейм-дизайна с продуманными маршрутами, стенами,
+   прыжковыми площадками и порталами, но и с эстетической точки зрения: текстуры, цвета,
+   свисающие вокруг грешники… Впрочем, мне всё равно старые уровни с пространством для
+   манёвра нравились больше.")
+   (:p "Монстры подверглись ребалансу, но внешне всё ещё узнаваемы: если видишь шотганера,
+   сразу понятно, что это он, а когда встречаешь Пинки, непроизвольно его приветствуешь,
+   правда, пока он на тебя не бросится. По ощущениям кажется, что монстры стали слабее, но
+   наносят больший урон, заставляя тебя постоянно и безостановочно двигаться. Первая же
+   остановка обычно означает смерть. И это снова приносит ощущение игры скорее в Quake,
+   чем в Doom, но всё равно круто. А сам ребаланс, кстати, весьма сильно раздражает, если
+   хорошо помнишь игру в классический Doom. Теперь первая же встреча с Baron of Hell "
+   (:s "заставляет отложить кирпичей") " очень сильно удивляет тем, что он забивает игрока
+   насмерть двумя-тремя мощными ударами. Впрочем, на последних уровнях он удостаивается не
+   большего внимания, чем обычные зомби. Ситуация с Imp'ом обратная: в классике завалить
+   одного, двух, целую группу их, не является каким-то особым достижением, сейчас же они
+   одни из самых опасных врагов в игре, особенно из-за количества. Imp'ов множество, они
+   везде, они бегают по стенам и потолкам и швыряются оттуда файрболлами ровно в тот
+   момент, когда ты собираешься отступить и поискать аптечку.")
+   (:p "Набор оружия мне вполне нравится и не особо раздражает, что он не совпадает с
+   классическим набором: гаусс-ган выглядит несколько странно, да и не сказал бы, что он
+   очень уж эффективен, а вот шотган с режимом \"burst fire\" весьма неплох в некоторых
+   местах. Двухстволка всё ещё символ и основное орудие труда на протяжении всей игры так
+   как баланс между " (:strong "мощью") " и патронами весьма хорош. Ну и конечно же
+   бензопила. И она, конечно, всё ещё чудо, как хороша! Даже лучше, чем можно себе
+   представить — она распиливает практически кого угодно пополам (ну или на несколько
+   частей) за секунду, а поиск бензина к ней — главный квест в игре.")
+   (:p "В общем определённо рекомендую попробовать, если вы ещё этого не сделали, и
+   составить собственное мнение. В крайнем случае, даже если игра не понравится, расстрел
+   демонов ада из ружья — это весело!")
+   (:hr)
+   (:h3 "Книга")
+   (:p "И пару слов о книге: " (:strong "must read") ". Да. Вот эта пара слов. Дэвид
+   Кушнер отлично поработал, собрав кучу самой разноплановой информации из разных
+   источников и запихав их в книгу. Наиболее захватывающая часть, конечно — вся эта
+   история прошла прямо перед нашими глазами. Российский игровой мир отставал на несколько
+   лет, но ситуация была прямо точно такой, как описано в книге.")
+   (:p "Ну и с профессионально точки зрения я отметил для себя несколько моментов: момент
+   изначального создания id, когда группа программистов всё равно нуждалась в менеджере,
+   который возьмёт на себя всякие переговоры и будет жарить мясо, пока все работают и
+   ситуацию в взлётом и падением Ion Storm: печальная, но закономерная история. Отличный
+   профессионал необязательно окажется способен организовать команду и вести бизнес, даже
+   если думает, что сможет. Команда (или человек), которая постоянно доставляет
+   продукт (за что всё время держится Кармак) всегда побеждает огромные нереализованные
+   планы, а все великие свершения базируются не только на гениальных озарениях, но и на
+   скучных митингах и планомерной ежедневной работе.")
+   (:p "В любом случае книга получает от меня 5/5 баллов и определённо стоит и своих денег
+   и потраченного времени.")
+   (:small "There is an " (:a :href "/blog?id=3678124120" :lang "en" "english version")
+	   " of this post"))
+  :tags '("ru" "games" "dev" "thoughts" "books")
+  :meta  ((:meta :property "og:title" :content "О Doom")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Моё личное мнение об игре Doom (2016)")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124121")))

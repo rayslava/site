@@ -1,10 +1,10 @@
 ;;; A personal blog engine main file
-(defpackage :piserv.blog
+(defpackage :site.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :piserv :local-time)
+	:asdf :site :local-time)
   (:export :defblogpost))
 
-(in-package :piserv.blog)
+(in-package :site.blog)
 
 (setf (html-mode) :html5)
 

@@ -1,13 +1,13 @@
-(defpackage :piserv.static
-  (:use :cl :cl-who :hunchentoot :piserv.config)
+(defpackage :site.static
+  (:use :cl :cl-who :hunchentoot :site.config)
   (:export :generate-static-table))
 
-(in-package :piserv.static)
+(in-package :site.static)
 
 (defun generate-files-list (path)
   "Prepares a list of files in directory"
   (directory
-   (make-pathname :directory `(:relative ,path)
+   (make-pathname :directory path
 		  :type :wild
 		  :name :wild
 		  :version :wild)))
