@@ -68,10 +68,9 @@
 	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
 	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
 	    (:p "Now I'm working on migration to AWS and preparing the docker-compose image though.")
-	    (:p "If you are courious how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
+	    (:p "If you are courious about how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
      	    (:script :type "text/javascript" :src "/jscl.js")))))
-
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
