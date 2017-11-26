@@ -1,6 +1,7 @@
 ;;; A personal blog engine main file
+;;; Post id is `(local-time:timestamp-to-universal (local-time:now))'
 (defpackage :site.blogposts
-  (:use :site.blog))
+  (:use :site.blog :cl :cl-css :cl-who))
 
 (in-package :site.blogposts)
 
@@ -90,7 +91,7 @@
    (:p "В целом веб-дизайн по моему мнению дизайн должен быть как у "
        (:a :href "https://gnu.org/" "GNU") " и "
        (:a :href "https://wikipedia.org" "Wikipedia")
-   ": минималистичным, доносящим информацию, не зависящим от устройства и не делающим
+       ": минималистичным, доносящим информацию, не зависящим от устройства и не делающим
    лишнюю работу, чего я и стараюсь придерживаться на этом сайте.")
    (:small "There is an " (:a :href "/blog?id=3653209733" "english version") " of this
    post"))
@@ -142,7 +143,7 @@
        (:a :href "https://gnu.org/" "GNU") " and "
        (:a :href "https://wikipedia.org" "Wikipedia") " sites: minimalistic, clean and
        don't do excessive things. And I'm trying to keep the site this way.")
-  (:small "There is a " (:a :href "/blog?id=3653209732" "russian version") " of this
+   (:small "There is a " (:a :href "/blog?id=3653209732" "russian version") " of this
   post"))
   :tags '("en" "web" "design")
   :meta  ((:meta :property "og:title" :content "On web design")
@@ -158,8 +159,8 @@
       the " (:a :href "https://store.steampowered.com/app/379720/" "Doom (2016)")
       " game lately and it triggered my Doom admiration again. Coincidentally I've
       got the "
-       (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
-	   "Masters of Doom") " book inside my Kindle and could read it as well nearly the
+      (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
+	  "Masters of Doom") " book inside my Kindle and could read it as well nearly the
 	   same time.")
    (:h3 "The Game")
    (:p "So to begin with the game: I liked it! Yeah, I mean " (:strong "liked") ". Not so new
@@ -196,7 +197,7 @@
    (:p "Weapon set seems good to me and I don't really care much about fitting the classical set:
    Gauss gun seems strange and not very effective, but shotgun with burst is fine. Double-barrel
    shotgun is still the logo and the main device to use throughout the game, balance between "
-   (:strong "power") " and ammo is beautiful. And of course there's the chainsaw. And of course
+       (:strong "power") " and ammo is beautiful. And of course there's the chainsaw. And of course
    it's the great thing!  Even greater you can imagine — it'll split nearly anyone into two (or
    more) pieces in a second but looking for fuel is the main quest of the game.")
    (:p "Summarizing: I definitely advice you to try the game if you still didn't do it and make your
@@ -228,10 +229,10 @@
   (:div
    (:p "Недавно допрошёл
    игру " (:a :href "https://store.steampowered.com/app/379720/" "Doom (2016)")
-      " и снова проникся восхищением ко всей серии. И как раз в это же время вспомнил, что
+   " и снова проникся восхищением ко всей серии. И как раз в это же время вспомнил, что
       у меня в Kindle есть книга "
-      (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
-	        "Masters of Doom") " и как раз в это же время я её и прочёл.")
+   (:a :href "https://www.amazon.com/Masters-Doom-Created-Transformed-Culture/dp/0812972155"
+       "Masters of Doom") " и как раз в это же время я её и прочёл.")
    (:h3 "Игра")
    (:p "Начну с игры: игра понравилась. Да, прямо вот " (:strong "понравилась") ". Не
    сказать, что это такой уж новый опыт и революция в жанре, но то самоё слегка
@@ -240,7 +241,7 @@
    которые поменялись с классического Doom (что, впрочем, заметили почти все) — игра стала
    проще и появились арены.")
    (:p "Ну, первая часть "
-   (:a :href "https://www.youtube.com/watch?v=W1ZtBCpo0eU" "совершенно не удивляет") ":
+       (:a :href "https://www.youtube.com/watch?v=W1ZtBCpo0eU" "совершенно не удивляет") ":
    игры стали реально массовым развлечением, собрали вокруг себя огромную индустрию и
    становятся проще с каждым годом. Разницу между " (:em "Ultraviolence") " тогда
    и " (:em "Ultraviolence") " сейчас можно заметить без всяких усилий. Впрочем, после
@@ -261,7 +262,7 @@
    остановка обычно означает смерть. И это снова приносит ощущение игры скорее в Quake,
    чем в Doom, но всё равно круто. А сам ребаланс, кстати, весьма сильно раздражает, если
    хорошо помнишь игру в классический Doom. Теперь первая же встреча с Baron of Hell "
-   (:s "заставляет отложить кирпичей") " очень сильно удивляет тем, что он забивает игрока
+       (:s "заставляет отложить кирпичей") " очень сильно удивляет тем, что он забивает игрока
    насмерть двумя-тремя мощными ударами. Впрочем, на последних уровнях он удостаивается не
    большего внимания, чем обычные зомби. Ситуация с Imp'ом обратная: в классике завалить
    одного, двух, целую группу их, не является каким-то особым достижением, сейчас же они
@@ -305,3 +306,126 @@
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Моё личное мнение об игре Doom (2016)")
 	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124121")))
+
+(defblogpost 3720711026 "О GPD Pocket"
+  (:div
+   (:h3 "TLDR")
+   (:p "Девайс очень понравился и оказался ровно тем мобильным устройством для
+   каждодневного ношения с собой, что я хотел.")
+   (:p "Если вы ищете полноценный лаптоп для работы — это явно не ваш выбор.")
+   (:h3 "Железо")
+   (:table
+    (:tr (:td "CPU") (:td "Intel Atom X7-Z8750"))
+    (:tr (:td "RAM") (:td "8GB LPDDR3-1600"))
+    (:tr (:td "Display") (:td "7inch IPS 1920x1200"))
+    (:tr (:td "Storage") (:td "128GB eMMC SSD (non-replacable)"))
+    (:tr (:td "Battery") (:td "7000mAH"))
+    (:tr (:td "WiFi") (:td "Broadcom 4356 802.11ac"))
+    (:tr (:td "Bluetooth") (:td "Broadcom 2045"))
+    (:tr (:td "Audio") (:td "Realtek ALC5645"))
+    (:tr (:td "Ports") (:td "1 x USB 3 type A, 1 x MicroHDMI, 1 x USB 3 type C,
+    1 x 3.5mm Headphone Jack "))
+    (:tr (:td "Touchscreen") (:td "Goodix Capacitive TouchScreen")))
+   (:p "В целом, штуковина оказалась весьма шустрая. несмотря на то, что
+атом. И даже видеокарта в этом самом атоме весьма достойная и годится для
+небольших игрушек.")
+   (:p "К сожалению, пока не купил переходник на HDMI и не проверил, работает
+ли вывод на внешний монитор, но у меня есть подозрение, что для показа
+презентаций вполне подойдёт.")
+   (:p "Памяти аж восемь гигабайт, что для такого карманного девайса очень даже хорошо.")
+   (:p "Остальная начинка, конечно, набрана с миру по нитке и заставляет
+конструировать ядро из спичек и желудей.")
+   (:p "Вайфай и блютус бродкомы, причем не лучшие, тачскрин вообще некий
+Goodix Capacitive TouchScreen.")
+   (:p "Клавиатура весьма терпимая для английского языка, хотя и костыльная для
+русского. Половина клавиш с правой части распихана по таким углам. что не сразу
+разберешься, где и искать. Иногда чуть залипает, если нажимать не на центр
+клавиш, но к этому привыкаешь довольно быстро.")
+   (:p "Корпус просто прекрасен, металлический, как говорят американцы, solid,
+прямо приятно взять в руки. Открывается крышка плотно, \"внатяг\", прямо
+приятно, ничего не скрипит, не люфтит.  Экран, помимо высокого разрешения и
+прилагающихся проблем с масштабом и батареей, ничем не плох, скорее даже
+хорош. Даже с тачем. На удивление не становится нечитаемым даже на солнце,
+хотя, конечно, несколько бликует.  Трэкпойнт в принципе юзабельный, хотя и не
+сказать, что сильно удобный, но тачскрин эту проблему решает - очень недалеко
+тянуться от клавиатуры, поэтому вполне можно работать и с ним.")
+   (:p "Главное - весит немного и размер ровно такой, чтобы влезать в сумку любого
+размера, или даже достаточно большой карман.")
+   (:h3 "Софт")
+   (:p "С софтом традиционно хуже, как и у любого китайца. Приходится долго и
+внимательно изучать вывод lshw перед тем, как собрать ядро. Причем ядро из
+мейнлайна тоже пока работает так себе, надо брать " (:a :href "#kernel" "ядро
+Ганса") ". Со всем остальным несколько проще, я поставил генту, из коробки
+заработал BlueZ, после установки " (:tt "linux-firmware") " заработал
+wifi. Честь и хвала ребятам из Интела, сразу заработало видео.")
+   (:p "В иксах пришлось довольно долго развлекаться, подбирая шрифты и
+масштаб, но в целом это уже меньшая проблема.")
+   (:p "Также я видел как минимум " (:a :href "#respin" "\"фанатскую\"
+respin-сборку убунты") ", которую авторы-китайцы благословили и торжественно
+нарекли официальной. Там, поговаривают, все из коробки предустановлено. Оттуда
+пришлось позаимствовать настройки тачкрина и трэкпада, а также пару полезных
+пакетов, вроде управления кулером.")
+   (:p "Вообще, оно сделано довольно интересно. Кулер есть, а автоматического
+управления - нет. Решено скриптом " (:tt "gpd-fan") ", который тыкает палочкой
+в gpio-порт. Хотя и до его запуска нельзя сказать, что процессор так уж сильно
+перегревался.")
+   (:p "Из портов есть один USB type A, type C, micro hdmi и 3.5mm jack, в
+целом я больше ничего и не ожидал. Type C работает не только как гнездо
+питания, но и как вполне себе USB, даже картридер для него предлагается.")
+   (:p "UEFI очень неплох, все настройки, которых я там ждал, на месте, а в
+моей линуксовой версии даже хранилище ключей по-честному пустое, никакого вам
+микрософта. Шелл в комплекте есть, так что rescue shell для экспериментов с
+загрузкой будет.")
+   (:h3 "Батарея")
+   (:p "От батареи работает, как я и ожидал, а скорее даже
+надеялся, " (:em "ОЧЕНЬ") " долго. Тест показал, что примерно шесть-семь часов
+компиляции в три потока (чтобы не перегревался), высаживают около восьмидесяти
+процентов батареи.")
+   (:h3 "Недостатки")
+   (:p "Из недостатков можно упомянуть разве что далёкую от идеальной клавиатуру,
+которая, к тому же, генерит странные сканкоды. Лично я не люблю мелкие иконки,
+поэтому высокое разрешение экрана тоже скорее минус, чем плюс.")
+   (:p "Спорный момент - отсутствие сим-карты. В целом выпускать его в интернет было бы
+удобно, наверное, но это легко решается tethering'ом с телефона, например.")
+   (:h3 "Вывод")
+   (:p "В общем, как я и ожидал, когда донатил на кикстартере в первый же день,
+девайс оказался практически идеален в качестве этакого \"карманного
+емакса\". Для ответов на письма, быстрой правке кода на лету, в качестве этакой
+записной книжки для каких-нибудь meeting minutes или просто для
+структурированной записи мыслей. ")
+   (:p "Либреофис работает неожиданно бодро, когда на ходу нуюно проверить или
+поправить какую-нибудь внезапную табличку, никаких заметных проблем не
+возникает.")
+   (:p "Также если в дороге совсем скучно, можно попробовать позапускать
+какое-то количество игрушек. Благодаря x86 устройство становится идеальным для
+различных обитателей досбокса или какой-нибудь классики под wine (тех же
+HoMM3). Впрочем можно и из стима наставить различных головоломок, вроде Shenzhen
+i/o или MHRD, или даже скромных 3d.")
+   (:h3 "Ссылки")
+   (:ul
+    (:li :id "kernel" (:a :href "https://github.com/jwrdegoede/linux-sunxi" "Hans de Goede kernel"))
+    (:li (:a :href "https://www.reddit.com/r/GPDPocket/" "GPD Pocket subreddit"))
+    (:li (:a :href "https://wiki.archlinux.org/index.php/GPD_Pocket" "Arch Linux Wiki"))
+    (:li :id "respin" (:a :href "https://github.com/stockmind/gpd-pocket-ubuntu-respin" "GPD Pocket Ubuntu Respin"))
+    (:li (:a :href "https://www.indiegogo.com/products/gpd-pocket" "GPD Pocket Marketplace")))
+   (:h3 "Что докупил")
+   (:ul
+    (:li (:a :href "https://www.aliexpress.com/item/AUKEY-Braided-Nylon-USB-C-to-USB-3-0-USB-A-to-Type-C-Cable-for/32783788043.html" "Провод"))
+    (:li (:a :href "https://www.aliexpress.com/item/AUKEY-Dual-USB-Wall-Charger-with-Quick-Charge-3-0-AIPower-Tech-Port-34-5W-9V/32737801057.html" "Зарядник"))       
+    (:li (:a :href "https://www.aliexpress.com/item/Laptop-Sleeve-Bag-for-GPD-Pocket-7-Inch-Mini-Laptop-UMPC-Windows-10-System-Notebook-Bag/32829812080.html" "Чехол")))
+  :tags '("ru" "hw" "gpd")
+  :meta  ((:meta :property "og:title" :content "О GPD Pocket")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Впечатления и опыт использования GPD Pocket")
+	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3720711026")
+	  (:style :type "text/css" 
+		  (str
+		   (css '(("table"
+			   :width "100%"
+			   :border-collapse "collapse"
+			   :border-color "grey")
+			  ("td,th"
+			   :padding "3px"
+			   :border "1px solid grey"))))))))
+
