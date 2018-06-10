@@ -122,7 +122,7 @@ Allow: /blog
      (:script :type "text/javascript" "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
      (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")))))
 
-(define-easy-handler (contacts-page :uri "/about_git"
+(define-easy-handler (about-git-page :uri "/about_git"
 				    :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
