@@ -5,6 +5,9 @@
 
 (in-package :site.blogposts)
 
+;;; Perform a cleanup unless we want duplication
+(setf site.blog::*blog-posts* nil)
+
 (defblogpost 3649655845 "On blog creation"
   (:div
    (:p "For the past years I tired of repeating myself in every conversation on certain
