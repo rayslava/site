@@ -21,7 +21,7 @@
 	  (:meta :property "og:type" :content "article")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "A note about blog creation")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649655845")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3649655845")))
 
 (defblogpost 3649996316 "О блоге"
   (:div
@@ -45,7 +45,7 @@
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Заметка о том, что у меня теперь
 	  есть бложик")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3649996316")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3649996316")))
 
 (defblogpost 3653209732 "О веб-дизайне"
   (:div
@@ -101,7 +101,7 @@
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Плач и стенания о том, как
 	  веб-дизайн катится в бездну ужаса")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209732")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3653209732")))
 
 (defblogpost 3653209733 "On web design"
   (:div
@@ -151,7 +151,7 @@
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Mourning the web design and the
           whole web itself while looking on modern sites.")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3653209733")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3653209733")))
 
 (defblogpost 3678124120 "On Doom"
   (:div
@@ -223,7 +223,7 @@
 	  (:meta :property "og:type" :content "article")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "My personal opinion about the Doom (2016) game")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124120")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3678124120")))
 
 (defblogpost 3678124121 "О Doom"
   (:div
@@ -305,7 +305,7 @@
 	  (:meta :property "og:type" :content "article")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Моё личное мнение об игре Doom (2016)")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3678124121")))
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3678124121")))
 
 (defblogpost 3720711026 "О GPD Pocket"
   (:div
@@ -411,15 +411,15 @@ i/o или MHRD, или даже скромных 3d.")
    (:h3 "Что докупил")
    (:ul
     (:li (:a :href "https://www.aliexpress.com/item/AUKEY-Braided-Nylon-USB-C-to-USB-3-0-USB-A-to-Type-C-Cable-for/32783788043.html" "Провод"))
-    (:li (:a :href "https://www.aliexpress.com/item/AUKEY-Dual-USB-Wall-Charger-with-Quick-Charge-3-0-AIPower-Tech-Port-34-5W-9V/32737801057.html" "Зарядник"))       
+    (:li (:a :href "https://www.aliexpress.com/item/AUKEY-Dual-USB-Wall-Charger-with-Quick-Charge-3-0-AIPower-Tech-Port-34-5W-9V/32737801057.html" "Зарядник"))
     (:li (:a :href "https://www.aliexpress.com/item/Laptop-Sleeve-Bag-for-GPD-Pocket-7-Inch-Mini-Laptop-UMPC-Windows-10-System-Notebook-Bag/32829812080.html" "Чехол")))
   :tags '("ru" "hw" "gpd")
   :meta  ((:meta :property "og:title" :content "О GPD Pocket")
 	  (:meta :property "og:type" :content "article")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Впечатления и опыт использования GPD Pocket")
-	  (:meta :property "og:url" :content "http://rayslava.com/blog?id=3720711026")
-	  (:style :type "text/css" 
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3720711026")
+	  (:style :type "text/css"
 		  (str
 		   (css '(("table"
 			   :width "100%"
@@ -429,3 +429,250 @@ i/o или MHRD, или даже скромных 3d.")
 			   :padding "3px"
 			   :border "1px solid grey"))))))))
 
+(defblogpost 3747291152 "On Smart Home"
+  (:div	(:P "I'm building a " (:I "smart home")
+	    " in my new apartments and describe the process here.")
+	(:H2 "Naming")
+	(:P "First of all: I don't like all this movement with Internet of "
+	    (:I "Anything") ", like IoT, IoE and so on. All this is just
+advertising bullshit and nothing more.")
+	(:P "The most appropriate word in my opinion is \"industrial
+automation\", but it's about really " (:B "industrial") " things, where no one
+cares about price or compatibility and interconnection with other systems. I
+mean when you're trying to add automation into steel production facility,
+you're ready to pay even for creation of own network standards or produce some
+custom wire types if they are needed. But when you just try to improve your
+quality of life locally, you have to find kind of trade-off.")
+	(:P "So basically it's home automation, but I'm to improve the system
+with small decision making capabilities, so can proudly call it Smart,
+therefore Smart Home it is.")
+	(:H2 "Key points")
+	(:P "My view to the smart home idea based on several key points")
+	(:H3 "Absolutely custom")
+	(:P "No mass-production from famous brands may be used in key points of
+real smart home.")
+	(:OL
+	 (:LI "Security" :BR
+	      (:P "They say that \"The letter S in IoT stands for
+    Security\". And that's true—big companies do not treat security at all, the
+    idea is to fill the market with a huge set of devices and force customers
+    to buy them using advertisement."))
+	 (:LI "Data policy" :BR
+	      (:P "Any company, either huge corporation like Google or any
+small startup wants to collect your data first of all. All devices you buy
+follow only one single target: gather all your data to make advertisements work
+more effective (or resell the data to someone, who cares). Actually I don't
+really care about ads (I'm not a target audience anyway), but nearly every IoT
+service has security flaws and the data becomes available to everyone which is
+not good at all."))
+	 (:LI "Internet connectivity" :BR
+	      (:P "Almost every mass-market smart home solution strongly
+requires internet connectivity to function. This is absolutely inappropriate:
+even if we don't take internet censorship in Russia which just switched off
+Xiaomi smart home devices one day, we can't be sure that provider has 100% SLA,
+there will be no issues with uplink network hardware and so on."))
+	 (:LI "Customization" :BR
+	      (:P "This point is related to almost all hardware now: you don't
+buy devices anymore, you rent them. Every vendor makes everything to lock you
+in own infrastructure, forbid you change any behavior and so on. This might be
+fine for large purchases with support, like building a business center, when
+you can sign up a contract and vendor is interested in customization for your
+purposes. But this is not fine at all when you have a single apartment (or
+house) and just want to control your devices the way you want.")))
+	(:H3 "Fully autonomous")
+	(:P "I'm going to design the system which will be fully autonomous and
+will require nothing but electrical power to function. This includes:")
+	(:OL
+	 (:LI "No internet connectivity required" :BR
+	      (:P "Using cloud to control your home is a sick idea, as I
+already mentioned. Local server should be enough to get all features work."))
+	 (:LI "No internet connectivity used" :BR
+	      (:P "In order to improve security all devices which use network
+should be isolated in one dedicated net (physically), so no 0-day bug will
+affect smart home in any way."))
+	 (:LI "No server required" :BR
+	      (:P "Even if server goes down, devices must have a fallback
+solution to be controlled. Again: single point of failure is not an option."))
+	 (:LI "No wireless connectivity" :BR
+	      (:P "All devices are to be connected using wires.")
+	      (:P "It's not so hard to achieve when you build the solution from
+scratch, but it solves lots of issues:")
+	      (:UL
+	       (:LI "You don't depend on environment, which is now an issue in
+city, e.g. wi-fi frequencies are full of devices and connectivity is not so
+good.")
+	       (:LI "Hacking from outside is not possible: you have to enter
+the room to connect to the network.")
+	       (:LI "No power issues for sensors: when you use something like
+ESP8266, you have to think about power and either you will constantly change
+power cells, or you have to provide a wall outlet connection which is also
+awful."))))
+	 (:H3 "Fully open-source")
+	 (:P "From my personal experience, open-source solutions are the best
+options if you know what you do. I'm not a GPL fanatic, but when "
+	     (:B "you") " control the program's behavior it's much easier to solve
+any issue. You may try to buy the whole proprietary solution which will work
+out-of-box and have beautiful design (and maybe even support for the first
+time), but when you want to customize it slightly different than owner (vendor,
+not you) wants it, you're busted. And you never know what's inside and what
+will the device do next moment, and the worst part is: you have no way to know
+it.")
+	 (:H2 "Optional points") (:H3 "Configurability")
+	 (:P "Not sure how wide the limits of this point should be, but I'm not
+the fan of \"made once, works forever\" approach. We live in a changing world,
+so putting wires inside concrete walls is not my choice. Still I do understand,
+that I may agree to that if price difference is big enough.")
+	 (:P "If we talk about software, I see no problems at all: using open
+source software solves this problem completely.")
+	 (:H3 "Reproduction possibility")
+	 (:P "From side of vendors/component developers I expect detailed
+technical specification, not just user manual and several examples, as some
+companies like to do. As I mentioned already, I want to be able to control
+every pdevice in my system or replace it with something else.")
+	 (:P "From my side I'll describe my adventures in this blog and publish
+all sources or hardware descriptions created during the process. The more
+success (opr failure) stories we have, the more possibilities we give to those
+who comes after us. And I consider experience sharing to be the great thing.")
+	 (:small "Есть " (:a :href "/blog?id=3747291153" :lang "ru" "русская версия") " этого поста"))
+	:tags '("en" "smart home" "refurbishment")
+	:meta  ((:meta :property "og:title" :content "On Smart Home")
+		(:meta :property "og:type" :content "article")
+		(:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+		(:meta :property "og:description" :content "My vision of Smart Home design")
+		(:meta :property "og:url" :content "https://rayslava.com/blog?id=3747291152")))
+
+(defblogpost 3747291153 "Об умном доме"
+  (:DIV
+   (:P "Я строю " (:I "умный дом") " в своей новой квартире и буду описывать
+  процесс здесь.")
+   (:H3 "Название")
+   (:P "Во-первых: я недолюбливаю это движение с названиями Интернет "
+       (:I "Чего-то") ", IoT, IoE и так далее. Всё это просто рекламная фигня и
+    не несёт никакой смысловой нагрузки.")
+   (:P "Наиболее подходящим названием, по моему мнению, будет \"промышленная
+    автоматизация\", однако оно применимо только к "
+       (:B "промышленности") ", где никого не интересует цена, совместимость
+    или возможность подключения к другим системам. Я имею в виду, что пытаясь
+    внедрить автоматизацию на завод по производству стали, вы готовы заплатить
+    скажем за создание нового сетевого стандарта или выпуска кабеля нового
+    типа, если он понадобится. Однако, когда вы просто хотите несколько
+    улучшить качество своей жизни, приходится идти на некоторые компромиссы.")
+   (:P "В целом это просто автоматизация домашней жизни, однако я собираюсь
+    расширить эту систему ограниченными возможностями по самостоятельному
+    принятию решений, поэтому могу гордо называть её Умной, собственно
+    получается Умный Дом.")
+   (:H3 "Ключевые моменты")
+   (:P "Моё видение умного дома базируется на нескольких ключевых вещах")
+   (:H4 " Полностью самодельный")
+   (:P "При создании умного дома нельзя использовать никаких серийных решений от
+    известных брендов.")
+   (:OL
+    (:LI "Безопасность" :BR
+	 (:P
+	  "Уже есть поговорка \"The letter S in IoT stands for Security\" (буква
+	\"S\" в аббревиатуре \"IoT\" обозначает Безопасность). И это правда:
+	крупные производители не обращают ни малейшего внимания на безопасность
+	их решений, на данный момент их цель — наводнить рынок огромной массой
+	устройств и заставить пользователей покупать их, с помощью рекламы."))
+    (:LI "Отношение к пользовательским данным" :BR
+	 (:P
+	  "Любая компания, будь это огромная корпорация, вроде Google, или
+	небольшой стартап, в первую очередь хочет собирать ваши данные. Все
+	устройства, которые вы можете купить преследуют ровно одну цель:
+	собрать все возможные данные, чтобы заставить рекламу работать более
+	эффективно (или кому-нибудь эти данные перепродать). И в целом я не
+	слишком беспокоюсь о рекламе (всё равно я не целевая аудитория), но,
+	поскольку практически в каждом сервисе и устройстве есть уязвимости и
+	дыры в безопасности, эти данные доступны всем желающим, что уже совсем
+	нехорошо."))
+    (:LI "Зависимость от интернет-подключения" :BR
+	 (:P "Практически все серийные решения для умного дома жёстко требуют
+	наличия интернет-подключения для работы. Это абсолютно неприемлемо:
+	даже если не принимать во внимание цензурирование интернета в России,
+	которое не так давно просто выключило все устройства для умного дома от
+	Xiaomi, дома невозможно иметь провайдера со стопроцентной доступностью,
+	быть уверенным, что ничего не случится с проводом и так далее."))
+    (:LI "Настраиваемость" :BR
+	 (:P
+	  "Этот пункт сейчас относится практически ко всему оборудованию: вы больше
+	не покупаете устройства, вы берёте их в аренду. Каждый производитель
+	делает всё возможное, чтобы заманить вас в свою экосистему и там
+	закрепить, запретить вам менять настройки, поведение по умолчанию, и тому
+	подобное. Это может быть вполне допустимо для больших закупок вместе с
+	поддержкой и, скажем при оборудовании бизнес-центра, когда вы можете
+	подписать подходящий контракт и производитель согласится на донастройку
+	под ваши цели. Однако это довольно плохо, когда у вас всего лишь квартира
+	или дом и вы просто хотите управлять вашими устройствами так, как вам
+	нравится.")))
+   (:H4 "Полная автономность")
+   (:P
+    "Система, которую я создаю, будет полностью автономной и не будет требовать
+    ничего, кроме электроэнергии для работы:")
+   (:OL
+    (:LI "Соединения с интернетом не требуется" :BR
+	 (:P
+	  "Использование облака для управления умным домом — очень плохая идея,
+	как я уже говорил выше. Локального сервера должно быть достаточно для
+	работы всех систем."))
+    (:LI "Соединение с интернетом не используется при работе" :BR
+	 (:P "Для увеличения безопасности, все устройства должны быть
+	подключены к отдельной, физически изолированной сети, чтобы ни одна
+	уязвимость нулевого дня не могла повлиять на работу умного дома."))
+    (:LI "Сервер не требуется" :BR
+	 (:P "Даже если сервер упал, у устройств должна быть возможность
+	аварийного управления. Повторюсь: единая точка отказа — не вариант."))
+    (:LI "Отсутствие беспроводной связи" :BR
+	 (:P "Все устройства должны быть подключены по проводам.")
+	 (:P "Достигнуть этого не слишком сложно, когда вся система строится с
+	нуля, однако этот подход решает множество проблем:")
+	 (:UL
+	  (:LI "Независимость от окружения, что сейчас в больших городах уже
+	  является проблемой: например частоты wi-fi забиты и качество
+	  соединения не слишком хорошее.")
+	  (:LI
+	   "Невозможен взлом снаружи: нужно физически войти в комнату и
+	  подключиться к сети.")
+	  (:LI
+	   "Решение проблемы с питанием датчиков: когда вы используете
+	  какой-нибудь ESP8266, приходится думать о питании и либо постоянно
+	  менять батарейки, либо организовывать электрическую розетку, что не
+	  менее ужасно."))))
+   (:H4 "Полностью открытое и свободное программное обеспечение")
+   (:P "Из моего личного опыта, решения на основе открытого ПО — лучшее
+    решение, когда вы понимаете, что вы делаете. Я не фанатичный последователь
+    GPL, однако, когда есть возможность "
+       (:B "самому") " управлять поведением программы, любую проблему всегда
+    решить сильно проще. Можно, конечно, попробовать купить проприетарное
+    решение, которое будет работать прямо из коробки, да ещё и иметь
+    великолепный дизайн (а может быть даже и поддержку первое время), однако
+    как только вы захотите что-нибудь настроить чуточку не так, как хочет
+    хозяин (производитель, не вы), вы попали. А ещё вы никогда не узнаете, что
+    находится внутри и что устройство сделает в следующий момент, а самая
+    худшая часть — у вас нет возможности об этом узнать.")
+   (:H3 "Дополнительные плюсы") (:H4 "Настраиваемость")
+   (:P "Не уверен, насколько широко должен распространяться этот пункт, но я не
+    сторонник подхода \"сделал раз, работает вечно\". Мы живём в меняющемся
+    мире, поэтому запихивать провода внутрь бетонных стен — не мой выбор. С
+    другой стороны, я прекрасно понимаю, что пойду и на это, если будет
+    значительная разница в цене.")
+   (:P "Если же речь о ПО, то не вижу никакой проблемы, открытый исходный код
+    полностью решает эту проблему.")
+   (:H4 " Воспроизводимость")
+   (:P "Со стороны производителей и разработчиков компонентов я ожидаю
+    подробной технической спецификации, а не просто руководства пользователя с
+    несколькими примерами, как любят делать некоторые компании. Как я уже
+    упоминал, я хочу иметь возможность управлять каждый устройством в системе и
+    иметь возможность заменить его чем-нибудь другим.")
+   (:P "Со своей стороны, постараюсь описывать все мои приключения в этом блоге
+    и публиковать исходный код и описание железа, создаваемое в процессе. Чем
+    больше историй успеха (или провала) напишем мы, тем больше возможностей мы
+    дадим тем, кто придёт за нами. Я считаю такую возможность поделиться опытом
+    замечательной штукой.")
+   (:small "There is an " (:a :href "/blog?id=3747291152" :lang "en" "english
+   version")))
+	:tags '("ru" "умный дом" "ремонт")
+	:meta  ((:meta :property "og:title" :content "Об умном доме")
+		(:meta :property "og:type" :content "article")
+		(:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+		(:meta :property "og:description" :content "Моё видение разработки умного дома")
+		(:meta :property "og:url" :content "https://rayslava.com/blog?id=3747291153")))
