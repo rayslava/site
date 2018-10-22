@@ -38,7 +38,7 @@
 
 (defun init-static-handlers ()
   (mapcar (lambda (url) (push
-			 (create-prefix-dispatcher url  (defstatic-handler url))
+			 (create-prefix-dispatcher url (defstatic-handler url))
 			 *dispatch-table*))
 	  '("/s/" "/i/" "/static/" "/image/" "/img/"))
   (print (format nil "~A ~A" "Static handlers created, current table: " *dispatch-table*)))
@@ -120,4 +120,5 @@
 					s))
 			 (split-sequence:split-sequence #\, tags))
 		       :filename ,(cadr uploaded))))
-    (upload-file (car uploaded) attrs)))
+    (upload-file (car uploaded) attrs)
+    (hunchentoot:redirect "/admin?action=refresh")))

@@ -58,7 +58,8 @@
 		      ;; catch all
 		      (lambda (request)
 			(declare (ignore request))
-			(redirect "/main" :protocol :https))))))
+			(redirect "/main" :protocol :https)))))
+  (init-static-handlers))
 
 (defun stop-server ()
   "Stops the server"
@@ -71,7 +72,6 @@
   (when *hunchentoot-server*
     (stop-server))
   (setup-dispatch-table)
-  (init-static-handlers)
   (setf *admin-password* adminpass)
   (setf *log-lisp-errors-p* t)
   (setf *log-lisp-backtraces-p* t)
