@@ -46,7 +46,7 @@
 			       (:a :href "/admin?action=list" "List actions"))))))))))
 
 					; Main page goes here
-(define-easy-handler (main-page :uri "/main"
+(define-easy-handler (main-page :uri "/about"
                                 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
@@ -59,15 +59,14 @@
      (:body (:h2 "About site")
 	    (:p "This site is just my first attempt to build the whole site using only a stack of LISP technologies.")
 	    (:ul
-	     (:li (:a :href "http://weitz.de/cl-who" "cl-who"))
-	     (:li (:a :href "http://github.com/Inaimathi/cl-css" "cl-css"))
-	     (:li (:a :href "http://github.com/davazp/jscl" "jscl")))
+	     (:li (:a :href "https://edicl.github.io/cl-who/" "cl-who"))
+	     (:li (:a :href "https://github.com/Inaimathi/cl-css" "cl-css"))
+	     (:li (:a :href "https://github.com/davazp/jscl" "jscl")))
 	    (:p
-	     "It works on " (:a :href "http://weitz.de/hunchentoot" "hunchentoot")
-	     " under " (:a :href "http://ecls.sourceforge.net" "ecl")
+	     "It works on " (:a :href "https://edicl.github.io/hunchentoot/" "hunchentoot")
+	     " under " (:a :href "https://sbcl.org" "sbcl")
 	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
-	     " installed on " (:a :href "http://www.hardkernel.com" "ODroid U2") ".")
-	    (:p "Now I'm working on migration to AWS and preparing the docker-compose image though.")
+	     " installed on AWS micro instance")
 	    (:p "If you are courious about how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
      	    (:script :type "text/javascript" :src "/jscl.js")))))
@@ -77,7 +76,7 @@
     ()
   (string "Host: rayslava.com
 User-agent: *
-Allow: /main
+Allow: /about
 Allow: /contacts
 Allow: /blog
 "))

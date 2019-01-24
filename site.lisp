@@ -58,7 +58,7 @@
 		      ;; catch all
 		      (lambda (request)
 			(declare (ignore request))
-			(redirect "/main" :protocol :https)))))
+			(redirect "/about" :host "rayslava.com" :protocol :https)))))
   (init-static-handlers))
 
 (defun stop-server ()
