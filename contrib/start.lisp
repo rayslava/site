@@ -2,7 +2,7 @@
 (ql:update-all-dists :prompt nil)
 (ql:quickload "quicklisp-slime-helper")
 (let ((swank::*loopback-interface* (sb-unix:unix-gethostname)))
-  (swank:create-server :dont-close t))
+  (swank:create-server :port 4005 :style :spawn :dont-close t))
 (sb-posix:chdir #P"/site/")
 (load "/site/site.asd")
 (ql:quickload "site")

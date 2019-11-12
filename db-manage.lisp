@@ -47,6 +47,7 @@
 				 :default-request-type :get)
     ()
   (with-http-authentication
+      (no-cache)
       (with-html-output-to-string (*standard-output* nil :prologue t)
 	(:html
 	 (:head (:title "List of available static files")
