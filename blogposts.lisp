@@ -735,4 +735,4 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:description" :content "Describing my life after
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
-	  :content "https://rayslava.com/blog?id=3817522801")))
+	  :content "https://rayslava.com/blog?id=3817522800")))
