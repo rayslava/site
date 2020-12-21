@@ -1,5 +1,9 @@
 ;;; A personal blog engine main file
 ;;; Post id is `(local-time:timestamp-to-universal (local-time:now))'
+;;;
+;;; (local-time:reread-timezone-repository)
+;;; (local-time:encode-timestamp 0 0 00 10 21 12 2020 :timezone (local-time:find-timezone-by-location-name "Europe/Moscow"))
+
 (defpackage :site.blogposts
   (:use :site.blog :cl :cl-css :cl-who))
 
@@ -679,3 +683,56 @@ who comes after us. And I consider experience sharing to be the great thing.")
 		(:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 		(:meta :property "og:description" :content "Моё видение разработки умного дома")
 		(:meta :property "og:url" :content "https://rayslava.com/blog?id=3747291153")))
+
+(defblogpost 3817522800 "Дневник вакцинации Sputnik-V #1"
+  (:div
+   (:p "Чо-то вокруг началась совсем дичь и заболевают повально все, скажем за
+прошлые две недели у меня заболела буквально вся семья (разнесённая
+географически), радует хоть, что в лёгкой форме.")
+   (:p "Вот и я решил немножко поболеть, но контролируемо. Раз уж началась
+массовая вакцинация нашим хвалёным спутником, принял участие.")
+   (:p "Зашёл на mos.ru, нажал «записаться на прививку», оно спросило номер
+полиса, я ввёл, выбрал время и всё. Пришёл к ним, они спросили фамилию и где
+работаю. Назвал фамилию, сказал, что работаю в исследовательском центре, иногда
+приходится читать лекции школьникам и выступать на научных
+конференциях. Девушка покивала, сказала «Ок», дала на заполнение форму согласия
+и отправила в процедурный кабинет.")
+   (:p "Вообще там народа прямо совсем немного, в нашей районной поликлинике
+выделили целое крыло под эту программу вакцинации, я провёл там минут сорок
+пять, встретил только трёх человек, не считая персонала. Похоже, никто особо не
+спешит прививаться, а самой поликлинике тоже надо набирать статистику.")
+   (:small "There is an " (:a :href "/blog?id=3817522801" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #1")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3817522800")))
+
+(defblogpost 3817522801 "Sputnik-V vaccination log #1"
+  (:div
+   (:p "The COVID-19 situation becomes harder and harder, more and more people
+get sick. For example my whole family got infected during last two weeks
+despite they all live in different places.")
+   (:p "So I decided to get sick as well and went to take part in massive
+vaccination program started by our government.")
+   (:p "Just performed registration via " (:a :href "https://mos.ru" "mos.ru")
+       ", entered insurance ID, chose appropriate time and came to the local
+clinic. Administrator just asked me about my workplace, and accepted my answer
+that I'm a member of research center, work in \"Samsung School\" program and
+take part in conferences. The only thing I had to do is to fill an agreement
+form and get a Sputnik-V shot.")
+   (:p "Apparently the vaccine is not so popular, I've only seen three people
+who came for vaccination during 45 minutes I spent in clinic.")
+   (:small "Есть " (:a :href "/blog?id=3817522801" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #1")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+	  :content "https://rayslava.com/blog?id=3817522801")))
