@@ -736,3 +736,70 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 	  :content "https://rayslava.com/blog?id=3817522800")))
+
+(defblogpost 3817548000 "Дневник вакцинации Sputnik-V #2"
+  (:div
+   (:p "Начинаю ощущать небольшой дискомфорт, как при лёгкой простуде. Похоже,
+   что аденовирус добрался по адресу. Надеюсь, что он ещё и принёс с собой
+   нужный белок. Небольшой озноб, лёгкая головная боль, першение в горле. ")
+   (:p "Сравнил ощущения с привившимся коллегой, отличий никаких, у него было
+   ровно то же.")
+   (:small "There is an " (:a :href "/blog?id=3817548001" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #2")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3817548000")))
+
+(defblogpost 3817548001 "Sputnik-V vaccination log #2"
+  (:div
+   (:p "Feeling kind of discomfort very alike to a mild cold, sore throat and a
+   light headache. Discussed it with a colleague who got the shot a while ago
+   and he said that he felt exactly the same. Hope this means that
+   adenovirus (platform of Sputnik-V) reached its destination and got
+   SARS-CoV-2 protein with it. So it seems that currently I'm doing good.")
+   (:small "Есть " (:a :href "/blog?id=3817548000" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #3")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817548001")))
+
+(defblogpost 3817558800 "Дневник вакцинации Sputnik-V #3"
+  (:div
+   (:p "Поужинал, полчасика полежал, попил тёплого чая с лимоном, боль прошла,
+   горло успокоилось, некоторое ощущение слабости и температура 36.9°C В
+   принципе, не всё так плохо.")
+   (:small "There is an " (:a :href "/blog?id=3817558801" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #3")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url" :content "https://rayslava.com/blog?id=3817558800")))
+
+(defblogpost 3817558801 "Sputnik-V vaccination log #3"
+  (:div
+   (:p "Cold symptoms are gone. Had a dinner, got a rest for 30 minutes and a
+   cup of warm tea with lemon, now head and throat are fine, now it's just a
+   light weakness and temp. of 36.9°C")
+   (:small "Есть " (:a :href "/blog?id=3817558800" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #3")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817558801")))
+
