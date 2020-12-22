@@ -829,7 +829,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 	  :content "https://rayslava.com/blog?id=3817609200")))
 
-(defblogpost 3817558801 "Sputnik-V vaccination log #4"
+(defblogpost 3817609201 "Sputnik-V vaccination log #4"
   (:div
    (:p "The first night was rather fine. About 22:30 the temperature came down
    to 36.2°С, then returned back to 37°C at midnight and stabilized. Several
@@ -843,7 +843,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
    clearly indicates that they work with it for a long time already. ")
    (:p "Now I'm awaken at last, my condition is appropriate: throat is sore a
    little, feeling tired and sleepy, but nothing more. Will try to work. ")
-   (:small "Есть " (:a :href "/blog?id=3817558800" :lang "ru" "русская версия")
+   (:small "Есть " (:a :href "/blog?id=3817609200" :lang "ru" "русская версия")
 	   " этого поста"))
   :tags '("en" "covid" "vaccination")
   :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #4")
@@ -852,4 +852,4 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:description" :content "Describing my life after
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
-		 :content "https://rayslava.com/blog?id=3817558801")))
+		 :content "https://rayslava.com/blog?id=3817609201")))
