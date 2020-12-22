@@ -853,3 +853,35 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3817609201")))
+
+(defblogpost 3817632600 "Дневник вакцинации Sputnik-V #5"
+  (:div
+   (:p "Начались эффекты второго дня. Лёгкое раздражение кожи, слабые боли в
+   мышцах, 36.8°C, тяжёлая голова, болит место укола. Озноб практически не
+   ощущается, состояние лучше, чем вчера вечером.")
+   (:small "There is an " (:a :href "/blog?id=3817632601" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #5")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817632600")))
+
+(defblogpost 3817632601 "Sputnik-V vaccination log #5"
+  (:div
+   (:p "Second day side-effects are coming. Light skin irritation, light muscle
+   pain, 36.8°C, heaviness in the head, and the shot spot hurts a little. Fever
+   is hardly sensible though, feels much better than yesterday.")
+   (:small "Есть " (:a :href "/blog?id=3817632600" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #5")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817632601")))
