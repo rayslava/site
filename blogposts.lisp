@@ -803,3 +803,53 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3817558801")))
 
+(defblogpost 3817609200 "Дневник вакцинации Sputnik-V #4"
+  (:div
+   (:p "Первая ночь прошла вполне терпимо. В районе половины одиннадцатого
+   температура свалилась до 36.2°С, потом к полуночи вернулась до 37°C и уже не
+   опускалась. Несколько раз удалось подремать, но без нормального сна, только
+   в районе трёх часов получилось,наконец, заснуть. И уже в 7:20 я проснулся
+   слегка вспотевшим и с тем самым ощущением «иммунитет дожрал
+   вирус». Побаливало место укола, ощущалась слабость, но температура уже в
+   норме и состояние довольно приемлемое. ")
+   (:p "Молодцы они в этом Центре Гамалеи, дозу аденовируса намешали очень
+   профессионально. Ровно на одну ночь и ровно до состояния «неприятно, но не
+   болезненно». Видно, что давно работают с ней. ")
+   (:p "Сейчас вот проснулся окончательно, состояние вполне терпимое: чуть
+   першит в горле, ощущается некоторая усталость и недосып, но и всё, можно
+   даже попробовать поработать. ")
+   (:small "There is an " (:a :href "/blog?id=3817609200" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #4")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+	  :content "https://rayslava.com/blog?id=3817609200")))
+
+(defblogpost 3817558801 "Sputnik-V vaccination log #4"
+  (:div
+   (:p "The first night was rather fine. About 22:30 the temperature came down
+   to 36.2°С, then returned back to 37°C at midnight and stabilized. Several
+   times I've been snoozing but fell asleep about 3 AM. And at 7:20 I woke up
+   in a sweat and with that feeling \"my immune system just finished up the
+   virus\". The spot of the shot hurt a little, but there was no fever and
+   overall condition was rather good. ")
+   (:p "Good job for Gamaleya Research Institute: the adenovirus doze was
+   prepared professionally. Just for single night and accurately up to
+   condition \"not very comfortable but it doesn't hurt\". I guess, this
+   clearly indicates that they work with it for a long time already. ")
+   (:p "Now I'm awaken at last, my condition is appropriate: throat is sore a
+   little, feeling tired and sleepy, but nothing more. Will try to work. ")
+   (:small "Есть " (:a :href "/blog?id=3817558800" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #4")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817558801")))
