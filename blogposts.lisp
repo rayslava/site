@@ -885,3 +885,40 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3817632601")))
+
+(defblogpost 3817693800 "Дневник вакцинации Sputnik-V #6"
+  (:div
+   (:p "Возвращаюсь в нормальное состояние. Вчера где-то до одиннадцати часов
+   температура слегка плавала от 36.2°C до 36.8°C, но в принципе не особо
+   мешала. Вполне нормально уснул, и вполне нормально выспался. Из неприятных
+   ощущений осталось только тянущее ощущение в месте укола. Похоже, что
+   действие аденовируса закончилось, и теперь остаётся ожидать, что будут
+   генерироваться антитела. ")
+   (:small "There is an " (:a :href "/blog?id=3817693801" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #6")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817693800")))
+
+(defblogpost 3817693801 "Sputnik-V vaccination log #6"
+  (:div
+   (:p "Getting back to normal. Yesterday evening the temperature floated
+   between from 36.2°C to 36.8°C but it wasn't too uncomfortable. Fell asleep
+   just fine and got enough sleep. Now the only thing left from vaccination is
+   light nagging in the shot spot. Apparently adenovirus effect has ended and
+   now I can only wait until I get enough antibodies. ")
+   (:small "Есть " (:a :href "/blog?id=3817693800" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #6")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3817693801")))
