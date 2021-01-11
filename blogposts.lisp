@@ -2,7 +2,7 @@
 ;;; Post id is `(local-time:timestamp-to-universal (local-time:now))'
 ;;;
 ;;; (local-time:reread-timezone-repository)
-;;; (local-time:encode-timestamp 0 0 00 10 21 12 2020 :timezone (local-time:find-timezone-by-location-name "Europe/Moscow"))
+;;; (local-time:timestamp-to-universal (local-time:encode-timestamp 0 0 00 10 21 12 2020 :timezone (local-time:find-timezone-by-location-name "Europe/Moscow")))
 
 (defpackage :site.blogposts
   (:use :site.blog :cl :cl-css :cl-who))
@@ -922,3 +922,35 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3817693801")))
+
+(defblogpost 3787713600 "Дневник вакцинации Sputnik-V #7"
+  (:div
+   (:p "Получил второй компонент прививки. По сравнению с прошлой
+   прививкой,куда я пришёл в нормальном состоянии, в этот раз у меня чуть
+   побаливает горло (видимо новогоднее шампанское было слишком холодным), так
+   что ожидаю усиленного эффекта именно на горло.")
+   (:small "There is an " (:a :href "/blog?id=3787713601" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #7")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3787713600")))
+
+(defblogpost 3787713601 "Sputnik-V vaccination log #7"
+  (:div
+   (:p "Received a shot of second vaccine component. Now I've got my throat a
+   little sore, so I expect it as a primary place to feel effect.")
+   (:small "Есть " (:a :href "/blog?id=3787713600" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #7")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3787713601")))
