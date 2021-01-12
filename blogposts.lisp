@@ -954,3 +954,41 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3787713601")))
+
+(defblogpost 3819423600 "Дневник вакцинации Sputnik-V #8"
+  (:div
+   (:p "Вторая прививка оказалась потяжелее первой: примерно к часу ночи
+   поднялась до 37.8° и не опускалась часов до четырёх, впрочем, кроме
+   температуры ничего не болело, так что было скорее просто неприятно, даже
+   место укола в этот раз почти не болит. В итоге половину ночи всё равно не
+   мог уснуть, поэтому сидел и пил тёплый чай с лимоном, в общем, состояние так
+   себе, хотя, после того, как температура упала, и удалось поспать.")
+   (:small "There is an " (:a :href "/blog?id=3819423601" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #8")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3819423600")))
+
+(defblogpost 3819423601 "Sputnik-V vaccination log #8"
+  (:div
+   (:p "The second component feels a little worse than first one. By 1 AM the
+   fever came with 37.8°C and remained until 4 AM. There were no symptoms
+   except the fever though, no pain, no sore throat, no head ache, no running
+   nose, just discomfort. But still I couldn't sleep well, so stayed awake and
+   just drank lots of warm lemon tea until temperature went down. Now I feel
+   myself tired, but rather fine.")
+   (:small "Есть " (:a :href "/blog?id=3819423600" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #8")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3819423601")))
