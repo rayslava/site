@@ -992,3 +992,35 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3819423601")))
+
+(defblogpost 3819510000 "Дневник вакцинации Sputnik-V #9"
+  (:div
+   (:p "Эта ночь прошла спокойно, никаких проблем, никаких неприятных ощущений,
+   похоже, второй компонент тоже прижился. Теперь подожду пару недель и пойду
+   проверюсь на наличие антител.")
+   (:small "There is an " (:a :href "/blog?id=3819510001" :lang "en" "english
+   version")))
+  :tags '("ru" "covid" "вакцинация")
+  :meta  ((:meta :property "og:title" :content "Дневник вакцинации Sputnik-V #9")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Описание ощущений от
+	  прививки")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3819510000")))
+
+(defblogpost 3819510001 "Sputnik-V vaccination log #9"
+  (:div
+   (:p "This night went well, no discomfort, no symptoms, nothing. Apparently
+   the second component is set. So now I'll wait for two weeks and perform an
+   IgG check.")
+   (:small "Есть " (:a :href "/blog?id=3819510000" :lang "ru" "русская версия")
+	   " этого поста"))
+  :tags '("en" "covid" "vaccination")
+  :meta  ((:meta :property "og:title" :content "Sputnik-V vaccination log #9")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Describing my life after
+	  Sputnik-V vaccination")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3819510001")))
