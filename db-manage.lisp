@@ -124,9 +124,9 @@
 			 (split-sequence:split-sequence #\, tags))
 		 :filename ,(cadr uploaded))))
     (upload-file (car uploaded) attrs)
-    (hunchentoot:redirect "/admin?action=list")))
+    (hunchentoot:redirect "/admin/statics")))
 
-(define-easy-handler (upload-work :uri "/admin/do-delete")
+(define-easy-handler (delete-work :uri "/admin/do-delete")
     ((victim :parameter-type 'string))
   (delete-static victim)
   (hunchentoot:redirect "/admin?action=list"))
