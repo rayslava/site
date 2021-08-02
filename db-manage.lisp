@@ -61,8 +61,11 @@
 					       (fmt "~A" (filename e))))
 					  (:td (fmt "~A" (beautify-attrs (attr e))))
 					  (:td (:a :href (concatenate 'string "/admin/do-delete?victim=" (s3name e))
-						   (fmt "~A" "Delete file"))))))
-			      (site.db-storage:list-available-statics)))
+						   (fmt "~A ~A" "del " (filename e)))))))
+			      (stable-sort
+			       (site.db-storage:list-available-statics)
+			       #'string-lessp
+			       :key #'filename)))
 		     (:script :type "text/javascript" :src "/jscl.js")))))))
 
 (define-easy-handler (upload-req :uri "/admin/upload"
