@@ -1,5 +1,5 @@
 (defpackage :site.db-storage
-  (:use :cl :site.config :dyna.table-operation :zs3 :jonathan :trivial-mimes)
+  (:use :cl :site.config :dyna.table-operation :dyna :zs3 :jonathan :trivial-mimes)
   (:export
    :list-available-statics
    :static-file
@@ -7,7 +7,8 @@
    :attr
    :s3name
    :upload-file
-   :compute-s3-name))
+   :compute-s3-name
+   :delete-static))
 
 (in-package :site.db-storage)
 
@@ -64,9 +65,23 @@
 		  (to-json attr)))
 	  (save-dyna obj)))))
 
+(defun delete-s3-file (file-hash)
+  "Delete `file-hash' from S3"
+  (delete-object *static-bucket* file-hash))
+
 (defun list-available-statics ()
   "Request list of files from DynamoDB and return as list"
   (select-dyna 'static-file))
+
+(defun delete-static (s3name)
+  "Delete object with `s3name' from DynamoDB and S3"
+  (let ((name (filename (car (dyna:select-dyna 'static-file
+					       (sxql:where (:= :s3name s3name)))))))
+    (dyna::delete-item *dyna*
+		       :table-name "statics"
+		       :key `(("s3name" . ,s3name)
+			      ("filename" . ,name)))
+    (delete-s3-file s3name)))
 
 ;;; We have to create the bucket if there is no one
 (when (not (bucket-exists-p *static-bucket*))

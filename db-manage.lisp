@@ -48,20 +48,22 @@
     ()
   (with-http-authentication
       (no-cache)
-      (with-html-output-to-string (*standard-output* nil :prologue t)
-	(:html
-	 (:head (:title "List of available static files")
-		(:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	 (:body (:h2 "Statics")
-		(:table
-		 (:tr (:td "Filename") (:td "Attrs"))
-		 (mapcar (lambda (e)
-			   (htm (:tr (:td
-				      (:a :href (format nil "/i/~A" (filename e))
-					  (fmt "~A" (filename e))))
-				     (:td (fmt "~A" (beautify-attrs (attr e)))))))
-			 (site.db-storage:list-available-statics)))
-		(:script :type "text/javascript" :src "/jscl.js")))))))
+    (with-html-output-to-string (*standard-output* nil :prologue t)
+      (:html
+       (:head (:title "List of available static files")
+	      (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	      (:body (:h2 "Statics")
+		     (:table
+		      (:tr (:td "Filename") (:td "Attrs"))
+		      (mapcar (lambda (e)
+				(htm (:tr (:td
+					   (:a :href (format nil "/i/~A" (filename e))
+					       (fmt "~A" (filename e))))
+					  (:td (fmt "~A" (beautify-attrs (attr e))))
+					  (:td (:a :href (concatenate 'string "/admin/do-delete?victim=" (s3name e))
+						   (fmt "~A" "Delete file"))))))
+			      (site.db-storage:list-available-statics)))
+		     (:script :type "text/javascript" :src "/jscl.js")))))))
 
 (define-easy-handler (upload-req :uri "/admin/upload"
 				 :default-request-type :get)
@@ -120,6 +122,11 @@
 					  #\Linefeed #\Page #\Return #\Rubout)
 					s))
 			 (split-sequence:split-sequence #\, tags))
-		       :filename ,(cadr uploaded))))
+		 :filename ,(cadr uploaded))))
     (upload-file (car uploaded) attrs)
-    (hunchentoot:redirect "/admin?action=refresh")))
+    (hunchentoot:redirect "/admin?action=list")))
+
+(define-easy-handler (upload-work :uri "/admin/do-delete")
+    ((victim :parameter-type 'string))
+  (delete-static victim)
+  (hunchentoot:redirect "/admin?action=list"))
