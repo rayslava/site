@@ -23,8 +23,8 @@
 		("href" . "https://rayslava.com/ap/actor/blog")))))))))
 
 					; Actor to support ActivityPub
-(define-easy-handler (actor :uri "/ap/actor/blog"
-			    :default-request-type :get)
+(define-easy-handler (actor-blog :uri "/ap/actor/blog"
+				 :default-request-type :get)
     ()
   (setf (hunchentoot:content-type*) "application/activity+json")
   (let ((cl-json::+json-lisp-escaped-chars+
@@ -42,8 +42,8 @@
 
 
 					; Accept followers
-(define-easy-handler (actor :uri "/ap/actor/blog/inbox"
-			    :default-request-type :post)
+(define-easy-handler (blog-inbox :uri "/ap/actor/blog/inbox"
+				 :default-request-type :post)
     ()
   (setf (hunchentoot:content-type*) "application/ld+json")
   (let ((cl-json::+json-lisp-escaped-chars+
