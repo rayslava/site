@@ -13,20 +13,22 @@
   :long-description "Lisp implementation of my home page"
   :depends-on (:hunchentoot :cl-who :ht-simple-ajax :cl-css :cl-json :local-time :dyna :zs3 :jonathan :trivial-mimes :ironclad)
   :components ((:file "site"
-                      :depends-on ("static" "config"))
+                :depends-on ("static" "config"))
                (:file "static"
-		      :depends-on ("config" "db-manage"))
+		:depends-on ("config" "db-manage"))
 	       (:file "config")
 	       (:file "blog")
 	       (:file "pages"
-		      :depends-on ("site" "blog" "db-manage"))
+		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
-		      :depends-on ("site"))
+		:depends-on ("site"))
 	       (:file "blogposts"
-		      :depends-on ("blog"))
+		:depends-on ("blog"))
 	       (:file "lj"
-		      :depends-on ("blogposts"))
+		:depends-on ("blogposts"))
 	       (:file "db-storage"
-		      :depends-on ("config"))
+		:depends-on ("config"))
 	       (:file "db-manage"
-		      :depends-on ("db-storage"))))
+		:depends-on ("db-storage"))
+	       (:file "activitypub"
+		:depends-on ("config"))))
