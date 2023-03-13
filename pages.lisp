@@ -1,6 +1,6 @@
 					; Here are "static" pages
 (defpackage :site.pages
-  (:use :cl :hunchentoot :cl-who :ht-simple-ajax
+  (:use :cl :hunchentoot :cl-who :ht-simple-ajax :cl-json
 	:asdf :site :site.db-manage))
 					;  (:export :generate-pages))
 (in-package :site.pages)
@@ -134,3 +134,21 @@ Allow: /blog
 	    (:p "Since GitHub is now owned by Microsoft, I created my personal
 	    git storage and will keep my project here. For now I just started
 	    migration, but all future repositories will be kept here")))))
+
+					; WebFinger to support ActivityPub
+(define-easy-handler (admin :uri "/.well-known/webfinger"
+			    :default-request-type :get)
+    ((resource :parameter-type 'string))
+  (setf (hunchentoot:content-type*) "application/jrd+json")
+  (cond ((equalp resource "acct:blog@rayslava.com")
+	 (let ((cl-json::+json-lisp-escaped-chars+
+		 (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+	   (json:encode-json-to-string
+	    '((subject . "blog@rayslava.com")
+	      (aliases . ("https://rayslava.com/blog" "https://rayslava.com/u/blog"))
+	      (links (((rel . "http://webfinger.net/rel/profile-page")
+		       (type . "text/html")
+		       (href . "https://rayslava.com/blog"))
+		      ((rel . "self")
+		       (type . "application/activity+json")
+		       (href . "https://rayslava.com/u/blog"))))))))))
