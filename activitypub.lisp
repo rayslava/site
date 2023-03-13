@@ -15,12 +15,12 @@
 	   (json:encode-json-to-string
 	    '(("subject" . "acct:blog@rayslava.com")
 	      ("aliases" . ("https://rayslava.com/blog" "https://rayslava.com/ap/actor/blog"))
-	      ("links" ((("rel" . "http://webfinger.net/rel/profile-page")
-			 ("type" . "text/html")
-			 ("href" . "https://rayslava.com/blog"))
-			(("rel" . "self")
-			 ("type" . "application/activity+json")
-			 ("href" . "https://rayslava.com/ap/actor/blog"))))))))))
+	      ("links" (("rel" . "http://webfinger.net/rel/profile-page")
+			("type" . "text/html")
+			("href" . "https://rayslava.com/blog"))
+	       (("rel" . "self")
+		("type" . "application/activity+json")
+		("href" . "https://rayslava.com/ap/actor/blog")))))))))
 
 					; Actor to support ActivityPub
 (define-easy-handler (actor :uri "/ap/actor/blog"
