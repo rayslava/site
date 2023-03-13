@@ -1,5 +1,5 @@
 (defpackage :site.config
-  (:use :cl :asdf :zs3 :dyna)
+  (:use :cl :asdf :zs3 :dyna :alexandria)
   (:export :*admin-login*
 	   :*admin-password*
 	   :*access-log-file*
@@ -12,7 +12,9 @@
 	   :*dyna*
 	   :*static-bucket*
 	   :*aws-region*
-	   :*distribution*))
+	   :*distribution*
+	   :*activitypub-private-key*
+	   :*activitypub-public-key*))
 
 (in-package :site.config)
 
@@ -40,6 +42,14 @@
 
 (defvar *default-static-path* (concatenate 'string (namestring  (sb-posix::getcwd)) "/" "static")
   "Default path where server should search for files that should be exported as is")
+
+(defvar *activitypub-private-key*
+  (alexandria:read-file-into-string "activitypub/private.pem")
+  "Key for signing HTTP requests for ActivityPub protocol")
+
+(defvar *activitypub-public-key*
+  (alexandria:read-file-into-string "activitypub/public.pem")
+  "Key for publishing as ActivityPub pubkey")
 
 ;;; AWS Setup
 (defparameter *aws-region* "eu-west-1")
