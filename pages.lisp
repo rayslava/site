@@ -134,39 +134,3 @@ Allow: /blog
 	    (:p "Since GitHub is now owned by Microsoft, I created my personal
 	    git storage and will keep my project here. For now I just started
 	    migration, but all future repositories will be kept here")))))
-
-					; WebFinger to support ActivityPub
-(define-easy-handler (webfinger :uri "/.well-known/webfinger"
-				:default-request-type :get)
-    ((resource :parameter-type 'string))
-  (setf (hunchentoot:content-type*) "application/jrd+json")
-  (cond ((equalp resource "acct:blog@rayslava.com")
-	 (let ((cl-json::+json-lisp-escaped-chars+
-		 (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-	   (json:encode-json-to-string
-	    '(("subject" . "blog@rayslava.com")
-	      ("aliases" . ("https://rayslava.com/blog" "https://rayslava.com/ap/actor/blog"))
-	      ("links" ((("rel" . "http://webfinger.net/rel/profile-page")
-			 ("type" . "text/html")
-			 ("href" . "https://rayslava.com/blog"))
-			(("rel" . "self")
-			 ("type" . "application/activity+json")
-			 ("href" . "https://rayslava.com/ap/actor/blog"))))))))))
-
-					; Actor to support ActivityPub
-(define-easy-handler (actor :uri "/ap/actor/blog"
-			    :default-request-type :get)
-    ()
-  (setf (hunchentoot:content-type*) "application/activity+json")
-  (let ((cl-json::+json-lisp-escaped-chars+
-	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-    (json:encode-json-to-string
-     `(("@context" . ("https://www.w3.org/ns/activitystreams" "https://w3id.org/security/v1"))
-       ("id" . "https://rayslava.com/ap/actor/blog")
-       ("type" . "Person")
-       ("preferredUsername" . "rayslava")
-       ("summary" . "Personal blog from rayslava.com")
-       ("inbox" . "https://rayslava.com/ap/actor/blog/inbox")
-       ("publicKey" . (("id" . "https://rayslava.com/ap/actor/blog#main-key")
-		       ("owner" . "https://rayslava.com/ap/actor/blog")
-		       ("publicKeyPem" . ,site.config:*activitypub-public-key*)))))))
