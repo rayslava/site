@@ -33,7 +33,7 @@
      `(("@context" . ("https://www.w3.org/ns/activitystreams" "https://w3id.org/security/v1"))
        ("id" . "https://rayslava.com/ap/actor/blog")
        ("type" . "Person")
-       ("preferredUsername" . "rayslava")
+       ("preferredUsername" . "blog")
        ("summary" . "Personal blog from rayslava.com")
        ("inbox" . "https://rayslava.com/ap/actor/blog/inbox")
        ("publicKey" . (("id" . "https://rayslava.com/ap/actor/blog#main-key")
