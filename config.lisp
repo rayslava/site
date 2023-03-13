@@ -44,11 +44,13 @@
   "Default path where server should search for files that should be exported as is")
 
 (defvar *activitypub-private-key*
-  (alexandria:read-file-into-string "activitypub/private.pem")
+  (alexandria:read-file-into-string (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
+						 "activitypub/private.pem"))
   "Key for signing HTTP requests for ActivityPub protocol")
 
 (defvar *activitypub-public-key*
-  (alexandria:read-file-into-string "activitypub/public.pem")
+  (alexandria:read-file-into-string (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
+						 "activitypub/public.pem"))
   "Key for publishing as ActivityPub pubkey")
 
 ;;; AWS Setup
