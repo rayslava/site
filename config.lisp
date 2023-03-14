@@ -1,5 +1,5 @@
 (defpackage :site.config
-  (:use :cl :asdf :zs3 :dyna :alexandria :ironclad :asn1 :trivia :cl-base64)
+  (:use :cl :asdf :zs3 :dyna :alexandria :asn1 :trivia :cl-base64)
   (:export :*admin-login*
    :*admin-password*
 	   :*access-log-file*

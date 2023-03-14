@@ -1,8 +1,6 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
-	:asdf :site :site.db-manage :site.config
-	:ironclad :trivia :local-time :dexador
-	:uuid :quri))
+	:asdf :site :site.db-manage :site.config))
 
 (in-package :site.activitypub)
 
