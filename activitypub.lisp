@@ -54,8 +54,9 @@
       (cond ((eq request-type :get) "" );; handle get request
             ((eq request-type :post)
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
-                    (request-obj (cl-json:decode-json-from-string data-string))) ;; use jsown to parse the string
-	       (send-signed "https://rayslava.com/ap/actor/blog" (generate-accept request-obj))
+                    (request-obj (cl-json:decode-json-from-string data-string)))
+	       (when (string= "Follow" (cdr (assoc 'type request-obj)))
+		 (send-signed "https://rayslava.com/ap/actor/blog" (generate-accept request-obj)))
 	       ""))))))
 
 (defun generate-accept (request)
