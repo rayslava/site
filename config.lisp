@@ -1,19 +1,19 @@
 (defpackage :site.config
-  (:use :cl :asdf :zs3 :dyna :alexandria)
+  (:use :cl :asdf :zs3 :dyna :alexandria :ironclad :asn1 :trivia :cl-base64)
   (:export :*admin-login*
-	   :*admin-password*
+   :*admin-password*
 	   :*access-log-file*
-	   :*message-log-file*
+   :*message-log-file*
 	   :*default-static-path*
-	   :*server-port*
+   :*server-port*
 	   :*admin-login-message*
-	   :environment-credentials
+   :environment-credentials
 	   :*credentials*
-	   :*dyna*
+   :*dyna*
 	   :*static-bucket*
-	   :*aws-region*
+   :*aws-region*
 	   :*distribution*
-	   :*activitypub-private-key*
+   :*activitypub-private-key*
 	   :*activitypub-public-key*))
 
 (in-package :site.config)
@@ -43,15 +43,43 @@
 (defvar *default-static-path* (concatenate 'string (namestring  (sb-posix::getcwd)) "/" "static")
   "Default path where server should search for files that should be exported as is")
 
+(defun load-rsa-key (filename)
+  "Reads a PKCS#1 from `filename`"
+  (with-open-file (stream filename)
+    (apply 'concatenate 'string
+	   (loop for line = (read-line stream nil)
+		 while line
+		 when (not (search "-----" line))
+		   collect line))))
+
 (defvar *activitypub-private-key*
-  (alexandria:read-file-into-string (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
-						 "activitypub/private.pem"))
+  (trivia:match
+      (asn1:decode
+       (base64:base64-string-to-usb8-array
+	(load-rsa-key (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
+				   "activitypub/private.pem"))))
+    ((asn1:rsa-private-key :modulus n
+			   :public-exponent e
+			   :private-exponent d
+			   :prime1 p
+			   :prime2 q)
+     (ironclad:make-private-key :rsa :n n :e e :d d :p p :q q)))
   "Key for signing HTTP requests for ActivityPub protocol")
 
-(defvar *activitypub-public-key*
+(defvar *activitypub-public-key-pem*
   (alexandria:read-file-into-string (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
 						 "activitypub/public.pem"))
-  "Key for publishing as ActivityPub pubkey")
+  "Key PEM info for publishing as ActivityPub pubkey")
+
+(defvar *activitypub-public-key*
+  (trivia:match
+      (asn1:decode
+       (base64:base64-string-to-usb8-array
+	(load-rsa-key (concatenate 'string (namestring  (sb-posix::getcwd)) "/"
+				   "activitypub/public.pem"))))
+    ((asn1:rsa-public-key-info n e)
+     (ironclad:make-public-key :rsa :n n :e e)))
+  "Public key for using as ActivityPub pubkey")
 
 ;;; AWS Setup
 (defparameter *aws-region* "eu-west-1")
@@ -87,8 +115,8 @@
   (if (and *credentials*
 	   (loaded *credentials*))
       (dyna:make-dyna :credentials (cons (access-key *credentials*)
-				    (secret-key *credentials*))
-		 :region *aws-region*)
+					 (secret-key *credentials*))
+		      :region *aws-region*)
       (dyna:make-dyna :region "local"))
   "Local connection to dynamodb")
 
