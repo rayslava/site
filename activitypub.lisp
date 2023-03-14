@@ -59,12 +59,14 @@
 	       (print (format nil "JSON: ~A\n"json-obj))
 	       ""))))))
 
-(defun generate-accept (domain guid name object)
+(defun generate-accept (request)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
-		 ("id" . ,(format nil "https://rayslava.com/~A" guid))
+		 ("id" . ,(string-downcase (format nil "https://rayslava.com/~A" (uuid:make-v4-uuid))))
 		 ("type" . "Accept")
-		 ("actor" . ,(format nil "https://~A/~A" domain name))
-		 ("object" . ,object))))
+		 ("actor" . "https://rayslava.com/ap/actor/blog")
+		 ("object" . ,request)))
+	(cl-json::+json-lisp-escaped-chars+
+	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (cl-json:encode-json-alist reply)))
 
 (defun generate-signed-header (keyid inbox domain date hash)
