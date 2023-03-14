@@ -1,6 +1,7 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
-	:asdf :site :site.db-manage :site.config))
+	:asdf :site :site.db-manage :site.config
+	:ironclad :trivia :local-time :dexador))
 
 (in-package :site.activitypub)
 
@@ -56,3 +57,39 @@
                     (json-obj (cl-json:decode-json-from-string data-string))) ;; use jsown to parse the string
 	       (print (format nil "JSON: ~A\n"json-obj))
 	       ""))))))
+
+(defun generate-accept (domain guid name object)
+  (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
+		 ("id" . ,(format nil "https://~A/~A" domain guid))
+		 ("type" . "Accept")
+		 ("actor" . ,(format nil "https://~A/~A" domain name))
+		 ("object" . ,object))))
+    (cl-json:encode-json-alist reply)))
+
+(defun generate-signed-header (keyid inbox domain date hash)
+
+  (format nil "keyId=\"~A\",headers=\"(request-target) host date digest\",signature=\"~A\""
+	  keyid
+	  (base64:usb8-array-to-base64-string
+	   (ironclad:sign-message
+	    *privkey*
+	    (ironclad:digest-sequence :sha256
+				      (ironclad:ascii-string-to-byte-array
+				       (format nil "(request-target): post ~A~%host: ~A~%date: ~A~%digest: SHA-256=~A"
+					       inbox
+					       domain
+					       date
+					       hash)))))))
+
+(defun send-reply (replyurl message)
+  (let ((inbox "/inbox")
+	(domain "host")
+	(date (local-time:format-timestring nil (local-time:now) :format local-time:+rfc-1123-format+))
+	(hash "sdfg")
+	(keyid "https://rayslava.com/ap/actor/blog#main-key"))
+    (dex:post replyurl :headers `(("Content-Type" . "application/ld+json")
+				  ("(request-target)" . ,inbox)
+				  ("host" . ,domain)
+				  ("date" . ,date)
+				  ("digest" . ,hash)
+				  ("Signature" . ,(generate-signed-header keyid inbox domain date hash))))))
