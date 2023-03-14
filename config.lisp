@@ -14,7 +14,8 @@
    :*aws-region*
 	   :*distribution*
    :*activitypub-private-key*
-	   :*activitypub-public-key*))
+	   :*activitypub-public-key-pem*
+   :*activitypub-public-key*))
 
 (in-package :site.config)
 

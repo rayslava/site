@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :site.db-manage :site.config
 	:ironclad :trivia :local-time :dexador
-	:uuid))
+	:uuid :quri))
 
 (in-package :site.activitypub)
 
@@ -40,7 +40,7 @@
        ("inbox" . "https://rayslava.com/ap/actor/blog/inbox")
        ("publicKey" . (("id" . "https://rayslava.com/ap/actor/blog#main-key")
 		       ("owner" . "https://rayslava.com/ap/actor/blog")
-		       ("publicKeyPem" . ,site.config:*activitypub-public-key*)))))))
+		       ("publicKeyPem" . ,site.config:*activitypub-public-key-pem*)))))))
 
 
 					; Accept followers
@@ -50,13 +50,12 @@
   (setf (hunchentoot:content-type*) "application/ld+json")
   (let ((cl-json::+json-lisp-escaped-chars+
 	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-
     (let ((request-type (hunchentoot:request-method hunchentoot:*request*)))
       (cond ((eq request-type :get) "" );; handle get request
             ((eq request-type :post)
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
-                    (json-obj (cl-json:decode-json-from-string data-string))) ;; use jsown to parse the string
-	       (print (format nil "JSON: ~A\n"json-obj))
+                    (request-obj (cl-json:decode-json-from-string data-string))) ;; use jsown to parse the string
+	       (send-signed "https://rayslava.com/ap/actor/blog" (generate-accept request-obj))
 	       ""))))))
 
 (defun generate-accept (request)
@@ -67,15 +66,14 @@
 		 ("object" . ,request)))
 	(cl-json::+json-lisp-escaped-chars+
 	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-    (cl-json:encode-json-alist reply)))
+    (cl-json:encode-json-alist-to-string reply)))
 
 (defun generate-signed-header (keyid inbox domain date hash)
-
   (format nil "keyId=\"~A\",headers=\"(request-target) host date digest\",signature=\"~A\""
 	  keyid
 	  (base64:usb8-array-to-base64-string
 	   (ironclad:sign-message
-	    *privkey*
+	    site.config:*activitypub-private-key*
 	    (ironclad:digest-sequence :sha256
 				      (ironclad:ascii-string-to-byte-array
 				       (format nil "(request-target): post ~A~%host: ~A~%date: ~A~%digest: SHA-256=~A"
@@ -84,16 +82,25 @@
 					       date
 					       hash)))))))
 
-(defun send-reply (replyurl message)
-  (let ((inbox "/inbox")
-	(domain "host")
-	(date (local-time:format-timestring nil (local-time:now) :format local-time:+rfc-1123-format+))
-	(hash "sdfg")
-	(keyid "https://rayslava.com/ap/actor/blog#main-key"))
-    (dex:post replyurl :headers `(("Content-Type" . "application/ld+json")
-				  ("(request-target)" . ,inbox)
-				  ("host" . ,domain)
-				  ("date" . ,date)
-				  ("digest" . ,hash)
-				  ("Signature" . ,(generate-signed-header keyid inbox domain date hash)))
-		       :content message)))
+(defun send-signed (actor message)
+  (let* ((actor-uri (quri:uri actor))
+	 (target-domain (quri:uri-domain actor-uri))
+	 (target-user (quri:uri-path actor-uri))
+	 (target-inbox (concatenate 'string target-user "/inbox"))
+	 (reply-url (concatenate 'string actor "/inbox"))
+	 (date (local-time:format-timestring nil (local-time:now) :format local-time:+rfc-1123-format+))
+	 (hash (ironclad:byte-array-to-hex-string (ironclad:digest-sequence
+						   :sha256
+						   (ironclad:ascii-string-to-byte-array message))))
+	 (keyid "https://rayslava.com/ap/actor/blog#main-key"))
+    (handler-bind ((dex:http-request-not-found #'dex:ignore-and-continue)
+		   (dex:http-request-not-implemented #'dex:ignore-and-continue))
+      (print
+       (dex:post reply-url :headers `(("content-type" . "application/ld+json")
+				      ("(request-target)" . ,target-inbox)
+				      ("host" . ,target-domain)
+				      ("date" . ,date)
+				      ("digest" . ,hash)
+				      ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
+			   :content message
+			   :verbose t)))))
