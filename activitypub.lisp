@@ -44,6 +44,9 @@
 (defmacro fail (&body body)
   `(throw :return (progn ,@body)))
 
+(defun get-subheader-string (name subheaders)
+  (string-trim "\"" (cdr (assoc name subheaders :test #'string-equal))))
+
 					; Accept followers
 (define-easy-handler (blog-inbox :uri "/ap/actor/blog/inbox"
 				 :default-request-type :post)
@@ -68,10 +71,10 @@
 		    (signature-parts
 		      (loop for (head . tail) on line-parts by #'cddr
 			    collect (cons head (car tail))))
-		    (keyid (string-trim "\"" (cdr (assoc "keyid" signature-parts :test #'string-equal))))
-		    (headers (string-trim "\"" (cdr (assoc "headers" signature-parts :test #'string-equal))))
+		    (keyid (get-subheader-string "keyid" signature-parts))
+		    (headers (get-subheader-string "headers" signature-parts))
 		    (signature (base64:base64-string-to-usb8-array
-				(string-trim "\"" (cdr (assoc "signature" signature-parts :test #'string-equal)))))
+				(get-subheader-string "signature" signature-parts)))
 		    (checked-headers (with-output-to-string (s)
 				       (mapcar #'(lambda (hdr)
 						   (format s "~%~A: ~A"
@@ -113,7 +116,6 @@
 
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
                     (request-obj (cl-json:decode-json-from-string data-string)))
-	       (print (format nil "~A of type ~A~%Checking signature~%" request-obj (cdr (assoc :type request-obj))))
 	       (when (string= "Follow" (cdr (assoc :type request-obj)))
 		 (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj)))
 	       ""))))))
