@@ -1,7 +1,8 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :site.db-manage :site.config
-	:ironclad :trivia :local-time :dexador))
+	:ironclad :trivia :local-time :dexador
+	:uuid))
 
 (in-package :site.activitypub)
 
@@ -60,7 +61,7 @@
 
 (defun generate-accept (domain guid name object)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
-		 ("id" . ,(format nil "https://~A/~A" domain guid))
+		 ("id" . ,(format nil "https://rayslava.com/~A" guid))
 		 ("type" . "Accept")
 		 ("actor" . ,(format nil "https://~A/~A" domain name))
 		 ("object" . ,object))))
@@ -92,4 +93,5 @@
 				  ("host" . ,domain)
 				  ("date" . ,date)
 				  ("digest" . ,hash)
-				  ("Signature" . ,(generate-signed-header keyid inbox domain date hash))))))
+				  ("Signature" . ,(generate-signed-header keyid inbox domain date hash)))
+		       :content message)))
