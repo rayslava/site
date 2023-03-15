@@ -222,7 +222,7 @@
   (create-dyna-table 'activitypub-subscriber))
 
 (defmethod update-lastpost ((subscriber activitypub-subscriber) newlastpost)
-  "Update lastpost number in DynamoDB to `newlastpost'"
+  "Update lastpost number in DynamoDB to `newlastpost' for `subscriber'"
   (let* ((item (car (select-dyna 'activitypub-subscriber
 				 (sxql:where (:= :actor (actor subscriber))))))
 	 (oldposts (lastpost item)))
@@ -233,6 +233,10 @@
     (save-dyna item)))
 
 (defun format-fedi-post (post)
+  "Produces new json 'Create' activity from the `post'
+
+TODO: Check and support mastodon formatting, currently it seems that newlines
+are processed as plain text, not as in HTML"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
 	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
@@ -251,6 +255,8 @@
     (cl-json:encode-json-alist-to-string message)))
 
 (defun maybe-deliver-new-post (post)
+  "Find all the subscribers who didn't recieve the `post' yet and push the post
+to corresponding actor"
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
