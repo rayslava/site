@@ -85,15 +85,16 @@
 		      (userprofile (cl-json:decode-json-from-string
 				    (handler-bind ((dex:http-request-gone #'(lambda (args)
 									      (setf (return-code*) hunchentoot:+http-authorization-required+)
+									      (hunchentoot:log-message* :info "Public key gone from ~A" keyid)
 									      (format nil "Can't load signature~A~%" args)
 									      (return-from blog-inbox)))
 						   (dex:http-request-not-found #'(lambda (args)
 										   (setf (return-code*) hunchentoot:+http-authorization-required+)
+										   (hunchentoot:log-message* :info "Public key not found for ~A" keyid)
 										   (format nil "Can't find public key~A~%" args)
 										   (return-from blog-inbox))))
-				      (dex:get keyid :verbose t
-						     :headers
-						     '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))))))
+				      (dex:get keyid :headers
+					       '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))))))
 		      (key (assoc :public-key userprofile))
 		      (pem (cdr (assoc :public-key-pem (cdr key))))
 		      (public-key (trivia:match
@@ -108,7 +109,7 @@
 					       (ironclad:ascii-string-to-byte-array message-to-check)
 					       signature
 					       :sha256)
-		   (print (format nil "Signature verification failed~%"))
+		   (hunchentoot:log-message* :info "Signature verification failed for ~A" keyid)
 		   (setf (return-code*) hunchentoot:+http-authorization-required+)
 		   (format nil "Signature verification failed~%")
 		   (return-from blog-inbox))))
@@ -166,9 +167,9 @@
 				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 
-		:content message
-		:verbose t))))
-
+			  :content message
+			  :verbose t))
+    (hunchentoot:log-message* :info "Accepted new follower ~A" actor)))
 
 ;;;; Posting message like that
 ;; (let ((message '(("@context" . "https://www.w3.org/ns/activitystreams")
