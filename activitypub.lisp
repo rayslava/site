@@ -252,7 +252,7 @@
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(send-signed subscriber (format-fedi-post post))
+		(send-signed (actor subscriber) (format-fedi-post post))
 		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
