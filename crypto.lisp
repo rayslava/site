@@ -6,7 +6,7 @@
 (in-package :site.crypto)
 
 ;;; Thanks to dnaeon for this section
-;;; http://dnaeon.github.io/rsassa-pkcs1-1_5-signature-common-lisp/
+;;; https://dnaeon.github.io/rsassa-pkcs1-1_5-signature-common-lisp/
 
 (defun i2osp (n &key n-bits)
   "Integer-to-Octet-String primitive. See RFC 8017, section 4.1"
