@@ -1024,3 +1024,21 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  Sputnik-V vaccination")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3819510001")))
+
+(defblogpost 3887892772 "ActivityPub enabled"
+  (:div
+   (:p "Lately I've spent some time and added the very basic ActivityPub support to
+   the blog. Now posts with the 'fedi' tag will be automatically published at
+   @blog@rayslava.com account.")
+   (:p "Now I need a bit of rest and then will share some thoughts on the standard
+   and implementation"))
+  :tags '("en" "fedi" "test")
+  :meta  ((:meta :property "og:title" :content "ActivityPub enabled")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "announce")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3887892772")))
+
+;;; Push new posts to activitypub if needed
+(maybe-deliver-new-posts)

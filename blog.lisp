@@ -2,7 +2,7 @@
 (defpackage :site.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
 	:asdf :site :local-time)
-  (:export :defblogpost :blog-post))
+  (:export :defblogpost :blog-post :id :tags :post))
 
 (in-package :site.blog)
 

@@ -118,17 +118,20 @@
 	     ;;; Now the actual request can be processed
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
                     (request-obj (cl-json:decode-json-from-string data-string)))
-	       (when (string= "Follow" (cdr (assoc :type request-obj)))
-		 (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
-		 (let* ((actor (cdr (assoc :actor request-obj)))
-			(attr `(("subscribed" . ,(hunchentoot:rfc-1123-date))))
-			(subscriber (make-instance 'activitypub-subscriber :actor actor
-									   :attr (cl-json:encode-json-to-string attr))))
-		   (when (not (nth-value 0 (select-dyna 'activitypub-subscriber
-							(sxql:where (:= :actor actor)))))
-		     (save-dyna subscriber)
-		     (hunchentoot:log-message* :info "Accepted new follower ~A" actor))))
-	       ""))))))
+	       (cond ((string= "Follow" (cdr (assoc :type request-obj)))
+		      (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
+		      (let* ((actor (cdr (assoc :actor request-obj)))
+			     (attr `(("subscribed" . ,(hunchentoot:rfc-1123-date))))
+			     (subscriber (make-instance 'activitypub-subscriber :actor actor
+										:attr (cl-json:encode-json-to-string attr))))
+			(when (not (nth-value 0 (select-dyna 'activitypub-subscriber
+							     (sxql:where (:= :actor actor)))))
+			  (save-dyna subscriber)
+			  (hunchentoot:log-message* :info "Accepted new follower ~A" actor))))
+		     (t (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A"
+						  (cdr (assoc :type request-obj))
+						  (cdr (assoc :actor request-obj)))))))))))
+
 
 (defun generate-accept (request)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
@@ -227,9 +230,9 @@
 			       ("lastpost" . ,oldposts)))
     (save-dyna item)))
 
-(defmethod format-fedi-post (post blog-post)
+(defun format-fedi-post (post)
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
-	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp post-id)
+	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
 	 (message `(("@context" . "https://www.w3.org/ns/activitystreams")
 		    ("id" . ,post-id)
@@ -245,15 +248,14 @@
 	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (cl-json:encode-json-alist-to-string message)))
 
-
-(defmethod maybe-deliver-new-post (post blog-post)
+(defun maybe-deliver-new-post (post)
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(send-signed subscriber (format-fedi-post post)))
+		(send-signed subscriber (format-fedi-post post))
+		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
-
 
 (defun maybe-deliver-new-posts ()
   "Check if there are new posts to deliver to subscribers"
@@ -261,7 +263,7 @@
 		    (remove-if-not #'(lambda (post)
 				       (member "fedi" (tags post) :test #'equal))
 				   site.blog::*blog-posts*)
-		    #'> :key #'(lambda (p) (id p)))))
+		    #'< :key #'(lambda (p) (id p)))))
     (dolist (post fediposts)
-      (when (= 0 (maybe-deliver-new-posts post))
+      (when (= 0 (maybe-deliver-new-post post))
 	(return)))))
