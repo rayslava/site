@@ -273,5 +273,4 @@ to corresponding actor"
 				   site.blog::*blog-posts*)
 		    #'< :key #'(lambda (p) (id p)))))
     (dolist (post fediposts)
-      (when (= 0 (maybe-deliver-new-post post))
-	(return)))))
+      (maybe-deliver-new-post post))))
