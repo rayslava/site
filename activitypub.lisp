@@ -1,6 +1,7 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
-	:asdf :site :dyna :site.db-manage :site.config :site.crypto))
+	:asdf :site :dyna.table-operation :dyna
+	:site.db-manage :site.config :site.crypto))
 
 (in-package :site.activitypub)
 
