@@ -81,6 +81,25 @@ Allow: /contacts
 Allow: /blog
 "))
 
+(define-easy-handler (health-page :uri "/health"
+				  :default-request-type :get)
+    ()
+  (format nil "[+]: Alive
+Dyn: ~A
+Avg: ~A
+Mem:~A
+"
+	  (sb-kernel:dynamic-usage)
+	  (with-open-file (stream #P"/proc/loadavg")
+	    (read-line stream nil))
+	  (with-open-file (stream #P"/proc/meminfo")
+	    (apply 'concatenate 'string
+		   (loop for line = (read-line stream nil)
+			 while line
+			 when (or (search "MemFree:" line)
+				  (search "MemAvailable:" line))
+			   collect (cl-ppcre:regex-replace "^.*?\\s+" line " "))))))
+
 (define-easy-handler (contacts-page :uri "/contacts"
 				    :default-request-type :get)
     ()
