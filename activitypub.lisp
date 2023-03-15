@@ -248,7 +248,7 @@ are processed as plain text, not as in HTML"
 				 ("type" . "Note")
 				 ("published" . ,date)
 				 ("attributedTo" . "https://rayslava.com/ap/actor/blog")
-				 ("content" . ,(funcall (post post)))
+				 ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
 				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))))
 	 (cl-json::+json-lisp-escaped-chars+
 	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
