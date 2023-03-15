@@ -25,7 +25,7 @@
 	       (:file "style"
 		:depends-on ("site"))
 	       (:file "blogposts"
-		:depends-on ("blog"))
+		:depends-on ("blog" "activitypub"))
 	       (:file "lj"
 		:depends-on ("blogposts"))
 	       (:file "db-storage"
@@ -34,4 +34,4 @@
 		:depends-on ("db-storage"))
 	       (:file "crypto")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto"))))
+		:depends-on ("config" "crypto" "blog"))))

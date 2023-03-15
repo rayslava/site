@@ -1,7 +1,8 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
-	:site.db-manage :site.config :site.crypto))
+	:site.db-manage :site.config :site.crypto :site.blog)
+  (:export :maybe-deliver-new-posts))
 
 (in-package :site.activitypub)
 
@@ -119,9 +120,14 @@
                     (request-obj (cl-json:decode-json-from-string data-string)))
 	       (when (string= "Follow" (cdr (assoc :type request-obj)))
 		 (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
-		 (let ((subscriber (make-instance 'activitypub-subscriber :actor actor)))
-		   (save-dyna subscriber))
-		 (hunchentoot:log-message* :info "Accepted new follower ~A" actor))
+		 (let* ((actor (cdr (assoc :actor request-obj)))
+			(attr `(("subscribed" . ,(hunchentoot:rfc-1123-date))))
+			(subscriber (make-instance 'activitypub-subscriber :actor actor
+									   :attr (cl-json:encode-json-to-string attr))))
+		   (when (not (nth-value 0 (select-dyna 'activitypub-subscriber
+							(sxql:where (:= :actor actor)))))
+		     (save-dyna subscriber)
+		     (hunchentoot:log-message* :info "Accepted new follower ~A" actor))))
 	       ""))))))
 
 (defun generate-accept (request)
@@ -179,41 +185,83 @@
 	  :initarg :actor
 	  :accessor actor
 	  :documentation "The actor url of subscriber.")
-   (attr     :attr-name "attr"
-	     :attr-type :S
-	     :initarg :attr
-	     :key-type :range
-	     :accessor attr
-	     :initform nil
-	     :documentation "Sorted plist with additional arguments"))
+   (lastpost :key-type :range
+	     :attr-name "lastpost"
+	     :attr-type :N
+	     :initarg :lastpost
+	     :accessor lastpost
+	     :initform 0
+	     :documentation "Id of last post sent to this subscriber")
+   (attr :key-type :range
+	 :attr-name "attr"
+	 :attr-type :S
+	 :initarg :attr
+	 :accessor attr
+	 :initform nil
+	 :documentation "Sorted plist with additional arguments"))
   (:dyna *dyna*)
   (:table-name "activitypub-subscribers")
   (:metaclass dyna.table-operation::<dyna-table-class>))
 
 (defmethod print-object ((subscriber activitypub-subscriber) out)
-  (with-slots (actor attr) subscriber
+  (with-slots (actor lastpost attr) subscriber
     (print-unreadable-object (subscriber out :type t)
-      (format out "File '~A' ~A" actor attr))))
+      (format out "File '~A' with last post provided ~A ~A" actor lastpost attr))))
 
 (defmethod store-subscriber-to-dynamodb (subscriber activitypub-subscriber)
   "Store the subscriber to DynamoDB taking data from `subscriber' object"
   (save-dyna subscriber))
 
-;;; The same to DynamoDB table
+;;; Create DynamoDB table if one doesn't exist
 (when (not (table-exist-p 'activitypub-subscriber))
   (create-dyna-table 'activitypub-subscriber))
 
-;;;; Posting message like that
-;; (let ((message '(("@context" . "https://www.w3.org/ns/activitystreams")
-;; 			  ("id" . "https://rayslava.com/blog/create-test-message")
-;; 			  ("type" . "Create")
-;; 			  ("actor" . "https://rayslava.com/ap/actor/blog")
-;; 			  ("object" . (("id" . "https://rayslava.com/blog/test-message")
-;; 				       ("type" . "Note")
-;; 				       ("published" . "2023-03-14T17:30:55Z")
-;; 				       ("attributedTo" . "https://rayslava.com/ap/actor/blog")
-;; 				       ("content" . "<p>Testing ActivityPub from own LISP server</p>")
-;; 				       ("to" . "https://www.w3.org/ns/activitystreams#Public")))))
-;; 	       (cl-json::+json-lisp-escaped-chars+
-;; 		 (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-;; 	   (send-signed "https://lor.sh/users/rayslava" (cl-json:encode-json-alist-to-string message)))
+(defmethod update-lastpost ((subscriber activitypub-subscriber) newlastpost)
+  "Update lastpost number in DynamoDB to `newlastpost'"
+  (let* ((item (car (select-dyna 'activitypub-subscriber
+				 (sxql:where (:= :actor (actor subscriber))))))
+	 (oldposts (lastpost item)))
+    (setf (lastpost item) newlastpost)
+    (delete-item *dyna* :table-name "activitypub-subscribers"
+			:key `(("actor" . ,(actor item))
+			       ("lastpost" . ,oldposts)))
+    (save-dyna item)))
+
+(defmethod format-fedi-post (post blog-post)
+  (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
+	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp post-id)
+					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
+	 (message `(("@context" . "https://www.w3.org/ns/activitystreams")
+		    ("id" . ,post-id)
+		    ("type" . "Create")
+		    ("actor" . "https://rayslava.com/ap/actor/blog")
+		    ("object" . (("id" . ,post-id)
+				 ("type" . "Note")
+				 ("published" . ,date)
+				 ("attributedTo" . "https://rayslava.com/ap/actor/blog")
+				 ("content" . ,(funcall (post post)))
+				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))))
+	 (cl-json::+json-lisp-escaped-chars+
+	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+    (cl-json:encode-json-alist-to-string message)))
+
+
+(defmethod maybe-deliver-new-post (post blog-post)
+  (let ((unnotified (select-dyna 'activitypub-subscriber
+				 (sxql:where (:< :lastpost (id post))))))
+    (mapcar #'(lambda (subscriber)
+		(send-signed subscriber (format-fedi-post post)))
+	    unnotified)
+    (length unnotified)))
+
+
+(defun maybe-deliver-new-posts ()
+  "Check if there are new posts to deliver to subscribers"
+  (let ((fediposts (sort
+		    (remove-if-not #'(lambda (post)
+				       (member "fedi" (tags post) :test #'equal))
+				   site.blog::*blog-posts*)
+		    #'> :key #'(lambda (p) (id p)))))
+    (dolist (post fediposts)
+      (when (= 0 (maybe-deliver-new-posts post))
+	(return)))))
