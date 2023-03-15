@@ -127,10 +127,12 @@
 			(when (not (nth-value 0 (select-dyna 'activitypub-subscriber
 							     (sxql:where (:= :actor actor)))))
 			  (save-dyna subscriber)
-			  (hunchentoot:log-message* :info "Accepted new follower ~A" actor))))
-		     (t (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A"
+			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
+			  (maybe-deliver-new-posts))))
+		     (t (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A~%Dump: ~A~%"
 						  (cdr (assoc :type request-obj))
-						  (cdr (assoc :actor request-obj)))))))))))
+						  (cdr (assoc :actor request-obj))
+						  request-obj)))))))))
 
 
 (defun generate-accept (request)
