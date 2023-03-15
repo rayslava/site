@@ -150,7 +150,6 @@
 	 (target-user (quri:uri-path actor-uri))
 	 (target-inbox (concatenate 'string target-user "/inbox"))
 	 (reply-url (concatenate 'string actor "/inbox"))
-					;	 (date (local-time:format-timestring nil (local-time:now) :format local-time:+rfc-1123-format+))
 	 (date (hunchentoot:rfc-1123-date))
 	 (hash (concatenate 'string "SHA-256="
 			    (base64:usb8-array-to-base64-string (ironclad:digest-sequence
@@ -160,13 +159,11 @@
     (handler-bind ((dex:http-request-not-found #'dex:ignore-and-continue)
 		   (dex:http-request-not-implemented #'dex:ignore-and-continue))
       (dex:post reply-url :headers `(("content-type" . "application/ld+json")
-					;				      ("@request-target" . ,(concatenate 'string "post " target-inbox))
 				     ("host" . ,target-domain)
 				     ("date" . ,date)
 				     ("digest" . ,hash)
 				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
-
 			  :content message
 			  :verbose t))
     (hunchentoot:log-message* :info "Accepted new follower ~A" actor)))
