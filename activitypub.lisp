@@ -1,6 +1,6 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
-	:asdf :site :site.db-manage :site.config :site.crypto))
+	:asdf :site :dyna :site.db-manage :site.config :site.crypto))
 
 (in-package :site.activitypub)
 
@@ -117,7 +117,10 @@
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
                     (request-obj (cl-json:decode-json-from-string data-string)))
 	       (when (string= "Follow" (cdr (assoc :type request-obj)))
-		 (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj)))
+		 (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
+		 (let ((subscriber (make-instance 'activitypub-subscriber :actor actor)))
+		   (save-dyna subscriber))
+		 (hunchentoot:log-message* :info "Accepted new follower ~A" actor))
 	       ""))))))
 
 (defun generate-accept (request)
@@ -165,8 +168,39 @@
 				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 			  :content message
-			  :verbose t))
-    (hunchentoot:log-message* :info "Accepted new follower ~A" actor)))
+			  :verbose t))))
+
+;;; Static storage procedure
+(defclass activitypub-subscriber ()
+  ((actor :key-type :hash
+	  :attr-name "actor"
+	  :attr-type :S
+	  :initarg :actor
+	  :accessor actor
+	  :documentation "The actor url of subscriber.")
+   (attr     :attr-name "attr"
+	     :attr-type :S
+	     :initarg :attr
+	     :key-type :range
+	     :accessor attr
+	     :initform nil
+	     :documentation "Sorted plist with additional arguments"))
+  (:dyna *dyna*)
+  (:table-name "activitypub-subscribers")
+  (:metaclass dyna.table-operation::<dyna-table-class>))
+
+(defmethod print-object ((subscriber activitypub-subscriber) out)
+  (with-slots (actor attr) subscriber
+    (print-unreadable-object (subscriber out :type t)
+      (format out "File '~A' ~A" actor attr))))
+
+(defmethod store-subscriber-to-dynamodb (subscriber activitypub-subscriber)
+  "Store the subscriber to DynamoDB taking data from `subscriber' object"
+  (save-dyna subscriber))
+
+;;; The same to DynamoDB table
+(when (not (table-exist-p 'activitypub-subscriber))
+  (create-dyna-table 'activitypub-subscriber))
 
 ;;;; Posting message like that
 ;; (let ((message '(("@context" . "https://www.w3.org/ns/activitystreams")

@@ -1,4 +1,4 @@
-(defpackage :site.crypt
+(defpackage :site.crypto
   (:use :cl :hunchentoot :cl-who :cl-json :asdf)
   (:export :rsassa-pkcs1-v1_5-sign
    :rsassa-pkcs1-v1_5-verify))
