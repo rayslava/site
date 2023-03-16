@@ -42,6 +42,19 @@
 		       ("owner" . "https://rayslava.com/ap/actor/blog")
 		       ("publicKeyPem" . ,site.config:*activitypub-public-key-pem*)))))))
 
+(defmacro generate-delete-reply-func (message)
+  `(lambda (args)
+     (let* ((data-string (hunchentoot:raw-post-data :force-text t))
+	    (request-obj (cl-json:decode-json-from-string data-string)))
+       (if (string= "Delete" (cdr (assoc :type request-obj)))
+	   (progn
+	     (hunchentoot:log-message* :info "Delete request came to remove ~A" keyid)
+	     (cl-json:encode-json-to-string '(("status" . "ok"))))
+	   (progn
+	     (setf (return-code*) hunchentoot:+http-authorization-required+)
+	     (hunchentoot:log-message* :info "~A~A" ,message keyid)
+	     (format nil "~A~A~%" ,message args))))
+     (return-from blog-inbox)))
 
 (define-easy-handler (blog-inbox :uri "/ap/actor/blog/inbox"
 				 :default-request-type :post)
@@ -85,16 +98,8 @@
 						     "(request-target): post /ap/actor/blog/inbox"
 						     checked-headers))
 		      (userprofile (cl-json:decode-json-from-string
-				    (handler-bind ((dex:http-request-gone #'(lambda (args)
-									      (setf (return-code*) hunchentoot:+http-authorization-required+)
-									      (hunchentoot:log-message* :info "Public key gone from ~A" keyid)
-									      (format nil "Can't load signature~A~%" args)
-									      (return-from blog-inbox)))
-						   (dex:http-request-not-found #'(lambda (args)
-										   (setf (return-code*) hunchentoot:+http-authorization-required+)
-										   (hunchentoot:log-message* :info "Public key not found for ~A" keyid)
-										   (format nil "Can't find public key~A~%" args)
-										   (return-from blog-inbox))))
+				    (handler-bind ((dex:http-request-gone (generate-delete-reply-func "Public key gone for id "))
+						   (dex:http-request-not-found (generate-delete-reply-func "Public key not found for id ")))
 				      (dex:get keyid :headers
 					       '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))))))
 		      (key (assoc :public-key userprofile))
