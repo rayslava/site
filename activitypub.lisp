@@ -245,7 +245,12 @@ are processed as plain text, not as in HTML"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
 	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
-	 (message `(("@context" . "https://www.w3.org/ns/activitystreams")
+	 (langtag (cond ((member "ru" (tags post) :test #'string=) '(("@language" . "ru")))
+			((member "en" (tags post) :test #'string=) '(("@language" . "en")))
+			(t nil)))
+	 (message `(("@context" . ,(if langtag
+				       `("https://www.w3.org/ns/activitystreams" ,langtag)
+				       "https://www.w3.org/ns/activitystreams"))
 		    ("id" . ,post-id)
 		    ("type" . "Create")
 		    ("actor" . "https://rayslava.com/ap/actor/blog")
