@@ -1040,5 +1040,19 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3887892772")))
 
+(defblogpost 3888337755 "Поддержка локализации ActivityPub"
+  (:div
+   (:p "Внезапно, под покроном ночи, рывком добавил поддержку тега с языком в
+   ActivityPub. Потому что могу.")
+   (:p "И да, я всё ещё помню, что я хотел написать пост про эту поддержку, но пока не
+   добрался"))
+  :tags '("ru" "fedi" "дыбр")
+  :meta  ((:meta :property "og:title" :content "Поддержка локализации ActivityPub")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Добавление локализации в ActivityPub")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3888337755")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts)
