@@ -255,8 +255,8 @@
 			       ("lastpost" . ,oldposts)))
     (save-dyna item)))
 
-(defun prepare-fedi-object (post)
-  "Produces new json object from the `post'"
+(defun prepare-fedi-object (post type)
+  "Produces new json object from the `post' of type `type'"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
 	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
@@ -267,7 +267,7 @@
 				       `("https://www.w3.org/ns/activitystreams" ,langtag)
 				       "https://www.w3.org/ns/activitystreams"))
 		    ("id" . ,post-id)
-		    ("type" . "Create")
+		    ("type" . ,type)
 		    ("actor" . "https://rayslava.com/ap/actor/blog")
 		    ("object" . (("id" . ,post-id)
 				 ("type" . "Note")
@@ -284,17 +284,13 @@ TODO: Check and support mastodon formatting, currently it seems that newlines
 are processed as plain text, not as in HTML"
   (let* ((cl-json::+json-lisp-escaped-chars+
 	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-    (cl-json:encode-json-alist-to-string (prepare-fedi-object post))))
+    (cl-json:encode-json-alist-to-string (prepare-fedi-object post "Create"))))
 
 (defun fedi-post-update (post)
   "Produces new json 'Update' activity from the `post'"
-  (let ((update-post `(("@context" . "https://www.w3.org/ns/activitystreams")
-		       ("id" . ,(string-downcase (format nil "https://rayslava.com/~A" (uuid:make-v4-uuid))))
-		       ("type" . "Update")
-		       ("object" . ,(prepare-fedi-object post))))
-	(cl-json::+json-lisp-escaped-chars+
+  (let ((cl-json::+json-lisp-escaped-chars+
 	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-    (cl-json:encode-json-alist-to-string update-post)))
+    (cl-json:encode-json-alist-to-string (prepare-fedi-object post "Update"))))
 
 (defun maybe-deliver-new-post (post)
   "Find all the subscribers who didn't recieve the `post' yet and push the post
@@ -326,9 +322,9 @@ version to corresponding actor"
   (let ((notified (select-dyna 'activitypub-subscriber
 			       (sxql:where (:>= :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(hunchentoot:log-message* :info "Updating post ~A to ~A: ~A"
-					  (id post)
-					  (actor subscriber)
-					  (send-signed (actor subscriber) (fedi-post-update post))))
+		(format nil "Updating post ~A to ~A: ~A"
+			(id post)
+			(actor subscriber)
+			(send-signed (actor subscriber) (fedi-post-update post))))
 	    notified)
     (length notified)))
