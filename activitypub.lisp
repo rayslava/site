@@ -322,7 +322,7 @@ version to corresponding actor"
   (let ((notified (select-dyna 'activitypub-subscriber
 			       (sxql:where (:>= :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(format nil "Updating post ~A to ~A: ~A"
+		(hunchentoot:log-message* :info "Updating post ~A to ~A: ~A"
 			(id post)
 			(actor subscriber)
 			(send-signed (actor subscriber) (fedi-post-update post))))

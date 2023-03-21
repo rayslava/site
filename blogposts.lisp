@@ -1054,5 +1054,22 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3888337755")))
 
+(defblogpost 3888412487 "Добавил Unsubscribe и Update в ActivityPub"
+  (:div
+   (:p "Покрон ночи, конечно, починить не вышло, потому что слишком много времени
+   прошло, но я дописал ещё кусочек функциональности в часть с поддержкой
+   ActivityPub.")
+   (:p "В целом, как всегда, когда есть базовая часть, дописывать новые куски с каждым
+   разом всё проще и проще. Такими темпами у меня появится вполне живая
+   поддержка, собственно, из того, что я хотел бы добавить, остался только сбор
+   статистики по бустам и добавлению в фэйвориты."))
+  :tags '("ru" "fedi" "дыбр")
+  :meta  ((:meta :property "og:title" :content "Поддержка локализации ActivityPub")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Добавил Unsubscribe и Update в ActivityPub")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3888412487")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts)
