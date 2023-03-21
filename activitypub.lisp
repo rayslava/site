@@ -134,11 +134,20 @@
 			  (save-dyna subscriber)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
 			  (maybe-deliver-new-posts))))
+		     ((string= "Undo" (cdr (assoc :type request-obj)))
+		      (let* ((object (cdr (assoc :object request-obj))))
+			(cond ((string= "Follow" (cdr (assoc :type object)))
+			       (unsubscribe (make-instance 'activitypub-subscriber :actor (cdr (assoc :actor object))))
+			       (hunchentoot:log-message* :info "Unsubscribed user: ~A" (cdr (assoc :actor object)))
+			       (cl-json:encode-json-to-string '(("status" . "ok"))))
+			      (t (hunchentoot:log-message* :info "Unexpected undo request for object of type ~A received from ~A~%Dump: ~A~%"
+							   (cdr (assoc :type object))
+							   (cdr (assoc :actor request-obj))
+							   request-obj)))))
 		     (t (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A~%Dump: ~A~%"
 						  (cdr (assoc :type request-obj))
 						  (cdr (assoc :actor request-obj))
 						  request-obj)))))))))
-
 
 (defun generate-accept (request)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
@@ -185,7 +194,7 @@
 				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 			  :content message
-			  :verbose t))))
+			  :verbose nil))))
 
 ;;; Static storage procedure
 (defclass activitypub-subscriber ()
@@ -218,13 +227,22 @@
     (print-unreadable-object (subscriber out :type t)
       (format out "File '~A' with last post provided ~A ~A" actor lastpost attr))))
 
-(defmethod store-subscriber-to-dynamodb (subscriber activitypub-subscriber)
-  "Store the subscriber to DynamoDB taking data from `subscriber' object"
-  (save-dyna subscriber))
-
 ;;; Create DynamoDB table if one doesn't exist
 (when (not (table-exist-p 'activitypub-subscriber))
   (create-dyna-table 'activitypub-subscriber))
+
+(defgeneric unsubscribe (subscriber)
+  (:documentation "Unsubscribe the subscriber from blog."))
+
+(defmethod unsubscribe ((subscriber activitypub-subscriber))
+  "Delete the `subscriber' from DynamoDB and stop pushing messages"
+  (let ((item (car (select-dyna 'activitypub-subscriber
+				(sxql:where (:= :actor (actor subscriber)))))))
+    (when item
+      (let ((oldposts (lastpost item)))
+	(delete-item *dyna* :table-name "activitypub-subscribers"
+			    :key `(("actor" . ,(actor item))
+				   ("lastpost" . ,oldposts)))))))
 
 (defmethod update-lastpost ((subscriber activitypub-subscriber) newlastpost)
   "Update lastpost number in DynamoDB to `newlastpost' for `subscriber'"
@@ -270,7 +288,10 @@ to corresponding actor"
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(send-signed (actor subscriber) (format-fedi-post post))
+		(hunchentoot:log-message* :info "Delivered post ~A to ~A: ~A"
+					  (id post)
+					  (actor subscriber)
+					  (send-signed (actor subscriber) (format-fedi-post post)))
 		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
