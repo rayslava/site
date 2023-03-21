@@ -255,11 +255,8 @@
 			       ("lastpost" . ,oldposts)))
     (save-dyna item)))
 
-(defun format-fedi-post (post)
-  "Produces new json 'Create' activity from the `post'
-
-TODO: Check and support mastodon formatting, currently it seems that newlines
-are processed as plain text, not as in HTML"
+(defun prepare-fedi-object (post)
+  "Produces new json object from the `post'"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
 	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
@@ -277,10 +274,27 @@ are processed as plain text, not as in HTML"
 				 ("published" . ,date)
 				 ("attributedTo" . "https://rayslava.com/ap/actor/blog")
 				 ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
-				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))))
-	 (cl-json::+json-lisp-escaped-chars+
+				 ("to" . "https://www.w3.org/ns/activitystreams#Public"))))))
+    message))
+
+(defun fedi-post-create (post)
+  "Produces new json 'Create' activity from the `post'
+
+TODO: Check and support mastodon formatting, currently it seems that newlines
+are processed as plain text, not as in HTML"
+  (let* ((cl-json::+json-lisp-escaped-chars+
 	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
-    (cl-json:encode-json-alist-to-string message)))
+    (cl-json:encode-json-alist-to-string (prepare-fedi-object post))))
+
+(defun fedi-post-update (post)
+  "Produces new json 'Update' activity from the `post'"
+  (let ((update-post `(("@context" . "https://www.w3.org/ns/activitystreams")
+		       ("id" . ,(string-downcase (format nil "https://rayslava.com/~A" (uuid:make-v4-uuid))))
+		       ("type" . "Update")
+		       ("object" . ,(prepare-fedi-object post))))
+	(cl-json::+json-lisp-escaped-chars+
+	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+    (cl-json:encode-json-alist-to-string update-post)))
 
 (defun maybe-deliver-new-post (post)
   "Find all the subscribers who didn't recieve the `post' yet and push the post
@@ -291,7 +305,7 @@ to corresponding actor"
 		(hunchentoot:log-message* :info "Delivered post ~A to ~A: ~A"
 					  (id post)
 					  (actor subscriber)
-					  (send-signed (actor subscriber) (format-fedi-post post)))
+					  (send-signed (actor subscriber) (fedi-post-create post)))
 		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
@@ -305,3 +319,16 @@ to corresponding actor"
 		    #'< :key #'(lambda (p) (id p)))))
     (dolist (post fediposts)
       (maybe-deliver-new-post post))))
+
+(defun maybe-update-post (post)
+  "Find all the subscribers who recieved the `post' already and push the new
+version to corresponding actor"
+  (let ((notified (select-dyna 'activitypub-subscriber
+			       (sxql:where (:>= :lastpost (id post))))))
+    (mapcar #'(lambda (subscriber)
+		(hunchentoot:log-message* :info "Updating post ~A to ~A: ~A"
+					  (id post)
+					  (actor subscriber)
+					  (send-signed (actor subscriber) (fedi-post-update post))))
+	    notified)
+    (length notified)))
