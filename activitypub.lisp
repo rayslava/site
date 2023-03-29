@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog)
-  (:export :maybe-deliver-new-posts))
+  (:export :maybe-deliver-new-posts :reactions-number))
 
 (in-package :site.activitypub)
 
@@ -145,14 +145,71 @@
 			       (unsubscribe (make-instance 'activitypub-subscriber :actor (cdr (assoc :actor object))))
 			       (hunchentoot:log-message* :info "Unsubscribed user: ~A" (cdr (assoc :actor object)))
 			       (cl-json:encode-json-to-string '(("status" . "ok"))))
+			      ((or
+				(string= "Like" (cdr (assoc :type object)))
+				(string= "Announce" (cdr (assoc :type object))))
+			       (dislike (cdr (assoc :id object)))
+			       (hunchentoot:log-message* :info "Removed ~A for: ~A"
+							 (cdr (assoc :type object))
+							 (cdr (assoc :object object)))
+			       (cl-json:encode-json-to-string '(("status" . "ok"))))
 			      (t (hunchentoot:log-message* :info "Unexpected undo request for object of type ~A received from ~A~%Dump: ~A~%"
 							   (cdr (assoc :type object))
 							   (cdr (assoc :actor request-obj))
 							   request-obj)))))
-		     (t (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A~%Dump: ~A~%"
-						  (cdr (assoc :type request-obj))
-						  (cdr (assoc :actor request-obj))
-						  request-obj)))))))))
+		     ((or (string= "Like" (cdr (assoc :type request-obj)))
+			  (string= "Announce" (cdr (assoc :type request-obj))))
+		      (let* ((event-type (cdr (assoc :type request-obj)))
+			     (id (cdr (assoc :id request-obj)))
+			     (actor (cdr (assoc :actor request-obj)))
+			     (object-id (cdr (assoc :object request-obj)))
+			     (event-body data-string)
+			     (event (make-instance 'activitypub-event
+						   :id id
+						   :object-id object-id
+						   :published 0
+						   :event-type event-type
+						   :event event-body)))
+			(save-dyna event)
+			(hunchentoot:log-message* :info "Received like for ~A from ~A" object-id actor))
+		      (cl-json:encode-json-to-string '(("status" . "ok"))))
+		     ((string= "Delete" (cdr (assoc :type request-obj)))
+		      (let* ((event-type (cdr (assoc :type request-obj)))
+			     (id (cdr (assoc :id request-obj)))
+			     (actor (cdr (assoc :actor request-obj)))
+			     (object-id (cdr (assoc :object request-obj)))
+			     (event-body data-string)
+			     (event (make-instance 'activitypub-event
+						   :id id
+						   :object-id object-id
+						   :published 0
+						   :event-type event-type
+						   :event event-body)))
+			(save-dyna event)
+			(hunchentoot:log-message* :info "Received delete request for ~A from ~A" object-id actor))
+		      (cl-json:encode-json-to-string '(("status" . "ok"))))
+		     (t (progn
+			  (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A, placing into database~%Dump: ~A~%"
+						    (cdr (assoc :type request-obj))
+						    (cdr (assoc :actor request-obj))
+						    request-obj)
+			  (let* ((event-type (cdr (assoc :type request-obj)))
+				 (id (cdr (assoc :id request-obj)))
+				 (apub-object (cdr (assoc :object request-obj)))
+				 (object-id (cdr (assoc :id apub-object)))
+				 (pubstr (cdr (assoc :published request-obj)))
+				 (published (if pubstr
+						(local-time:timestamp-to-universal (local-time:parse-timestring pubstr))
+						0))
+				 (event-body data-string)
+				 (event (make-instance 'activitypub-event
+						       :id id
+						       :object-id object-id
+						       :published published
+						       :event-type event-type
+						       :event event-body)))
+			    (save-dyna event))
+			  (cl-json:encode-json-to-string '(("status" . "ok"))))))))))))
 
 (defun generate-accept (request)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
@@ -328,8 +385,75 @@ version to corresponding actor"
 			       (sxql:where (:>= :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
 		(hunchentoot:log-message* :info "Updating post ~A to ~A: ~A"
-			(id post)
-			(actor subscriber)
-			(send-signed (actor subscriber) (fedi-post-update post))))
+					  (id post)
+					  (actor subscriber)
+					  (send-signed (actor subscriber) (fedi-post-update post))))
 	    notified)
     (length notified)))
+
+;;; Static storage procedure
+(defclass activitypub-event ()
+  ((id :key-type :hash
+       :attr-name "id"
+       :attr-type :S
+       :initarg :id
+       :accessor id
+       :documentation "ID of the event")
+   (published :key-type :range
+	      :attr-name "published"
+	      :attr-type :N
+	      :initarg :published
+	      :accessor published
+	      :initform 0
+	      :documentation "Timestamp of event from published field")
+   (event-type :key-type :range
+	       :attr-name "eventtype"
+	       :attr-type :S
+	       :initarg :event-type
+	       :accessor event-type
+	       :initform nil
+	       :documentation "Type of the event")
+   (object-id :key-type :hash
+	      :attr-name "objectid"
+	      :attr-type :S
+	      :initarg :object-id
+	      :accessor object-id
+	      :documentation "ID of the object event is related to")
+   (event :key-type :range
+	  :attr-name "event"
+	  :attr-type :S
+	  :initarg :event
+	  :accessor event
+	  :initform nil
+	  :documentation "Full event body"))
+  (:dyna *dyna*)
+  (:table-name "activitypub-events")
+  (:metaclass dyna.table-operation::<dyna-table-class>))
+
+;;; TODO: IMPLEMENT
+(defmethod print-object ((event activitypub-event) out)
+  (with-slots (id published event-type) event
+    (print-unreadable-object (event out :type t)
+      (format out "ActivityPub event '~A' of type ~A published at ~A" id event-type published))))
+
+(defun dislike (likeid)
+  "Delete the Like or Announce event from DynamoDB"
+  (let ((item (car (select-dyna 'activitypub-event (sxql:where (:= :id likeid))))))
+    (when item
+      (delete-item *dyna* :table-name "activitypub-events"
+			  :key `(("id" . ,(id item))
+				 ("published" . 0))))))
+
+(defun reactions-number (id reaction-type)
+  "Get number of reactions `reaction-type' (Like or Announce) for post with `id'"
+  (let ((counts
+	  (nth-value 1 (scan *dyna* :table-name "activitypub-events"
+				    :filter-expression "objectid = :id AND eventtype = :type"
+				    :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
+								   (":type" . ,reaction-type))
+				    :select "COUNT"))))
+    (cdr (assoc "count" (cdr counts) :test #'string-equal))))
+
+;;; Create DynamoDB table if one doesn't exist
+(when (not (table-exist-p 'activitypub-event))
+  (create-dyna-table 'activitypub-event))

@@ -1,7 +1,7 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site :local-time)
+	:asdf :site :local-time :site.activitypub)
   (:export :defblogpost :blog-post :id :tags :post))
 
 (in-package :site.blog)
@@ -46,15 +46,15 @@
 	 (merge 'list
 		*blog-posts*
 		(list (make-instance 'blog-post :id ,id
-				     :subject ,subject
-				     :post (lambda ()
-					     (with-html-output-to-string (*standard-output* nil :prologue nil)
-					       (:div :class "blog-post"
-						     ,post)))
-				     ,@(when meta `(:meta
-						    (lambda ()
-						      (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
-				     ,@(when tags `(:tags ,tags)))) #'less)))
+						:subject ,subject
+						:post (lambda ()
+							(with-html-output-to-string (*standard-output* nil :prologue nil)
+							  (:div :class "blog-post"
+								,post)))
+						,@(when meta `(:meta
+							       (lambda ()
+								 (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
+						,@(when tags `(:tags ,tags)))) #'less)))
 
 (defun split-by-comma (string)
   "Returns a list of substrings of string
@@ -62,9 +62,9 @@ divided by comma each.
 Note: Two consecutive spaces will be seen as
 if there were an empty string between them."
   (loop for i = 0 then (1+ j)
-     as j = (position #\Comma string :start i)
-     collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
-     while j))
+	as j = (position #\Comma string :start i)
+	collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
+	while j))
 
 (defun posts-by-tags (tags)
   "Returns only posts containing tags
@@ -116,6 +116,11 @@ TAGS is comma-separated string"
 				       (htm (:a :href (format nil "/blog?tags=~a" tag)
 						(:span :class "tag"
 						       (format t "~a" tag))))))))
+			    (when (member "fedi" taglist)
+			      (htm (:span :id "apubinfo"
+					  (format t "Likes: ~a, Boosts: ~a"
+						  (reactions-number id "Like")
+						  (reactions-number id "Announce")))))
 			    (:span :id "timeinfo"
 				   (:time
 				    :datetime (format nil "~a" datetime-tag)
