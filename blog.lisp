@@ -103,7 +103,6 @@ TAGS is comma-separated string"
 		       (format t "~a" (blog-page-head))
 		       (when meta
 			 (format t "~a" (funcall meta))))
-
 		(htm (:body
 		      (:article
 		       (:h2 (format t "~a" subject))
@@ -113,14 +112,15 @@ TAGS is comma-separated string"
 			     (:nav
 			      (:span :id "taglist"
 				     (dolist (tag taglist)
-				       (htm (:a :href (format nil "/blog?tags=~a" tag)
-						(:span :class "tag"
-						       (format t "~a" tag))))))))
-			    (when (member "fedi" taglist)
-			      (htm (:span :id "apubinfo"
-					  (format t "Likes: ~a, Boosts: ~a"
-						  (reactions-number id "Like")
-						  (reactions-number id "Announce")))))
+				       (if (string-equal tag "fedi")
+					   (htm (:a :href (format nil "/blog?tags=~a" tag)
+						    (:span :class "tag"
+							   (format t "&#x2B50;~a &#x1F501;~a"
+								   (reactions-number id "Like")
+								   (reactions-number id "Announce")))))
+					   (htm (:a :href (format nil "/blog?tags=~a" tag)
+						    (:span :class "tag"
+							   (format t "~a" tag)))))))))
 			    (:span :id "timeinfo"
 				   (:time
 				    :datetime (format nil "~a" datetime-tag)
