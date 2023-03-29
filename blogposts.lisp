@@ -1071,5 +1071,23 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3888412487")))
 
+(defblogpost 3889071954 "базовая поддержка ActivityPub стабилизирована"
+  (:div
+   (:p "Итого я добавил подписку-отписку, учёт лайков и бустов, технические ответы на
+   все сообщения, которые мне присылают сервера из федерации (постоянно говорят
+   УДОЛИ), чтобы они успокоились и не долбили запросами, и складывание
+   неизвестных запросов в БД, чтобы можно было покопаться когда-нибудь потом,
+   сейчас по логам всё спокойно, поэтому пока всё так и оставлю.")
+   (:p "Дальше можно будет сделать несколько улучшений по-мелочи, вроде возможности
+   прикладывать картинки и правильного цеплять ссылки, но в целом то, что
+   сейчас уже работает, пока меня устроит."))
+  :tags '("ru" "site" "fedi")
+  :meta  ((:meta :property "og:title" :content "базовая поддержка ActivityPub стабилизирована")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "AcitivityPub в моём бложике теперь поддерживается на базовом уровне, и пока думаю так её и оставить")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3889071954")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts)
