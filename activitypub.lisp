@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog)
-  (:export :maybe-deliver-new-posts :reactions-number))
+  (:export :maybe-deliver-new-posts :reactions-number :direct-replies))
 
 (in-package :site.activitypub)
 
@@ -201,13 +201,15 @@
 				 (published (if pubstr
 						(local-time:timestamp-to-universal (local-time:parse-timestring pubstr))
 						0))
+				 (reply-str (cdr (assoc :in-reply-to apub-object)))
 				 (event-body data-string)
 				 (event (make-instance 'activitypub-event
 						       :id id
 						       :object-id object-id
 						       :published published
 						       :event-type event-type
-						       :event event-body)))
+						       :event event-body
+						       :reply-to reply-str)))
 			    (save-dyna event))
 			  (cl-json:encode-json-to-string '(("status" . "ok"))))))))))))
 
@@ -419,6 +421,13 @@ version to corresponding actor"
 	      :initarg :object-id
 	      :accessor object-id
 	      :documentation "ID of the object event is related to")
+   (reply-to  :key-type :hash
+	      :attr-name "replyto"
+	      :attr-type :S
+	      :initarg :reply-to
+	      :accessor reply-to
+	      :initform nil
+	      :documentation "ID of the object to reply, if exists")
    (event :key-type :range
 	  :attr-name "event"
 	  :attr-type :S
@@ -453,6 +462,36 @@ version to corresponding actor"
 								   (":type" . ,reaction-type))
 				    :select "COUNT"))))
     (cdr (assoc "count" (cdr counts) :test #'string-equal))))
+
+;;; Create DynamoDB table if one doesn't exist
+(when (not (table-exist-p 'activitypub-event))
+  (create-dyna-table 'activitypub-event))
+
+(defun direct-replies (id)
+  "Get comments for `id' which came as replies"
+  (let* ((response
+	  (nth-value 1 (scan *dyna* :table-name "activitypub-events"
+				    :filter-expression "replyto = :id AND eventtype = :type"
+				    :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
+								   (":type" . "Create")))))
+	 (replies (cdr (assoc "items" (cdr response) :test #'string-equal)))
+	 (result nil))
+    (dolist (reply-obj replies result)
+      (let*  ((reply (cl-json:decode-json-from-string (cdr (assoc "s"
+								 (cddr (assoc "event" (cdr reply-obj) :test #'string-equal)) :test #'string-equal))))
+	      (object (cdr (assoc :object reply)))
+	      (actor (cdr (assoc :attributed-to object)))
+	      (url (cdr (assoc :url object)))
+	      (published (local-time:timestamp-to-universal (local-time:parse-timestring (cdr (assoc :published object)))))
+	      (content (cdr (assoc :content object)))
+	      (to (cdr (assoc :to object)))
+	      (public (if (member "https://www.w3.org/ns/activitystreams#Public" to :test #'string-equal)
+			  t
+			  nil)))
+	(push (pairlis '(:actor :url :published :content :public)
+		       (list actor url published content public))
+	      result)
+	result))))
 
 ;;; Create DynamoDB table if one doesn't exist
 (when (not (table-exist-p 'activitypub-event))

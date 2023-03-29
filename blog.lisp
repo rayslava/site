@@ -124,7 +124,21 @@ TAGS is comma-separated string"
 			    (:span :id "timeinfo"
 				   (:time
 				    :datetime (format nil "~a" datetime-tag)
-				    (format t "~a" posted-at))))))))))
+				    (format t "~a" posted-at))))
+		       (let ((replies (direct-replies id)))
+			 (when replies
+			   (htm (:div
+				 :class "comments"
+				 (dolist (reply replies)
+				   (when (cdr (assoc :public reply))
+				     (htm (:div
+					   :class "apub-reply"
+					   (:span :class "commenter" (format t "~a" (cdr (assoc :actor reply))))
+					   (:span :class "comment" (format t "~a" (cdr (assoc :content reply))))
+					   (:span :class "comment-time" (:a :href (format nil "~a" (cdr (assoc :url reply)))
+									    (format-timestring t (universal-to-timestamp (cdr (assoc :published reply)))
+											       :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))))))))))))))))
+
 
 	(let ((postlist (if tags
 			    (posts-by-tags tags)
