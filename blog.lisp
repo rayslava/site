@@ -67,7 +67,7 @@ TAGS is comma-separated string"
 		   :test #'string-equal))
       (progn
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
-	(fedi-post-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
+	(fedi-note-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
       (with-html-output-to-string (*standard-output* nil :prologue t)
 	(if id
 	    (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))

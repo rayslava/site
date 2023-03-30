@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog-post)
-  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-post-create))
+  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-note-create))
 
 (in-package :site.activitypub)
 
@@ -349,6 +349,32 @@ are processed as plain text, not as in HTML"
   (let* ((cl-json::+json-lisp-escaped-chars+
 	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (cl-json:encode-json-alist-to-string (prepare-fedi-object post "Create"))))
+
+(defun prepare-fedi-note (post)
+  "Produces new json object from the `post' of type Note to send it for GET"
+  (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
+	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
+					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
+	 (langtag (cond ((member "ru" (tags post) :test #'string=) '(("@language" . "ru")))
+			((member "en" (tags post) :test #'string=) '(("@language" . "en")))
+			(t nil)))
+	 (message `(("@context" . ,(if langtag
+				       `("https://www.w3.org/ns/activitystreams" ,langtag)
+				       "https://www.w3.org/ns/activitystreams"))
+		    ("id" . ,post-id)
+		    ("type" . "Note")
+		    ("published" . ,date)
+		    ("actor" . "https://rayslava.com/ap/actor/blog")
+		    ("attributedTo" . "https://rayslava.com/ap/actor/blog")
+		    ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
+		    ("to" . "https://www.w3.org/ns/activitystreams#Public"))))
+    message))
+
+(defun fedi-note-create (post)
+  "Produces new json from the `post'"
+  (let* ((cl-json::+json-lisp-escaped-chars+
+	   (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+    (cl-json:encode-json-alist-to-string (prepare-fedi-note post))))
 
 (defun fedi-post-update (post)
   "Produces new json 'Update' activity from the `post'"
