@@ -1,7 +1,7 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog-post
   (:use :cl :asdf :site)
-  (:export :blog-post :defblogpost :id :tags :post :less :print-object))
+  (:export :blog-post :defblogpost :id :tags :post :less :print-object :subject :meta))
 
 (in-package :site.blog-post)
 
