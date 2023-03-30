@@ -1,7 +1,7 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
-	:site.db-manage :site.config :site.crypto :site.blog)
+	:site.db-manage :site.config :site.crypto)
   (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-post-create))
 
 (in-package :site.activitypub)
@@ -370,12 +370,12 @@ to corresponding actor"
 	    unnotified)
     (length unnotified)))
 
-(defun maybe-deliver-new-posts ()
+(defun maybe-deliver-new-posts (posts)
   "Check if there are new posts to deliver to subscribers"
   (let ((fediposts (sort
 		    (remove-if-not #'(lambda (post)
 				       (member "fedi" (tags post) :test #'equal))
-				   site.blog::*blog-posts*)
+				   posts)
 		    #'< :key #'(lambda (p) (id p)))))
     (dolist (post fediposts)
       (maybe-deliver-new-post post))))

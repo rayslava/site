@@ -1090,4 +1090,4 @@ who came for vaccination during 45 minutes I spent in clinic.")
 		 :content "https://rayslava.com/blog?id=3889071954")))
 
 ;;; Push new posts to activitypub if needed
-(maybe-deliver-new-posts)
+(maybe-deliver-new-posts :site.blog::*blogposts*)
