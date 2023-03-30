@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog)
-  (:export :maybe-deliver-new-posts :reactions-number :direct-replies))
+  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-post-create))
 
 (in-package :site.activitypub)
 

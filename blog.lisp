@@ -87,71 +87,80 @@ TAGS is comma-separated string"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
-  (with-html-output-to-string (*standard-output* nil :prologue t)
-    (if id
-	(let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
-	       (subject (subject post))
-	       (taglist (tags post))
-	       (text (post post))
-	       (meta (meta post))
-	       (timestamp (universal-to-timestamp (id post)))
-	       (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
-	       (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
-	  (htm (:html
-		(:head (:title (format t "~a" subject)subject)
+  (hunchentoot:log-message* :info (header-in :accept *request*))
+  (if (and id
+	   (member (header-in :accept *request*)
+		   '("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+		     "application/activity+json")
+		   :test #'string-equal))
+      (progn
+	(setf (hunchentoot:content-type*) (header-in :accept *request*))
+	(fedi-post-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
+      (with-html-output-to-string (*standard-output* nil :prologue t)
+	(if id
+	    (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
+		   (subject (subject post))
+		   (taglist (tags post))
+		   (text (post post))
+		   (meta (meta post))
+		   (timestamp (universal-to-timestamp (id post)))
+		   (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
+		   (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
+	      (htm (:html
+		    (:head (:title (format t "~a" subject)subject)
 
-		       (format t "~a" (blog-page-head))
-		       (when meta
-			 (format t "~a" (funcall meta))))
-		(htm (:body
-		      (:article
-		       (:h2 (format t "~a" subject))
-		       (format t "~a" (funcall text))
-		       (htm (:div
-			     :id "postinfo"
-			     (:nav
-			      (:span :id "taglist"
-				     (dolist (tag taglist)
-				       (if (string-equal tag "fedi")
-					   (htm (:a :href (format nil "/blog?tags=~a" tag)
-						    (:span :class "tag"
-							   (format t "&#x2B50;~a &#x1F501;~a"
-								   (reactions-number id "Like")
-								   (reactions-number id "Announce")))))
-					   (htm (:a :href (format nil "/blog?tags=~a" tag)
-						    (:span :class "tag"
-							   (format t "~a" tag)))))))))
-			    (:span :id "timeinfo"
-				   (:time
-				    :datetime (format nil "~a" datetime-tag)
-				    (format t "~a" posted-at))))
-		       (let ((replies (direct-replies id)))
-			 (when replies
+			   (format t "~a" (blog-page-head))
+			   (when meta
+			     (format t "~a" (funcall meta))))
+		    (htm (:body
+			  (:article
+			   (:h2 (format t "~a" subject))
+			   (format t "~a" (funcall text))
 			   (htm (:div
-				 :class "comments"
-				 (dolist (reply replies)
-				   (when (cdr (assoc :public reply))
-				     (htm (:div
-					   :class "apub-reply"
-					   (:span :class "commenter" (format t "~a" (cdr (assoc :actor reply))))
-					   (:span :class "comment" (format t "~a" (cdr (assoc :content reply))))
-					   (:span :class "comment-time" (:a :href (format nil "~a" (cdr (assoc :url reply)))
-									    (format-timestring t (universal-to-timestamp (cdr (assoc :published reply)))
-											       :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))))))))))))))))
+				 :id "postinfo"
+				 (:nav
+				  (:span :id "taglist"
+					 (dolist (tag taglist)
+					   (if (string-equal tag "fedi")
+					       (htm (:a :href (format nil "/blog?tags=~a" tag)
+							(:span :class "tag"
+							       (format t "&#x2B50;~a &#x1F501;~a"
+								       (reactions-number id "Like")
+								       (reactions-number id "Announce")))))
+					       (htm (:a :href (format nil "/blog?tags=~a" tag)
+							(:span :class "tag"
+							       (format t "~a" tag)))))))))
+				(:span :id "timeinfo"
+				       (:time
+					:datetime (format nil "~a" datetime-tag)
+					(format t "~a" posted-at))))
+			   (let ((replies (direct-replies id)))
+			     (when replies
+			       (htm (:div
+				     :class "comments"
+				     (dolist (reply replies)
+				       (when (cdr (assoc :public reply))
+					 (htm (:div
+					       :class "apub-reply"
+					       (:span :class "commenter" (format t "~a" (cdr (assoc :actor reply))))
+					       (:span :class "comment" (format t "~a" (cdr (assoc :content reply))))
+					       (:span :class "comment-time" (:a :href (format nil "~a" (cdr (assoc :url reply)))
+										(format-timestring t (universal-to-timestamp (cdr (assoc :published reply)))
+												   :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))))))))))))))))
 
 
-	(let ((postlist (if tags
-			    (posts-by-tags tags)
-			    *blog-posts*)))
-	  (htm (:html
-		(:head (:title "Blog")
-		       (format t "~a" (blog-page-head))
-		       (:body (:h2 "Blog posts")
-			      (:ul
-			       (dolist (post postlist)
-				 (htm
-				  (:li (:a :href (format nil "/blog?id=~a" (id post))
-					   (format t "~a" (subject post)))))))))))))))
+	    (let ((postlist (if tags
+				(posts-by-tags tags)
+				*blog-posts*)))
+	      (htm (:html
+		    (:head (:title "Blog")
+			   (format t "~a" (blog-page-head))
+			   (:body (:h2 "Blog posts")
+				  (:ul
+				   (dolist (post postlist)
+				     (htm
+				      (:li (:a :href (format nil "/blog?id=~a" (id post))
+					       (format t "~a" (subject post))))))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
