@@ -5,6 +5,8 @@
 
 (in-package :site.blog)
 
+(defvar *blog-posts* '() "List of all blog posts sorted by ID")
+
 (setf (html-mode) :html5)
 
 ;;; Creating class system to use for blog posts

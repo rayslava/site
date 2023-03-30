@@ -19,8 +19,9 @@
                (:file "static"
 		:depends-on ("config" "db-manage"))
 	       (:file "config")
+	       (:file "blog-post")
 	       (:file "blog"
-		:depends-on ("activitypub"))
+		:depends-on ("activitypub" "blog-post"))
 	       (:file "pages"
 		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
@@ -35,4 +36,4 @@
 		:depends-on ("db-storage"))
 	       (:file "crypto")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto"))))
+		:depends-on ("config" "crypto" "blog-post"))))

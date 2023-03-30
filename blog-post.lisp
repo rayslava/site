@@ -5,8 +5,6 @@
 
 (in-package :site.blog-post)
 
-(defvar *blog-posts* '() "List of all blog posts sorted by ID")
-
 (defclass blog-post ()
   ((id :accessor id
        :initarg :id
