@@ -5,7 +5,7 @@
 ;;; (local-time:timestamp-to-universal (local-time:encode-timestamp 0 0 00 10 21 12 2020 :timezone (local-time:find-timezone-by-location-name "Europe/Moscow")))
 
 (defpackage :site.blogposts
-  (:use :site.blog :cl :cl-css :cl-who :site.activitypub))
+  (:use :site.blog :cl :cl-css :cl-who :site.activitypub :site.blog-post))
 
 (in-package :site.blogposts)
 

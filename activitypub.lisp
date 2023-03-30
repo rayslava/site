@@ -1,7 +1,7 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
-	:site.db-manage :site.config :site.crypto)
+	:site.db-manage :site.config :site.crypto :site.blog-post)
   (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-post-create))
 
 (in-package :site.activitypub)
