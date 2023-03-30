@@ -19,7 +19,8 @@
                (:file "static"
 		:depends-on ("config" "db-manage"))
 	       (:file "config")
-	       (:file "blog")
+	       (:file "blog"
+		:depends-on ("activitypub"))
 	       (:file "pages"
 		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
