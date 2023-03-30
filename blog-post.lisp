@@ -1,9 +1,11 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog-post
   (:use :cl :asdf :site)
-  (:export :blog-post :defblogpost :id :tags :post))
+  (:export :blog-post :defblogpost :id :tags :post :*blog-posts*))
 
 (in-package :site.blog-post)
+
+(defvar *blog-posts* '() "List of all blog posts sorted by ID")
 
 (defclass blog-post ()
   ((id :accessor id

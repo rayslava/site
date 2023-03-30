@@ -10,7 +10,7 @@
 (in-package :site.blogposts)
 
 ;;; Perform a cleanup unless we want duplication
-(setf site.blog::*blog-posts* nil)
+(setf *blog-posts* nil)
 
 (defblogpost 3649655845 "On blog creation"
   (:div
@@ -1090,4 +1090,4 @@ who came for vaccination during 45 minutes I spent in clinic.")
 		 :content "https://rayslava.com/blog?id=3889071954")))
 
 ;;; Push new posts to activitypub if needed
-(maybe-deliver-new-posts site.blog::*blog-posts*)
+(maybe-deliver-new-posts *blog-posts*)
