@@ -60,7 +60,6 @@ TAGS is comma-separated string"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
-  (hunchentoot:log-message* :info (header-in :accept *request*))
   (if (and id
 	   (member (header-in :accept *request*)
 		   '("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
