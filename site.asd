@@ -35,4 +35,4 @@
 		:depends-on ("db-storage"))
 	       (:file "crypto")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto" "blog"))))
+		:depends-on ("config" "crypto"))))
