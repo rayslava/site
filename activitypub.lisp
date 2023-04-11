@@ -138,7 +138,7 @@
 							     (sxql:where (:= :actor actor)))))
 			  (save-dyna subscriber)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
-			  (maybe-deliver-new-posts))))
+			  (maybe-deliver-new-posts site.blog::*blog-posts*))))
 		     ((string= "Undo" (cdr (assoc :type request-obj)))
 		      (let* ((object (cdr (assoc :object request-obj))))
 			(cond ((string= "Follow" (cdr (assoc :type object)))
