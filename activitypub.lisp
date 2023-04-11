@@ -34,7 +34,7 @@
     (json:encode-json-to-string
      `(("@context" . ("https://www.w3.org/ns/activitystreams" "https://w3id.org/security/v1"))
        ("id" . "https://rayslava.com/ap/actor/blog")
-       ("url" . "https://rayslava.com/")
+       ("url" . "https://rayslava.com/blog")
        ("type" . "Person")
        ("preferredUsername" . "blog")
        ("name" . "rayslava")
