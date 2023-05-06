@@ -1089,5 +1089,18 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3889071954")))
 
+(defblogpost 3892386892 "Проблемы с топливным фильтром Africa Twin Adventure Sports 2021"
+  (:div
+   (:p "Судя по всему, как минимум 2021 CRF1100A4M так же подвержен проблеме с загрязнённым баком, описанной в бюллетене NHTSA RCRIT-20V797-0876, который упоминает только 2018-2019 CRF1000L2/D2 и 2020 CRF1100L4/D4.")
+   (:p "Если у вас новая Africa Twin и именно Adventure Sports, то для успокоения души я бы предложил помыть бак и заменить топливный фильтр, чисто на всякий случай.")
+   (:p "Для сильно заинтересовавшихся написал историю на " (:a :href "https://bikepost.ru/blog/97833/Problemy-s-toplivnym-filtrom-Africa-Twin-Adventure-Sports-2021.html#cut" "байкпост")))
+  :tags '("ru" "moto" "fedi")
+  :meta  ((:meta :property "og:title" :content "Проблемы с топливным фильтром Africa Twin Adventure Sports 2021")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Похоже, что 2021 CRF1100A4M так же подвержен проблеме с загрязнённым баком, описанной в бюллетене NHTSA RCRIT-20V797-0876, который упоминает только 2018-2019 CRF1000L2/D2 и 2020 CRF1100L4/D4.")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3892386892")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
