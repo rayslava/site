@@ -52,6 +52,7 @@ TAGS is comma-separated string"
   (with-html-output-to-string (*standard-output* nil :prologue nil)
     (:link :rel "stylesheet" :type "text/css" :href "/main.css")
     (:link :rel "stylesheet" :type "text/css" :href "/blog.css")
+    (:link :rel "me" :href "/blog")
     (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
     (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
     (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0")))

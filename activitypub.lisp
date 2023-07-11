@@ -32,7 +32,10 @@
   (let ((cl-json::+json-lisp-escaped-chars+
 	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (json:encode-json-to-string
-     `(("@context" . ("https://www.w3.org/ns/activitystreams" "https://w3id.org/security/v1"))
+     `(("@context" . ("https://www.w3.org/ns/activitystreams" "https://w3id.org/security/v1"
+							      (("schema". "http://schema.org#")
+							       ("PropertyValue" . "schema:PropertyValue")
+							       ("value" . "schema:value"))))
        ("id" . "https://rayslava.com/ap/actor/blog")
        ("url" . "https://rayslava.com/blog")
        ("type" . "Person")
@@ -43,6 +46,9 @@
        ("icon" .  (("type" . "Image")
 		   ("mediaType" . "image/png")
 		   ("url" . "https://rayslava.com/i/apub-avatar.png")))
+       ("attachment" . ((("type" . "PropertyValue")
+			 ("name" . "Homepage")
+			 ("value" . "https://rayslava.com/blog"))))
        ("publicKey" . (("id" . "https://rayslava.com/ap/actor/blog#main-key")
 		       ("owner" . "https://rayslava.com/ap/actor/blog")
 		       ("publicKeyPem" . ,site.config:*activitypub-public-key-pem*)))))))
