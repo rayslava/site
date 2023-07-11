@@ -44,4 +44,5 @@
    `(("#taglist" :padding "4px" :display "inline-block" :max-height "32px")
      (".tag" :padding "4px" :border "1px solid silver" :margin "4px"
 	     :border-radius "8px")
+     ("#apubinfo" :padding "4px" :font-size "80%" :float "right")
      ("#timeinfo" :padding "4px" :font-size "80%" :float "right"))))

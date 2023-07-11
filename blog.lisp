@@ -107,7 +107,7 @@ TAGS is comma-separated string"
 				       (:time
 					:datetime (format nil "~a" datetime-tag)
 					(format t "~a" posted-at))))
-			   (let ((replies (direct-replies id)))
+			   (let ((replies (get-all-replies id)))
 			     (when replies
 			       (htm (:div
 				     :class "comments"

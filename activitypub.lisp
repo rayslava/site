@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog-post)
-  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :fedi-note-create :fedi-post-create))
+  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create))
 
 (in-package :site.activitypub)
 
@@ -520,10 +520,33 @@ version to corresponding actor"
 	      (public (if (member "https://www.w3.org/ns/activitystreams#Public" to :test #'string-equal)
 			  t
 			  nil)))
-	(push (pairlis '(:actor :url :published :content :public)
-		       (list actor url published content public))
+	(push (pairlis '(:id :actor :url :published :content :public)
+		       (id list actor url published content public))
 	      result)
 	result))))
+
+(defun get-all-replies (post-id)
+  "Retrieve the full list of replies for the given post ID"
+  (let ((replies (direct-replies post-id))
+        (all-replies '()))
+    (dolist (reply replies)
+      (push reply all-replies)
+      (when (getf reply :id)
+        (setf (getf reply :replies) (get-all-replies (getf reply :id)))
+        (dolist (nested-reply (getf reply :replies))
+          (push nested-reply all-replies))))
+    (nreverse all-replies)))
+
+(defun flatten-replies (replies)
+  "Flatten the nested list of replies into a flat list"
+  (let ((flat-replies '()))
+    (dolist (reply replies)
+      (push reply flat-replies)
+      (when (getf reply :replies)
+        (setf (getf reply :replies) (flatten-replies (getf reply :replies)))
+        (dolist (nested-reply (getf reply :replies))
+          (push nested-reply flat-replies))))
+    (nreverse flat-replies)))
 
 ;;; Create DynamoDB table if one doesn't exist
 (when (not (table-exist-p 'activitypub-event))
