@@ -166,12 +166,11 @@
 			     (attr `(("subscribed" . ,(hunchentoot:rfc-1123-date))))
 			     (subscriber (make-instance 'activitypub-subscriber :actor actor
 										:attr (cl-json:encode-json-to-string attr))))
-			(when (and (find-package :site.blog)
-				   (not (nth-value 0 (select-dyna 'activitypub-subscriber
-								  (sxql:where (:= :actor actor))))))
+			(when (not (nth-value 0 (select-dyna 'activitypub-subscriber
+							     (sxql:where (:= :actor actor)))))
 			  (save-dyna subscriber)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
-			  (maybe-deliver-new-posts site.blog::*blog-posts*))))
+			  (maybe-deliver-new-posts (find-symbol "*blog-posts*" :site.blog)))))
 		     ((string= "Undo" (cdr (assoc :type request-obj)))
 		      (let* ((object (cdr (assoc :object request-obj))))
 			(cond ((string= "Follow" (cdr (assoc :type object)))
