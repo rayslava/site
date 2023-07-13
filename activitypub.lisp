@@ -1,7 +1,8 @@
 (defpackage :site.activitypub
-  (:use :cl :hunchentoot :cl-who :cl-json :cl-json-helper
+  (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog-post)
+  (:shadowing-import-from :cl-json-helper :json-bool)
   (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create))
 
 (in-package :site.activitypub)
@@ -20,17 +21,16 @@
 	      ("username" . "rayslava")
 	      ("acct" . ,acct)
 	      ("display_name" . "rayslava")
-	      ("bot" . ,(xjson:json-bool nil))
-	      ("discoverable" . ,(xjson:json-bool nil))
-	      ("group" . ,(xjson:json-bool nil))
+	      ("bot" . ,(json-bool nil))
+	      ("discoverable" . ,(json-bool nil))
+	      ("group" . ,(json-bool nil))
 	      ("locked" . ,nil)
 	      ("avatar" . "https://rayslava.com/i/apub-avatar.png")
 	      ("avatar_static" . "https://rayslava.com/i/apub-avatar.png")
 	      ("url" . "https://rayslava.com/blog")
 	      ("header" . "")
 	      ("header_static" . "")
-	      ("noindex" . ,(xjson:json-bool t))
-	      ))))))
+	      ("noindex" . ,(json-bool t))))))))
 
 					; WebFinger to support ActivityPub
 (define-easy-handler (webfinger :uri "/.well-known/webfinger"
