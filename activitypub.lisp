@@ -8,7 +8,7 @@
 (in-package :site.activitypub)
 
 					; Mastodon lookup workaround
-(define-easy-handler (masto-lookup :uri "/api/v1/accounts/lookup"
+(define-easy-handler (masto-lookup :uri "/api/v1/accounts/lookup/"
 				:default-request-type :get)
     ((acct :parameter-type 'string))
   (setf (hunchentoot:content-type*) "application/jrd+json")
