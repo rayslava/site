@@ -1,10 +1,36 @@
 (defpackage :site.activitypub
-  (:use :cl :hunchentoot :cl-who :cl-json
+  (:use :cl :hunchentoot :cl-who :cl-json :cl-json-helper
 	:asdf :site :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog-post)
   (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create))
 
 (in-package :site.activitypub)
+
+					; Mastodon lookup workaround
+(define-easy-handler (webfinger :uri "/api/v1/accounts/lookup"
+				:default-request-type :get)
+    ((acct :parameter-type 'string))
+  (setf (hunchentoot:content-type*) "application/jrd+json")
+  (cond ((or (equalp acct "blog")
+	     (equalp acct "blog@rayslava.com"))
+	 (let ((cl-json::+json-lisp-escaped-chars+
+		 (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+	   (json:encode-json-to-string
+	    `(("id" . "1")
+	      ("username" . "rayslava")
+	      ("acct" . ,acct)
+	      ("display_name" . "rayslava")
+	      ("bot" . ,(xjson:json-bool nil))
+	      ("discoverable" . ,(xjson:json-bool nil))
+	      ("group" . ,(xjson:json-bool nil))
+	      ("locked" . ,nil)
+	      ("avatar" . "https://rayslava.com/i/apub-avatar.png")
+	      ("avatar_static" . "https://rayslava.com/i/apub-avatar.png")
+	      ("url" . "https://rayslava.com/blog")
+	      ("header" . "")
+	      ("header_static" . "")
+	      ("noindex" . ,(xjson:json-bool t))
+	      ))))))
 
 					; WebFinger to support ActivityPub
 (define-easy-handler (webfinger :uri "/.well-known/webfinger"
