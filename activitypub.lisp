@@ -420,10 +420,6 @@ to corresponding actor"
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
-		(hunchentoot:log-message* :info "Delivered post ~A to ~A: ~A"
-					  (id post)
-					  (actor subscriber)
-					  (send-signed (actor subscriber) (fedi-post-create post)))
 		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
