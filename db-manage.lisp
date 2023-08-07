@@ -121,7 +121,7 @@
     xhr.send(fd);
 });")
 
-	 (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"send\") \"disabled\") 0)")))))
+	 (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"send\") \"disabled\") 0)"))))))
 
 (define-easy-handler (upload-work :uri "/admin/do-upload")
     (uploaded tags)
