@@ -85,24 +85,30 @@
 			    :border 0 :cellpadding 5 :cellspacing 0 :width "100%"
 			    (:tr (:td :style "text-align: right" (str "Tags:"))
 				 (:td :colspan 2 (:input :type :text :id "tags" :name "tags" :style "width:100%")))
-			    (:tr (:td :style "text-align: right" (str "File:"))
-				 (:td (:input :type :file :name "uploaded" :id "uploaded"))
+			    (:tr (:td :style "text-align: right" (str "Files:"))
+				 (:td (:input :type :file :name "uploaded" :id "uploaded" :multiple "multiple"))
 				 (:td (:input :type :button :id "send" :value "Send" :disabled "true" :style "width:85%")))
 			    (:tr (:td :style "text-align: right" (str "Progress:"))
 				 (:td :colspan 2
 				      (:div :id "progress" :style "width:100%"
 					    (:div :id "bar" :style "text-align:center;width:1%;height=16px;background-color:#DCDCDC;")))))))
-		(:script :type "text/javascript" :src "/jscl.js"))
+
 	 (:script :type "text/javascript"
 		  "document.getElementById('send').addEventListener('click', function(e) {
-    var uploaded = document.getElementById('uploaded').files[0];
+    var uploadedFiles = document.getElementById('uploaded').files;
     var tags = document.getElementById('tags').value;
     var fd = new FormData();
-    fd.append('uploaded', uploaded);
+
+    // Loop through all uploaded files
+    for(var i = 0; i < uploadedFiles.length; i++) {
+        fd.append('uploaded[]', uploadedFiles[i]);
+    }
+
     fd.append('tags', tags);
+
     var xhr = new XMLHttpRequest();
     (xhr.upload || xhr).addEventListener('progress', function(e) {
-        var done = e.position || e.loaded
+        var done = e.position || e.loaded;
         var total = e.totalSize || e.total;
         document.getElementById('bar').style.width = Math.round(done/total*100) + '%';
         document.getElementById('bar').innerHTML = Math.round(done/total*100) + '%';
@@ -114,19 +120,21 @@
     document.getElementById('send').disabled = 1;
     xhr.send(fd);
 });")
-	 (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"send\") \"disabled\") 0)")))))
 
+	 (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"send\") \"disabled\") 0)")))))
 
 (define-easy-handler (upload-work :uri "/admin/do-upload")
     (uploaded tags)
-  (let ((attrs `(:tags ,(mapcar
-			 (lambda (s)
-			   (string-trim '(#\Space #\Newline #\Backspace #\Tab
-					  #\Linefeed #\Page #\Return #\Rubout)
-					s))
-			 (split-sequence:split-sequence #\, tags))
-		 :filename ,(cadr uploaded))))
-    (upload-file (car uploaded) attrs)
+  (let* ((file-list (if (listp uploaded) uploaded (list uploaded)))
+         (attrs `(:tags ,(mapcar
+			  (lambda (s)
+			    (string-trim '(#\Space #\Newline #\Backspace #\Tab
+					   #\Linefeed #\Page #\Return #\Rubout)
+					 s))
+			  (split-sequence:split-sequence #\, tags))
+			:filename ,(cadr (first file-list)))))
+    (dolist (file file-list)
+      (upload-file (car file) attrs))
     (hunchentoot:redirect "/admin/statics")))
 
 (define-easy-handler (delete-work :uri "/admin/do-delete")
