@@ -1102,5 +1102,44 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3892386892")))
 
+
+(defblogpost 3889071954 "Базовая поддержка ActivityPub стабилизирована"
+  (:div
+   (:p "Итого я добавил подписку-отписку, учёт лайков и бустов, технические ответы на
+   все сообщения, которые мне присылают сервера из федерации (постоянно говорят
+   УДОЛИ), чтобы они успокоились и не долбили запросами, и складывание
+   неизвестных запросов в БД, чтобы можно было покопаться когда-нибудь потом,
+   сейчас по логам всё спокойно, поэтому пока всё так и оставлю.")
+   (:p "Дальше можно будет сделать несколько улучшений по-мелочи, вроде возможности
+   прикладывать картинки и правильно цеплять ссылки, но в целом то, что сейчас
+   уже работает, пока меня устроит."))
+  :tags '("ru" "site" "fedi")
+  :meta  ((:meta :property "og:title" :content "Базовая поддержка ActivityPub стабилизирована")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "AcitivityPub в моём бложике теперь поддерживается на базовом уровне, и пока думаю так её и оставить")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3889071954")))
+
+(defblogpost 3906122291 "Diving logbook template"
+  (:div
+   (:p "My first diving logbook is over (50 registered dives, yay 🎉), so I had to find
+   a new one. As a true DIY, I couldn't miss an opportunity to make my own one!")
+   (:p "After a short investigation of available templates, I found a couple of
+   advice about required fields and paper positioning, and then prepared my own
+   template using LaTeX:" (:a :href "https://rayslava.github.io/divelog/divelog.pdf" "pdf")
+   ", " (:a :href "https://github.com/rayslava/divelog/" "sources"))
+   (:p "You can easily print it using any SOHO printer on any matte photo paper
+   with weight of 120-140 g/m². Then you just need a hole punch, a knife, and a
+   bit of time. ")
+   (:p (:img :src "/i/own-divelog.jpg")))
+  :tags '("en" "diving" "fedi")
+  :meta  ((:meta :property "og:title" :content "Diving logbook template")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Developed my own logbook template and sharing it")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3906122291")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
