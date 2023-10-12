@@ -21,6 +21,9 @@
 	:initform (error "Must supply an URL")
 	:documentation "Url leading to attachment")))
 
+(defmethod print-object ((att blog-post-attachment) (output stream))
+  (format output "Blog attachment from: ~a" (url att)))
+
 (defclass blog-post ()
   ((id :accessor id
        :initarg :id
