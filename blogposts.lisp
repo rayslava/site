@@ -1121,7 +1121,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3889071954")))
 
-(defblogpost 3906122291 "Diving logbook template"
+(defblogpost 3906122500 "Diving logbook template"
   (:div
    (:p "My first diving logbook is over (50 registered dives, yay 🎉), so I had to find
    a new one. As a true DIY, I couldn't miss an opportunity to make my own one!")
@@ -1139,7 +1139,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
 	  (:meta :property "og:description" :content "Developed my own logbook template and sharing it")
 	  (:meta :property "og:url"
-		 :content "https://rayslava.com/blog?id=3906122291")))
+		 :content "https://rayslava.com/blog?id=3906122500")))
 
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)

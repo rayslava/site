@@ -43,9 +43,13 @@
 	   (json:encode-json-to-string
 	    '(("subject" . "acct:blog@rayslava.com")
 	      ("aliases" . ("https://rayslava.com/blog" "https://rayslava.com/ap/actor/blog"))
-	      ("links" (("rel" . "http://webfinger.net/rel/profile-page")
-			("type" . "text/html")
-			("href" . "https://rayslava.com/blog"))
+	      ("links"
+	       (("rel" . "http://webfinger.net/rel/profile-page")
+		("type" . "text/html")
+		("href" . "https://rayslava.com/blog"))
+	       (("rel" . "http://webfinger.net/rel/avatar")
+		("type" . "image/png")
+		("href" . "https://rayslava.com/i/apub-avatar.png"))
 	       (("rel" . "self")
 		("type" . "application/activity+json")
 		("href" . "https://rayslava.com/ap/actor/blog")))))))))
@@ -217,7 +221,8 @@
 						   :published 0
 						   :event-type event-type
 						   :event event-body)))
-			(save-dyna event)
+			;;; Don't even want to save the event into DB, since no idea what to do with them
+			; (save-dyna event)
 			(hunchentoot:log-message* :info "Received delete request for ~A from ~A" object-id actor))
 		      (cl-json:encode-json-to-string '(("status" . "ok"))))
 		     (t (progn
@@ -420,6 +425,7 @@ to corresponding actor"
   (let ((unnotified (select-dyna 'activitypub-subscriber
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
+		(send-signed (actor subscriber) (fedi-post-create post))
 		(update-lastpost subscriber (id post)))
 	    unnotified)
     (length unnotified)))
