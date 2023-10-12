@@ -6,18 +6,14 @@
 
 (in-package :site.blog-post)
 
-(deftype attachment-type () '(member image)
+(deftype attachment-type ()
   "ATTACHMENT-TYPE defines the types of attachments for blog posts supported by
- the engine")
+ the engine"
+  '(member image))
 
-(defmethod make-load-form ((obj blog-post-attachment))
-  `(make-instance 'blog-post-attachment
-                  :attachment-type ,(attachment-type obj)
-                  :url ,(url obj)))
-
-(defclass blog-post-attachment()
-  ((attachment-type :accessor attachment-type
-	 :initarg :attachment-type
+(defclass blog-post-attachment ()
+  ((att-type :accessor att-type
+	 :initarg :att-type
 	 :type attachment-type
 	 :initform (error "Must supply an ATTACHMENT-TYPE")
 	 :documentation "Attachment type. Currently images are supported")

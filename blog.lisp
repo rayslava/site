@@ -23,9 +23,9 @@
 							       (lambda ()
 								 (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
 						,@(when attachment `(:attachment
-								     ,(make-instance 'blog-post-attachment
-										     :attachment-type (getf attachment :type)
-										     :url (getf attachment :url))))
+								     (make-instance 'blog-post-attachment
+										    :att-type ,(getf attachment :type)
+										    :url ,(getf attachment :url))))
 						,@(when tags `(:tags ,tags)))) #'less)))
 
 
