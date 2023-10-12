@@ -356,6 +356,16 @@
 			       ("lastpost" . ,oldposts)))
     (save-dyna item)))
 
+(defun prepare-image-url (url)
+  "Produces new json object with url `url' of type Image"
+  (let* ((message `("object" . (("id" . ,url)
+				("type" . "Image")
+				("attributedTo" . "https://rayslava.com/ap/actor/blog")
+				("to" . "https://www.w3.org/ns/activitystreams#Public")
+				("url" . (("href" . ,url)
+					  ("type" . "Link")))))))
+    message))
+
 (defun prepare-fedi-object (post type)
   "Produces new json object from the `post' of type `type'"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
@@ -378,11 +388,7 @@
 				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))
 		    ,(when (and (slot-boundp post 'attachment)
 				(eq (slot-value (attachment post) 'att-type) 'image))
-		       `("attachment" . (("id" . ,(ironclad:byte-array-to-hex-string
-						   (ironclad:digest-sequence :md5
-									     (ironclad:ascii-string-to-byte-array (url (attachment post))))))
-					 ("type" . "image")
-					 ("url" . ,(url (attachment post)))))))))
+		       (prepare-image-url (url (attachment post)))))))
     message))
 
 (defun fedi-post-create (post)

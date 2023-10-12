@@ -1123,7 +1123,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
 
 (defblogpost 3906122500 "Diving logbook template"
   (:div
-   (:p "My first diving logbook is over (50 registered dives, yay &#x1F389; ), so I had to find
+   (:p "My first diving logbook is over (50 registered dives, yay &#x1F389;), so I had to find
    a new one. As a true DIY, I couldn't miss an opportunity to make my own one!")
    (:p "After a short investigation of available templates, I found a couple of
    advice about required fields and paper positioning, and then prepared my own
