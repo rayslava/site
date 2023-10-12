@@ -3,7 +3,7 @@
   (:use :cl :asdf :site)
   (:export :blog-post :att-type :url :defblogpost :id :tags :post :attachment
 	   :less :print-object :subject :meta :attachment-type
-   :blog-post-attachment))
+   :blog-post-attachment :image))
 
 (in-package :site.blog-post)
 
