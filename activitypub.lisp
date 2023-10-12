@@ -375,7 +375,14 @@
 				 ("published" . ,date)
 				 ("attributedTo" . "https://rayslava.com/ap/actor/blog")
 				 ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
-				 ("to" . "https://www.w3.org/ns/activitystreams#Public"))))))
+				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))
+		    ,(when (and (slot-boundp post 'attachment)
+				(eq (slot-value (attachment post) 'att-type) 'image))
+		       `("attachment" . (("id" . ,(ironclad:byte-array-to-hex-string
+						   (ironclad:digest-sequence :md5
+									     (ironclad:ascii-string-to-byte-array (url (attachment post))))))
+					 ("type" . "image")
+					 ("url" . ,(url (attachment post)))))))))
     message))
 
 (defun fedi-post-create (post)
