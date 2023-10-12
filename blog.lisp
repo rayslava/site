@@ -80,6 +80,9 @@ TAGS is comma-separated string"
 		   (taglist (tags post))
 		   (text (post post))
 		   (meta (meta post))
+		   (att (if (slot-boundp post 'attachment)
+			    (attachment post)
+			    nil))
 		   (timestamp (universal-to-timestamp (id post)))
 		   (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
 		   (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
@@ -93,6 +96,13 @@ TAGS is comma-separated string"
 			  (:article
 			   (:h2 (format t "~a" subject))
 			   (format t "~a" (funcall text))
+			   (when att
+			     (htm
+			      (:div
+			       :id "attachment"
+			       (cond ((eq (slot-value att 'att-type) 'image)
+				      (htm (:img :src (url att))))
+				     (t)))))
 			   (htm (:div
 				 :id "postinfo"
 				 (:nav
