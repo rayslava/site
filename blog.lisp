@@ -8,7 +8,7 @@
 
 (defvar *blog-posts* '() "List of all blog posts sorted by ID")
 
-(defmacro defblogpost (id subject post &key meta tags)
+(defmacro defblogpost (id subject post &key meta tags attachment)
   "Create new blog post inside *blog-posts* with ID, POST and TAGS"
   `(setf *blog-posts*
 	 (merge 'list
@@ -22,6 +22,10 @@
 						,@(when meta `(:meta
 							       (lambda ()
 								 (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
+						,@(when attachment `(:attachment
+								     ,(make-instance 'blog-post-attachment
+										     :attachment-type (getf attachment :type)
+										     :url (getf attachment :url))))
 						,@(when tags `(:tags ,tags)))) #'less)))
 
 
