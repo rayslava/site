@@ -1,8 +1,9 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog-post
   (:use :cl :asdf :site)
-  (:export :blog-post :defblogpost :id :tags :post :less :print-object :subject
-	   :meta :attachment-type :blog-post-attachment))
+  (:export :blog-post :att-type :url :defblogpost :id :tags :post :attachment
+	   :less :print-object :subject :meta :attachment-type
+   :blog-post-attachment))
 
 (in-package :site.blog-post)
 
@@ -13,10 +14,10 @@
 
 (defclass blog-post-attachment ()
   ((att-type :accessor att-type
-	 :initarg :att-type
-	 :type attachment-type
-	 :initform (error "Must supply an ATTACHMENT-TYPE")
-	 :documentation "Attachment type. Currently images are supported")
+	     :initarg :att-type
+	     :type attachment-type
+	     :initform (error "Must supply an ATTACHMENT-TYPE")
+	     :documentation "Attachment type. Currently images are supported")
    (url :accessor url
 	:initarg :url
 	:initform (error "Must supply an URL")
