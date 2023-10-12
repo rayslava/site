@@ -40,7 +40,7 @@
 			  ((equalp action "pull")
 			   (with-html-output (*standard-output* nil)
 			     (:p "Pull result: "
-				 (str (sh "git pull")))
+				 (str (sh "git config --global --add safe.directory /site && git pull")))
 			     (:a :href "/admin?action=list" "back to list")))
 			  (t (with-html-output (*standard-output* nil)
 			       (:a :href "/admin?action=list" "List actions"))))))))))
