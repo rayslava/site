@@ -10,6 +10,11 @@
   "ATTACHMENT-TYPE defines the types of attachments for blog posts supported by
  the engine")
 
+(defmethod make-load-form ((obj blog-post-attachment))
+  `(make-instance 'blog-post-attachment
+                  :attachment-type ,(attachment-type obj)
+                  :url ,(url obj)))
+
 (defclass blog-post-attachment()
   ((attachment-type :accessor attachment-type
 	 :initarg :attachment-type
