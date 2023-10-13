@@ -1130,8 +1130,8 @@ who came for vaccination during 45 minutes I spent in clinic.")
    template using LaTeX:" (:a :href "https://rayslava.github.io/divelog/divelog.pdf" "pdf")
    ", " (:a :href "https://github.com/rayslava/divelog/" "sources"))
    (:p "You can easily print it using any SOHO printer on any matte photo paper
-   with weight of 120-140 g/m². Then you just need a hole punch, a knife, and a
-   bit of time. "))
+   with weight of 120-140 g/m&#xB2;. Then you just need a hole punch, a knife,
+   and a bit of time."))
   :attachment (:type 'image :url "https://rayslava.com/i/own-divelog.jpg")
   :tags '("en" "diving" "fedi")
   :meta  ((:meta :property "og:title" :content "Diving logbook template")
