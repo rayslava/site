@@ -540,15 +540,15 @@ version to corresponding actor"
 (defun direct-replies (id)
   "Get comments for `id' which came as replies"
   (let* ((response
-	  (nth-value 1 (scan *dyna* :table-name "activitypub-events"
-				    :filter-expression "replyto = :id AND eventtype = :type"
-				    :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
-								   (":type" . "Create")))))
+	   (nth-value 1 (scan *dyna* :table-name "activitypub-events"
+				     :filter-expression "replyto = :id AND eventtype = :type"
+				     :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
+								    (":type" . "Create")))))
 	 (replies (cdr (assoc "items" (cdr response) :test #'string-equal)))
 	 (result nil))
     (dolist (reply-obj replies result)
       (let*  ((reply (cl-json:decode-json-from-string (cdr (assoc "s"
-								 (cddr (assoc "event" (cdr reply-obj) :test #'string-equal)) :test #'string-equal))))
+								  (cddr (assoc "event" (cdr reply-obj) :test #'string-equal)) :test #'string-equal))))
 	      (object (cdr (assoc :object reply)))
 	      (actor (cdr (assoc :attributed-to object)))
 	      (url (cdr (assoc :url object)))
