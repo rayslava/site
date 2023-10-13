@@ -358,12 +358,10 @@
 
 (defun prepare-image-url (url)
   "Produces new json object with url `url' of type Image"
-  (let* ((message `("object" . (("id" . ,url)
-				("type" . "Image")
-				("attributedTo" . "https://rayslava.com/ap/actor/blog")
-				("to" . "https://www.w3.org/ns/activitystreams#Public")
-				("url" . (("href" . ,url)
-					  ("type" . "Link")))))))
+  (let* ((message `("attachment" . ((("id" . ,url)
+				     ("type" . "Document")
+				     ("mediaType" . "image/jpeg")
+				     ("url" . ,url))))))
     message))
 
 (defun prepare-fedi-object (post type)
@@ -417,7 +415,10 @@ are processed as plain text, not as in HTML"
 		    ("actor" . "https://rayslava.com/ap/actor/blog")
 		    ("attributedTo" . "https://rayslava.com/ap/actor/blog")
 		    ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
-		    ("to" . "https://www.w3.org/ns/activitystreams#Public"))))
+		    ("to" . "https://www.w3.org/ns/activitystreams#Public")
+		    ,(when (and (slot-boundp post 'attachment)
+				(eq (slot-value (attachment post) 'att-type) 'image))
+		       (prepare-image-url (url (attachment post)))))))
     message))
 
 (defun fedi-note-create (post)
