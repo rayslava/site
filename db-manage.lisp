@@ -101,7 +101,7 @@
 
     // Loop through all uploaded files
     for(var i = 0; i < uploadedFiles.length; i++) {
-        fd.append('uploaded[]', uploadedFiles[i]);
+        fd.append('uploaded', uploadedFiles[i]);
     }
 
     fd.append('tags', tags);
@@ -125,14 +125,14 @@
 
 (define-easy-handler (upload-work :uri "/admin/do-upload")
     (uploaded tags)
-  (let* ((file-list (if (listp uploaded) uploaded (list uploaded)))
+  (let* ((file-list (list uploaded))
          (attrs `(:tags ,(mapcar
 			  (lambda (s)
 			    (string-trim '(#\Space #\Newline #\Backspace #\Tab
 					   #\Linefeed #\Page #\Return #\Rubout)
 					 s))
 			  (split-sequence:split-sequence #\, tags))
-			:filename ,(cadr (first file-list)))))
+		  :filename ,(cadr (first file-list)))))
     (dolist (file file-list)
       (upload-file (car file) attrs))
     (hunchentoot:redirect "/admin/statics")))
