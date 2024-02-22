@@ -526,13 +526,16 @@ version to corresponding actor"
 
 (defun reactions-number (id reaction-type)
   "Get number of reactions `reaction-type' (Like or Announce) for post with `id'"
-  (let ((counts
-	  (nth-value 1 (scan *dyna* :table-name "activitypub-events"
-				    :filter-expression "objectid = :id AND eventtype = :type"
-				    :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
-								   (":type" . ,reaction-type))
-				    :select "COUNT"))))
-    (cdr (assoc "count" (cdr counts) :test #'string-equal))))
+  (handler-case
+      (let ((counts
+              (nth-value 1 (scan *dyna* :table-name "activitypub-events"
+					:filter-expression "objectid = :id AND eventtype = :type"
+					:expression-attribute-values `((:id . ,(format nil "https://rayslava.com/blog?id=~A" id))
+								       (:type . ,reaction-type))
+					:select "COUNT"))))
+        (cdr (assoc "count" (cdr counts) :test #'string-equal)))
+    (error (e) ; Catch all errors
+      -1)))
 
 ;;; Create DynamoDB table if one doesn't exist
 (when (not (table-exist-p 'activitypub-event))
