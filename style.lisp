@@ -45,4 +45,6 @@
      (".tag" :padding "4px" :border "1px solid silver" :margin "4px"
 	     :border-radius "8px")
      ("#apubinfo" :padding "4px" :font-size "80%" :float "right")
-     ("#timeinfo" :padding "4px" :font-size "80%" :float "right"))))
+     ("#timeinfo" :padding "4px" :font-size "80%" :float "right")
+     (".text-with-image span" :display "inline-block" :height "1em" :width "auto" :vertical-align "middle")
+     (".text-with-image img" :height "100%" :width "auto" :display "block"))))

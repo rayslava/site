@@ -143,12 +143,16 @@ TAGS is comma-separated string"
 		    (:head (:title "Blog")
 			   (format t "~a" (blog-page-head))
 			   (:body (:h2 "Blog posts")
+				  (:p :class "text-with-image"
+				      (:href "https://rayslava.com/blog" :rel "me"
+					     "The line marked with "
+					     (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
+					     " are published via ActivityPub as well"))
 				  (:ul
 				   (dolist (post postlist)
 				     (htm
 				      (:li (:a :href (format nil "/blog?id=~a" (id post))
-					       (format t "~a" (subject post)))))))
-				  (:href "https://rayslava.com/blog" :rel "me"))))))))))
+					       (format t "~a" (subject post))))))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
