@@ -144,15 +144,19 @@ TAGS is comma-separated string"
 			   (format t "~a" (blog-page-head))
 			   (:body (:h2 "Blog posts")
 				  (:p :class "text-with-image"
-				      (:href "https://rayslava.com/blog" :rel "me"
-					     "The line marked with "
-					     (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
-					     " are published via ActivityPub as well"))
-				  (:ul
-				   (dolist (post postlist)
-				     (htm
-				      (:li (:a :href (format nil "/blog?id=~a" (id post))
-					       (format t "~a" (subject post))))))))))))))))
+				      (:a :href "https://rayslava.com/blog" :rel "me"
+					  "The line marked with "
+					  (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
+					  " are published via ActivityPub as well"))
+				  (:ul :class "text-with-image"
+				       (dolist (post postlist)
+					 (htm
+					  (:li (:a :href (format nil "/blog?id=~a" (id post))
+						   (format t "~a~a"
+							   (if (member "fedi" (tags post) :test #'string=)
+							       (htm (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
+							       "")
+							   (subject post))))))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
