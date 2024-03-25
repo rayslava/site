@@ -1158,5 +1158,19 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	   (:meta :property "og:url"
 		  :content "https://rayslava.com/blog?id=3917604871")))
 
+(defblogpost 3920346397 "Вылечил все зубы"
+  (:div
+   (:p "Довольно любопытное ощущение: я вылечил последний зуб. В смысле во рту физически не осталось места, которе не проверили и/или не пролечили.")
+   (:p "Неделя на антибиотиках и обезболе, отёки по всему лицу, невозможность нормально есть, пить горячее, жевать в принципе, и ещё куча ограничений. Устал от всего этого настолько, что вчера буквально уснул в кресле у стоматолога. Пока он сверлил, ещё немного ощущалось, а когда начал ставить пломбу, уже просто не оставалось сил ни на что, поэтому я просто расслабился и задремал.")
+   (:p "Из хороших новостей — осталая консультация с ортодонтом, и я, наконец, доберусь до брекет-системы, ради которой всё и затевалось ещё со времён " (:a :href "https://rayslava.com/blog?id=3917604871" "прошлого поста") ".")
+   (:p "В общем, если задумаете пройти мой путь, то закладывайте ещё несколько месяцев, и ещё вторую цену этих брекетов в запас."))
+   :tags '("ru" "медицина" "дыбр" "fedi")
+   :meta  ((:meta :property "og:title" :content "Вылечил все зубы")
+	   (:meta :property "og:type" :content "article")
+	   (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	   (:meta :property "og:description" :content "Закончил с лечением зубов, устал")
+	   (:meta :property "og:url"
+		  :content "https://rayslava.com/blog?id=3920346397")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
