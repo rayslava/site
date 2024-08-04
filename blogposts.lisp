@@ -1207,5 +1207,82 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3923400325")))
 
+(defblogpost 3931789300 "Relocation"
+  (:div
+   (:h1 "Goodbye Samsung")
+   (:p "Suddenly, in this year it has been 12 years of impeccable service
+ already :)")
+   (:p "That's actually somewhat symbolic: the full zodiac cycle is finished now:
+I came to the company with the Water Dragon and now leaving it together with
+the Wooden Dragon. And since I've been born in the year of Earth Dragon it
+seems I have to perform a scrutiny on my whole horoscope to get a proper
+alignment with the stars.")
+   (:p "Back to the real life—I definitely regret nothing: that was a really great
+experience. Work with Samsung Research is interesting and provided enough
+challenges not to get bored during all these years. I took part in several
+interesting movements, attended worldwide conferences and affected (indirectly
+though) lots of products used by a huge amount of people all around the
+world. The environment is friendly, my colleagues were a great team and I'll
+miss some of our out-of-office activities.")
+   (:p "But anyway, I've reached my limit in the overseas center and now it's time
+to move further. ")
+   (:h1 "Hello Toyota")
+   (:p "During the last winter I accidentally met a vacancy description posted by
+the Woven by Toyota company which ridiculously resembled the job description
+I've prepared to hire new members into my team. And this match seemed so funny
+to me that I decided to apply.")
+   (:p "Actually, all the communications with the company went perfectly smooth
+and positively: starting from initial HR screening and up to the management
+skill interview on the last stages. Every person I had pleasure to communicate
+with, undoubtedly was a perfect professional and met every expectation I might
+have been waiting for. All the discussions left the feeling of an interesting
+company to work with and the resulting offer was realistic, convincing, and
+seemed as a good deal to me. Just like the thing I'd be expecting to get from a
+big company with established processes.")
+   (:p "So after all these interview rounds and some discussions including a talk
+to myself the decision has been made:" (:b "let's move to Tokyo!") ".")
+   (:h1 "Moving actually")
+   (:p "This year introduced lots of changes into my life: I got married (yeah, it
+looks like my \"year results\" post will be very interesting), and now I change
+the job and moving into a new country I've never been to.")
+   (:p "After I got an offer letter and accepted it I had to settle up all the
+matters in Moscow, and it was not so easy-I didn't expect such a relocation
+before, so I prepared my apartments for myself and there were some very
+specific things like my personal self-made Smart Home, also my motorbike is
+suited for traveling thought the Russia and possibly some related places. But
+anyway after decision is made you have to concentrate on the task, split it
+into the sub-tasks, and finish all of them one-by-one before the appointed
+flight time comes.")
+   (:p "So there were some weeks of quite a nervous activity but now it seems I'm
+almost prepared for a travel. All the belongings are packed and mostly sent,
+the car is sold, the apartment is prepared to be rental and the only thing I
+couldn't leave is my bike—I just preserved it and packed for a while in a hope
+to transfer one to my new place.")
+   (:h1 "Expectations of future")
+   (:p "Currently I can't predict my future with some appropriate accuracy but
+still I'm sure my life becomes more interesting and I suppose I'll be sharing
+more of my life experiences both in the blog and all over the social network
+services.")
+   (:p "Anyway, I've been living in Moscow for a long time now, I lived in Seoul
+for a couple of months, visited quite some cities, and I'm totally sure that
+the Tokyo difference from Moscow is much less than the Japan difference from
+Russia. There are definitely some local nuances and peculiarities to be worried
+about but the people live there and I have no doubts I'll fit Tokyo not worse
+that any megalopolis on Earth.")
+   (:h1 "Blog future")
+   (:p "It's hard to say right now but I'm nearly sure that after my arrival to
+Tokyo I'll have a split—on the one hand I'll have lots of new things to share
+and on the other hand there won't be enough time to prepare proper descriptions
+for all these changes. So I guess I'll reanimate my Instagram and will
+dramatically improve my activity in fedi, but not sure about the long stories
+to tell.")
+   :tags '("en" "life" "work" "relocation")
+   :meta  ((:meta :property "og:title" :content "Relocation")
+	   (:meta :property "og:type" :content "article")
+	   (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	   (:meta :property "og:description" :content "I decided to relocate to Japan")
+	   (:meta :property "og:url"
+		  :content "https://rayslava.com/blog?id=3931789300")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
