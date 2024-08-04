@@ -1275,7 +1275,7 @@ Tokyo I'll have a split—on the one hand I'll have lots of new things to share
 and on the other hand there won't be enough time to prepare proper descriptions
 for all these changes. So I guess I'll reanimate my Instagram and will
 dramatically improve my activity in fedi, but not sure about the long stories
-to tell.")
+to tell."))
    :tags '("en" "life" "work" "relocation")
    :meta  ((:meta :property "og:title" :content "Relocation")
 	   (:meta :property "og:type" :content "article")
