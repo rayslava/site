@@ -1209,7 +1209,7 @@ who came for vaccination during 45 minutes I spent in clinic.")
 
 (defblogpost 3931789300 "Relocation"
   (:div
-   (:h1 "Goodbye Samsung")
+   (:h3 "Goodbye Samsung")
    (:p "Suddenly, in this year it has been 12 years of impeccable service
  already :)")
    (:p "That's actually somewhat symbolic: the full zodiac cycle is finished now:
@@ -1226,7 +1226,7 @@ world. The environment is friendly, my colleagues were a great team and I'll
 miss some of our out-of-office activities.")
    (:p "But anyway, I've reached my limit in the overseas center and now it's time
 to move further. ")
-   (:h1 "Hello Toyota")
+   (:h3 "Hello Toyota")
    (:p "During the last winter I accidentally met a vacancy description posted by
 the Woven by Toyota company which ridiculously resembled the job description
 I've prepared to hire new members into my team. And this match seemed so funny
@@ -1241,7 +1241,7 @@ seemed as a good deal to me. Just like the thing I'd be expecting to get from a
 big company with established processes.")
    (:p "So after all these interview rounds and some discussions including a talk
 to myself the decision has been made:" (:b "let's move to Tokyo!") ".")
-   (:h1 "Moving actually")
+   (:h3 "Moving actually")
    (:p "This year introduced lots of changes into my life: I got married (yeah, it
 looks like my \"year results\" post will be very interesting), and now I change
 the job and moving into a new country I've never been to.")
@@ -1258,7 +1258,7 @@ almost prepared for a travel. All the belongings are packed and mostly sent,
 the car is sold, the apartment is prepared to be rental and the only thing I
 couldn't leave is my bike—I just preserved it and packed for a while in a hope
 to transfer one to my new place.")
-   (:h1 "Expectations of future")
+   (:h3 "Expectations of future")
    (:p "Currently I can't predict my future with some appropriate accuracy but
 still I'm sure my life becomes more interesting and I suppose I'll be sharing
 more of my life experiences both in the blog and all over the social network
@@ -1269,7 +1269,7 @@ the Tokyo difference from Moscow is much less than the Japan difference from
 Russia. There are definitely some local nuances and peculiarities to be worried
 about but the people live there and I have no doubts I'll fit Tokyo not worse
 that any megalopolis on Earth.")
-   (:h1 "Blog future")
+   (:h3 "Blog future")
    (:p "It's hard to say right now but I'm nearly sure that after my arrival to
 Tokyo I'll have a split—on the one hand I'll have lots of new things to share
 and on the other hand there won't be enough time to prepare proper descriptions
