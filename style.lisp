@@ -41,7 +41,15 @@
     ()
   (setf (hunchentoot:content-type*) "text/css")
   (css
-   `(("#taglist" :padding "4px" :display "inline-block" :max-height "32px")
+   `(("@media (min-width: 768px)"
+      ("html"
+       :font-size "125%"
+       :max-width "50em"))
+     ("h1, h2, h3, h4"
+      :margin "2.5rem 0 1.5rem 0"
+      :line-height "1.25"
+      :color "#333")
+     ("#taglist" :padding "4px" :display "inline-block" :max-height "32px")
      (".tag" :padding "4px" :border "1px solid silver" :margin "4px"
 	     :border-radius "8px")
      ("#apubinfo" :padding "4px" :font-size "80%" :float "right")
