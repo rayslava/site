@@ -44,7 +44,8 @@
    `(("@media (min-width: 768px)"
       ("html"
        :font-size "125%"
-       :max-width "50em"))
+       :max-width "45em"
+       :margin "0px auto"))
      ("h1, h2, h3, h4"
       :margin "2.5rem 0 1.5rem 0"
       :line-height "1.25"
