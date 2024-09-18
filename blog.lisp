@@ -13,20 +13,21 @@
   `(setf *blog-posts*
 	 (merge 'list
 		*blog-posts*
-		(list (make-instance 'blog-post :id ,id
-						:subject ,subject
-						:post (lambda ()
-							(with-html-output-to-string (*standard-output* nil :prologue nil)
-							  (:div :class "blog-post"
-								,post)))
-						,@(when meta `(:meta
-							       (lambda ()
-								 (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
-						,@(when attachment `(:attachment
-								     (make-instance 'blog-post-attachment
-										    :att-type ,(getf attachment :type)
-										    :url ,(getf attachment :url))))
-						,@(when tags `(:tags ,tags)))) #'less)))
+		(list (make-instance 'blog-post
+				     :id ,id
+				     :subject ,subject
+				     :post (lambda ()
+					     (with-html-output-to-string (*standard-output* nil :prologue nil)
+					       (:div :class "blog-post"
+						     ,post)))
+				     ,@(when meta `(:meta
+						    (lambda ()
+						      (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
+				     ,@(when attachment `(:attachment
+							  (make-instance 'blog-post-attachment
+									 :att-type ,(getf attachment :type)
+									 :url ,(getf attachment :url))))
+				     ,@(when tags `(:tags ,tags)))) #'less)))
 
 
 (setf (html-mode) :html5)
