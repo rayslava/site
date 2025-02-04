@@ -1,8 +1,10 @@
-FROM fukamachi/sbcl:2.5.1-alpine
+FROM fukamachi/sbcl:2.5.1-ubuntu
 LABEL maintainer "Slava Barinov <rayslava@gmail.com>"
 EXPOSE 4005 8080
 
-RUN apk add git curl file
+RUN apt update && apt upgrade --yes
+RUN apt install -y git curl file
+RUN apt clean
 RUN git config --global user.email 'server@amazon.com' && git config --global user.name 'server'
 RUN sbcl --eval "(ql:update-client :prompt nil)" --eval "(ql:update-all-dists :prompt nil)"
 RUN mkdir -p ~/.roswell/lisp/quicklisp/local-projects && cd ~/.roswell/lisp/quicklisp/local-projects && git clone https://github.com/rayslava/dyna.git
