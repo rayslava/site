@@ -1284,5 +1284,20 @@ to tell."))
 	   (:meta :property "og:url"
 		  :content "https://rayslava.com/blog?id=3931789300")))
 
+(defblogpost 3947747119 "Мигрировал сайт на новую ноду"
+  (:div
+   (:p "Обновил инфраструктуру сайта, переехал с t2.nano на t4g.nano. Работает не хуже,
+стоит ещё дешевле.")
+   (:p "Попутно обновил библиотеки, обновил деплой, всё даже завелось и работает.")
+   (:p "В общем, надо хотя бы сделать себе нормальный сайт-визитку, после стольки-то
+лет, а то как-то уже и неприлично даже получается."))
+   :tags '("ru" "сайт" "дыбр" "fedi")
+   :meta  ((:meta :property "og:title" :content "Мигрировал сайт на новую ноду")
+	   (:meta :property "og:type" :content "article")
+	   (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	   (:meta :property "og:description" :content "Обновил инфраструктуру и деплой, оживил библиотеки")
+	   (:meta :property "og:url"
+		  :content "https://rayslava.com/blog?id=3947747119")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
