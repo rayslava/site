@@ -153,12 +153,12 @@ TAGS is comma-separated string"
 				       (dolist (post postlist)
 					 (htm
 					  (:li (:a :href (format nil "/blog?id=~a" (id post))
-						   (format t "~a"
-							   (concatenate 'string
-									(if (member "fedi" (tags post) :test #'string=)
-									    (htm (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
-									    "")
-									(subject post)))))))))))))))))
+						   (format t "~a~a"
+							   (if (member "fedi" (tags post) :test #'string=)
+							       (with-html-output-to-string (s)
+								 (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
+							       "")
+							   (subject post))))))))))))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
