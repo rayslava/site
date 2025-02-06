@@ -31,6 +31,12 @@
       (".social-link"
        :padding "2px"
        :display "block"))
+     ("@media (prefers-color-scheme: dark)"
+      ("body" :background "#1a1a1a" :color "#e0e0e0")
+      ("a" :color "#fff")
+      ("a:hover" :color "#ff6666")
+      ("hr" :border-bottom "1px solid #404040")
+      ("h1, h2, h3, h4" :color "#e0e0e0"))
      ("h1" :margin "0.5em 0" :font-size "200%")
      ("p" :margin "0.5em 0")
      (".social-link" :padding "4px" :display "inline-block")
