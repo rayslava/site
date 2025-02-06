@@ -4,6 +4,7 @@
 (let ((swank::*loopback-interface* (sb-unix:unix-gethostname)))
   (swank:create-server :port 4005 :style :spawn :dont-close t))
 (sb-posix:chdir #P"/site/")
+(uiop:copy-file #P"/root/jscl.js" #P"/site/static/jscl.js")
 (load "/site/site.asd")
 (ql:quickload "site")
 (site:start-server 8080)
