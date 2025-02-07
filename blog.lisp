@@ -61,6 +61,100 @@ TAGS is comma-separated string"
     (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
     (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0")))
 
+(defun show-fedi-comments (id)
+  (let ((replies (get-all-replies id)))
+    (when replies
+      (with-html-output-to-string (*standard-output* nil :prologue nil)
+	(htm (:div
+	      :class "comments"
+	      (dolist (reply replies)
+		(when (cdr (assoc :public reply))
+		  (htm (:div
+			:class "apub-reply"
+			(:span :class "commenter" (format t "~a" (cdr (assoc :actor reply))))
+			(:span :class "comment" (format t "~a" (cdr (assoc :content reply))))
+			(:span :class "comment-time" (:a :href (format nil "~a" (cdr (assoc :url reply)))
+							 (format-timestring t (universal-to-timestamp (cdr (assoc :published reply)))
+									    :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))))))))))))
+
+(defun show-post (id)
+  (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
+	 (subject (subject post))
+	 (taglist (tags post))
+	 (text (post post))
+	 (meta (meta post))
+	 (att (if (slot-boundp post 'attachment)
+		  (attachment post)
+		  nil))
+	 (timestamp (universal-to-timestamp (id post)))
+	 (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
+	 (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
+    (with-html-output-to-string (*standard-output* nil :prologue nil)
+      (htm (:html
+	    (:head (:title (format t "~a" subject)subject)
+
+		   (format t "~a" (blog-page-head))
+		   (when meta
+		     (format t "~a" (funcall meta))))
+	    (htm (:body
+		  (:article
+		   (:h2 (format t "~a" subject))
+		   (format t "~a" (funcall text))
+		   (when att
+		     (htm
+		      (:div
+		       :id "attachment"
+		       (cond ((eq (slot-value att 'att-type) 'image)
+			      (htm (:img :src (url att))))
+			     (t)))))
+		   (htm (:div
+			 :id "postinfo"
+			 (:nav
+			  (:span :id "taglist"
+				 (dolist (tag taglist)
+				   (if (string-equal tag "fedi")
+				       (htm (:a :href (format nil "/blog?tags=~a" tag)
+						(:span :class "tag"
+						       (format t "&#x2B50;~a &#x1F501;~a"
+							       (reactions-number id "Like")
+							       (reactions-number id "Announce")))))
+				       (htm (:a :href (format nil "/blog?tags=~a" tag)
+						(:span :class "tag"
+						       (format t "~a" tag)))))))))
+			(:span :id "timeinfo"
+			       (:time
+				:datetime (format nil "~a" datetime-tag)
+				(format t "~a" posted-at))))
+		   (when (member "fedi" taglist)
+		     (show-fedi-comments id))))))))))
+
+(defun list-posts (tags)
+  (let* ((postlist (sort (copy-list
+			  (if tags
+			      (posts-by-tags tags)
+			      *blog-posts*))
+			 #'> :key #'id)))
+    (with-html-output-to-string (*standard-output* nil :prologue nil)
+      (htm (:html
+	    (:head (:title "Blog")
+		   (format t "~a" (blog-page-head))
+		   (:body (:h2 "Blog posts")
+			  (:p :class "text-with-image"
+			      (:a :href "https://rayslava.com/blog" :rel "me"
+				  "The line marked with "
+				  (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
+				  " are published via ActivityPub as well"))
+			  (:ul :class "text-with-image"
+			       (dolist (post postlist)
+				 (htm
+				  (:li (:a :href (format nil "/blog?id=~a" (id post))
+					   (format t "~a~a"
+						   (if (member "fedi" (tags post) :test #'string=)
+						       (with-html-output-to-string (s)
+							 (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
+						       "")
+						   (subject post))))))))))))))
+
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
     ((id :parameter-type 'integer)
@@ -74,93 +168,10 @@ TAGS is comma-separated string"
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
 	(fedi-note-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
       (with-html-output-to-string (*standard-output* nil :prologue t)
-	(if id
-	    (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
-		   (subject (subject post))
-		   (taglist (tags post))
-		   (text (post post))
-		   (meta (meta post))
-		   (att (if (slot-boundp post 'attachment)
-			    (attachment post)
-			    nil))
-		   (timestamp (universal-to-timestamp (id post)))
-		   (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
-		   (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
-	      (htm (:html
-		    (:head (:title (format t "~a" subject)subject)
-
-			   (format t "~a" (blog-page-head))
-			   (when meta
-			     (format t "~a" (funcall meta))))
-		    (htm (:body
-			  (:article
-			   (:h2 (format t "~a" subject))
-			   (format t "~a" (funcall text))
-			   (when att
-			     (htm
-			      (:div
-			       :id "attachment"
-			       (cond ((eq (slot-value att 'att-type) 'image)
-				      (htm (:img :src (url att))))
-				     (t)))))
-			   (htm (:div
-				 :id "postinfo"
-				 (:nav
-				  (:span :id "taglist"
-					 (dolist (tag taglist)
-					   (if (string-equal tag "fedi")
-					       (htm (:a :href (format nil "/blog?tags=~a" tag)
-							(:span :class "tag"
-							       (format t "&#x2B50;~a &#x1F501;~a"
-								       (reactions-number id "Like")
-								       (reactions-number id "Announce")))))
-					       (htm (:a :href (format nil "/blog?tags=~a" tag)
-							(:span :class "tag"
-							       (format t "~a" tag)))))))))
-				(:span :id "timeinfo"
-				       (:time
-					:datetime (format nil "~a" datetime-tag)
-					(format t "~a" posted-at))))
-			   (when (member "fedi" taglist)
-			     (let ((replies (get-all-replies id)))
-			       (when replies
-				 (htm (:div
-				       :class "comments"
-				       (dolist (reply replies)
-					 (when (cdr (assoc :public reply))
-					   (htm (:div
-						 :class "apub-reply"
-						 (:span :class "commenter" (format t "~a" (cdr (assoc :actor reply))))
-						 (:span :class "comment" (format t "~a" (cdr (assoc :content reply))))
-						 (:span :class "comment-time" (:a :href (format nil "~a" (cdr (assoc :url reply)))
-										  (format-timestring t (universal-to-timestamp (cdr (assoc :published reply)))
-												     :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm)))))))))))))))))))
-
-
-	    (let* ((postlist (sort (copy-list
-				    (if tags
-					(posts-by-tags tags)
-					*blog-posts*))
-				   #'> :key #'id)))
-	      (htm (:html
-		    (:head (:title "Blog")
-			   (format t "~a" (blog-page-head))
-			   (:body (:h2 "Blog posts")
-				  (:p :class "text-with-image"
-				      (:a :href "https://rayslava.com/blog" :rel "me"
-					  "The line marked with "
-					  (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
-					  " are published via ActivityPub as well"))
-				  (:ul :class "text-with-image"
-				       (dolist (post postlist)
-					 (htm
-					  (:li (:a :href (format nil "/blog?id=~a" (id post))
-						   (format t "~a~a"
-							   (if (member "fedi" (tags post) :test #'string=)
-							       (with-html-output-to-string (s)
-								 (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
-							       "")
-							   (subject post))))))))))))))))
+	(format t "~a" 	
+		(if id
+		    (show-post id)
+		    (list-posts tags))))))
 
 ;;; The RSS feed
 (define-easy-handler (rss-page :uri "/rss"
