@@ -130,30 +130,39 @@ TAGS is comma-separated string"
 
 (defun list-posts (tags)
   (let* ((postlist (sort (copy-list
-			  (if tags
-			      (posts-by-tags tags)
-			      *blog-posts*))
-			 #'> :key #'id)))
+                          (if tags
+                              (posts-by-tags tags)
+                              *blog-posts*))
+                         #'> :key #'id))
+         (current-year nil))
     (with-html-output-to-string (*standard-output* nil :prologue nil)
       (htm (:html
-	    (:head (:title "Blog")
-		   (format t "~a" (blog-page-head))
-		   (:body (:h2 "Blog posts")
-			  (:p :class "text-with-image"
-			      (:a :href "https://rayslava.com/blog" :rel "me"
-				  "The line marked with "
-				  (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub"))
-				  " are published via ActivityPub as well"))
-			  (:ul :class "text-with-image"
-			       (dolist (post postlist)
-				 (htm
-				  (:li (:a :href (format nil "/blog?id=~a" (id post))
-					   (format t "~a~a"
-						   (if (member "fedi" (tags post) :test #'string=)
-						       (with-html-output-to-string (s)
-							 (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
-						       "")
-						   (subject post))))))))))))))
+            (:head (:title "Blog")
+                   (format t "~a" (blog-page-head))
+                   (:body
+                    (:div :class "posts-by-year"
+                          (dolist (post postlist)
+                            (let ((post-year (local-time:timestamp-year
+                                              (local-time:universal-to-timestamp (id post)))))
+                              (when (not (eql post-year current-year))
+                                (setf current-year post-year)
+                                (htm (:div :class "year-split"
+					   (:h3 (format t "~A" post-year)))))
+                              (htm (:ul :class "text-with-image"
+                                        (:li (:a :href (format nil "/blog?id=~a" (id post))
+                                                 (format t "~a~a"
+                                                         (if (member "fedi" (tags post) :test #'string=)
+							     (with-html-output-to-string (s)
+                                                               (:span (:img :src "https://rayslava.com/i/apub.svg" :alt "apub")))
+							     "")
+                                                         (subject post)))))))))
+		    (:div :class "blog-stats"
+			  (:p (format t "Blog posts: ~d" (length postlist)))
+                    (:p :class "text-with-image"
+                        (:p
+                            "The line marked with "
+                            (:span (:img :height "24px;" :src "https://rayslava.com/i/apub.svg" :alt "apub"))
+                            " are published via ActivityPub as well"))))))))))
 
 (define-easy-handler (blog-page :uri "/blog"
 				:default-request-type :get)
@@ -168,7 +177,7 @@ TAGS is comma-separated string"
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
 	(fedi-note-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
       (with-html-output-to-string (*standard-output* nil :prologue t)
-	(format t "~a" 	
+	(format t "~a"
 		(if id
 		    (show-post id)
 		    (list-posts tags))))))
