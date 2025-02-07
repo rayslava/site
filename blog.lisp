@@ -137,9 +137,11 @@ TAGS is comma-separated string"
 												     :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm)))))))))))))))))))
 
 
-	    (let ((postlist (if tags
-				(posts-by-tags tags)
-				*blog-posts*)))
+	    (let* ((postlist (stable-sort
+			      (if tags
+				  (posts-by-tags tags)
+				  *blog-posts*)
+			      (lambda (post1 post2) (> (id post1) (id post2))))))
 	      (htm (:html
 		    (:head (:title "Blog")
 			   (format t "~a" (blog-page-head))
