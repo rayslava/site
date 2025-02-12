@@ -530,8 +530,8 @@ version to corresponding actor"
       (let ((counts
               (nth-value 1 (scan *dyna* :table-name "activitypub-events"
 					:filter-expression "objectid = :id AND eventtype = :type"
-					:expression-attribute-values `((:id . ,(format nil "https://rayslava.com/blog?id=~A" id))
-								       (:type . ,reaction-type))
+					:expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
+								       (":type" . ,reaction-type))
 					:select "COUNT"))))
         (cdr (assoc "count" (cdr counts) :test #'string-equal)))
     (error (e) ; Catch all errors
@@ -563,7 +563,7 @@ version to corresponding actor"
 			  t
 			  nil)))
 	(push (pairlis '(:id :actor :url :published :content :public)
-		       (id list actor url published content public))
+		       (list id actor url published content public))
 	      result)
 	result))))
 
