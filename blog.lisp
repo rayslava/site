@@ -186,6 +186,7 @@ TAGS is comma-separated string"
 (define-easy-handler (rss-page :uri "/rss"
 			       :default-request-type :get)
     ()
+  (let (((html-mode) :xml))
   (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent t)
     (:rss :|version| "2.0"
 	  (:channel
@@ -200,4 +201,4 @@ TAGS is comma-separated string"
 			    (cl-who:htm (:title (cl-who:str title))
 					(:link (cl-who:str link))
 					(:pubDate (cl-who:str (format-timestring nil (universal-to-timestamp (id post)) :format +rfc-1123-format+)))
-					(:description (cl-who:str (funcall description))))))))))))
+					(:description (cl-who:str (funcall description)))))))))))))
