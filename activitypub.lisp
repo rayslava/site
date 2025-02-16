@@ -559,7 +559,9 @@ version to corresponding actor"
 	      (published (local-time:timestamp-to-universal (local-time:parse-timestring (cdr (assoc :published object)))))
 	      (content (cdr (assoc :content object)))
 	      (to (cdr (assoc :to object)))
-	      (public (if (member "https://www.w3.org/ns/activitystreams#Public" to :test #'string-equal)
+	      (cc (cdr (assoc :cc object)))
+	      (public (if (or (member "https://www.w3.org/ns/activitystreams#Public" to :test #'string-equal)
+			      (member "https://www.w3.org/ns/activitystreams#Public" cc :test #'string-equal))
 			  t
 			  nil)))
 	(push (pairlis '(:id :actor :url :published :content :public)

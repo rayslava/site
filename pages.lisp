@@ -46,7 +46,7 @@
 			       (:a :href "/admin?action=list" "List actions"))))))))))
 
 					; Main page goes here
-(define-easy-handler (main-page :uri "/about"
+(define-easy-handler (about-page :uri "/about"
                                 :default-request-type :get)
     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
@@ -66,9 +66,31 @@
 	     "It works on " (:a :href "https://edicl.github.io/hunchentoot/" "hunchentoot")
 	     " under " (:a :href "https://sbcl.org" "sbcl")
 	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
-	     " installed on AWS micro instance")
+	     " installed on AWS t4g.nano instance")
 	    (:p "If you are courious about how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") " or " (:a :href "https://lor.sh/@rayslava" :rel "me" "Mastodon") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
+     	    (:script :type "text/javascript" :src "/jscl.js")))))
+
+					; Main page goes here
+(define-easy-handler (main-page :uri "/me"
+                                :default-request-type :get)
+    ()
+  (with-html-output-to-string (*standard-output* nil :prologue t)
+    (:html
+     (:head (:title "Slava Barinov")
+	    (:link :rel "stylesheet" :type "text/css" :href "/main.css")
+	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
+	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
+	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
+     (:body (:h1 "About me")
+	    (:div
+	     (:p "Hi, I'm Slava Barinov, a software engineer specializing in
+ developer tooling and toolchains. I was born in 1988 in a tiny town near
+ Vladimir, Russia.")
+	     (:p "Most of my production experience includes C and C++ but I'm switching to Rust
+lately together with the industry drifting in that direction.")
+	     (:p "Should you want to contact me, my contacts are available at "
+		 (:a :href "/contacts" "/contacts") " page."))
      	    (:script :type "text/javascript" :src "/jscl.js")))))
 
 (define-easy-handler (robots-page :uri "/robots.txt"
@@ -76,6 +98,7 @@
     ()
   (string "Host: rayslava.com
 User-agent: *
+Allow: /me
 Allow: /about
 Allow: /contacts
 Allow: /blog
