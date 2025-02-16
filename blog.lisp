@@ -125,8 +125,8 @@ TAGS is comma-separated string"
 			       (:time
 				:datetime (format nil "~a" datetime-tag)
 				(format t "~a" posted-at))))
-		   (when (member "fedi" taglist)
-		     (show-fedi-comments id))))))))))
+		   (when (member "fedi" taglist :test #'string-equal)
+		     (format t "~a" (show-fedi-comments id)))))))))))
 
 (defun list-posts (tags)
   (let* ((postlist (sort (copy-list
