@@ -73,6 +73,7 @@
        ("name" . "rayslava")
        ("summary" . "Personal blog from rayslava.com")
        ("inbox" . "https://rayslava.com/ap/actor/blog/inbox")
+       ("outbox" . "https://rayslava.com/ap/actor/blog/outbox")
        ("icon" .  (("type" . "Image")
 		   ("mediaType" . "image/png")
 		   ("url" . "https://rayslava.com/i/apub-avatar.png")))
