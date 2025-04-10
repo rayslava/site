@@ -296,7 +296,7 @@
                                           (cdr (assoc "object" (prepare-fedi-object post "Create") :test #'string=)))
                                       page-items))))
       ,@(when next-page-url `(("next" . ,next-page-url)))
-      ,@(when prev-page-url `(("prev" . ,prev-page-url)))))))
+      ,@(when prev-page-url `(("prev" . ,prev-page-url))))))
 
 (define-easy-handler (outbox-post :uri "/ap/actor/blog/outbox/post"
                                 :default-request-type :get)
