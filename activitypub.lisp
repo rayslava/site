@@ -174,7 +174,7 @@
 							     (sxql:where (:= :actor actor)))))
 			  (save-dyna subscriber)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
-			  (maybe-deliver-new-posts (find-symbol "*blog-posts*" :site.blog)))))
+			  (maybe-deliver-new-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog))))))
 		     ((string= "Undo" (cdr (assoc :type request-obj)))
 		      (let* ((object (cdr (assoc :object request-obj))))
 			(cond ((string= "Follow" (cdr (assoc :type object)))
@@ -249,6 +249,69 @@
 						       :reply-to reply-str)))
 			    (save-dyna event))
 			  (cl-json:encode-json-to-string '(("status" . "ok"))))))))))))
+
+(define-easy-handler (blog-outbox :uri "/ap/actor/blog/outbox"
+                                :default-request-type :get)
+    ((page :parameter-type 'integer :init-form 1)) ;; Support pagination with a page parameter
+  (setf (hunchentoot:content-type*) "application/activity+json")
+  (let ((cl-json::+json-lisp-escaped-chars+
+          (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+    (json:encode-json-to-string
+     (generate-outbox-collection page))))
+
+(defun generate-outbox-collection (page)
+  (let* ((all-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog)))
+         (fedi-posts (sort
+                      (remove-if-not #'(lambda (post)
+                                       (member "fedi" (tags post) :test #'equal))
+                                     all-posts)
+                      #'> :key #'(lambda (p) (id p))))
+         (items-per-page 20)
+         (start-idx (* (1- page) items-per-page))
+         (total-items (length fedi-posts))
+         (page-items (subseq fedi-posts
+                             start-idx
+                             (min (+ start-idx items-per-page) total-items)))
+         (next-page-url (if (< (+ start-idx items-per-page) total-items)
+                           (format nil "https://rayslava.com/ap/actor/blog/outbox?page=~A" (1+ page))
+                           nil))
+         (prev-page-url (if (> page 1)
+                           (format nil "https://rayslava.com/ap/actor/blog/outbox?page=~A" (1- page))
+                           nil)))
+    `(("@context" . "https://www.w3.org/ns/activitystreams")
+      ("id" . "https://rayslava.com/ap/actor/blog/outbox")
+      ("type" . "OrderedCollection")
+      ("totalItems" . ,total-items)
+      ("first" . "https://rayslava.com/ap/actor/blog/outbox?page=1")
+      ("last" . ,(format nil "https://rayslava.com/ap/actor/blog/outbox?page=~A"
+                         (ceiling total-items items-per-page)))
+      ,@(when (= page 1)
+          `(("orderedItems" . ,(mapcar #'(lambda (post)
+                                           (cdr (assoc "object" (prepare-fedi-object post "Create") :test #'string=)))
+                                       page-items))))
+      ,@(when (> page 1)
+          `(("type" . "OrderedCollectionPage")
+            ("partOf" . "https://rayslava.com/ap/actor/blog/outbox")
+            ("orderedItems" . ,(mapcar #'(lambda (post)
+                                          (cdr (assoc "object" (prepare-fedi-object post "Create") :test #'string=)))
+                                      page-items))))
+      ,@(when next-page-url `(("next" . ,next-page-url)))
+      ,@(when prev-page-url `(("prev" . ,prev-page-url)))))))
+
+(define-easy-handler (outbox-post :uri "/ap/actor/blog/outbox/post"
+                                :default-request-type :get)
+    ((id :parameter-type 'integer))
+  (setf (hunchentoot:content-type*) "application/activity+json")
+  (let* ((all-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog)))
+         (post (find id all-posts :key #'id))
+         (cl-json::+json-lisp-escaped-chars+
+           (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
+    (if (and post (member "fedi" (tags post) :test #'equal))
+        (json:encode-json-to-string
+         (prepare-fedi-object post "Create"))
+        (progn
+          (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
+          (json:encode-json-to-string '(("error" . "Post not found")))))))
 
 (defun generate-accept (request)
   (let ((reply `(("@context" . "https://www.w3.org/ns/activitystreams")
