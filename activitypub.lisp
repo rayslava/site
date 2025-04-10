@@ -143,7 +143,8 @@
 				    (handler-bind ((dex:http-request-gone (generate-delete-reply-func "Public key gone for id "))
 						   (dex:http-request-not-found (generate-delete-reply-func "Public key not found for id ")))
 				      (dex:get keyid :headers
-					       '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))))))
+					       '(("accept" . "application/ld+json"))
+					       :force-string t))))
 		      (key (assoc :public-key userprofile))
 		      (pem (cdr (assoc :public-key-pem (cdr key))))
 		      (public-key (trivia:match
@@ -356,7 +357,7 @@
 				     ("host" . ,target-domain)
 				     ("date" . ,date)
 				     ("digest" . ,hash)
-				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
+				     ("accept" . "application/ld+json")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 			  :content message
 			  :verbose nil))))
