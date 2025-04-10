@@ -341,7 +341,7 @@
 
 (defun send-signed (actor message)
   (let* ((actor-uri (quri:uri actor))
-	 (target-domain (quri:uri-domain actor-uri))
+	 (target-domain (quri:uri-host actor-uri))
 	 (target-user (quri:uri-path actor-uri))
 	 (target-inbox (concatenate 'string target-user "/inbox"))
 	 (reply-url (concatenate 'string actor "/inbox"))
