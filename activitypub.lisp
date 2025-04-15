@@ -143,7 +143,7 @@
 				    (handler-bind ((dex:http-request-gone (generate-delete-reply-func "Public key gone for id "))
 						   (dex:http-request-not-found (generate-delete-reply-func "Public key not found for id ")))
 				      (dex:get keyid :headers
-					       '(("accept" . "application/ld+json"))
+					       '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))
 					       :force-string t))))
 		      (key (assoc :public-key userprofile))
 		      (pem (cdr (assoc :public-key-pem (cdr key))))
@@ -341,7 +341,7 @@
 
 (defun send-signed (actor message)
   (let* ((actor-uri (quri:uri actor))
-	 (target-domain (quri:uri-host actor-uri))
+	 (target-domain (quri:uri-domain actor-uri))
 	 (target-user (quri:uri-path actor-uri))
 	 (target-inbox (concatenate 'string target-user "/inbox"))
 	 (reply-url (concatenate 'string actor "/inbox"))
@@ -357,7 +357,7 @@
 				     ("host" . ,target-domain)
 				     ("date" . ,date)
 				     ("digest" . ,hash)
-				     ("accept" . "application/ld+json")
+				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 			  :content message
 			  :verbose nil))))
