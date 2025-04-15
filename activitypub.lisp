@@ -101,12 +101,14 @@
 (define-easy-handler (blog-inbox :uri "/ap/actor/blog/inbox"
 				 :default-request-type :post)
     ()
-  (setf (hunchentoot:content-type*) "application/ld+json")
+  (setf (hunchentoot:content-type*) "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
   (let ((cl-json::+json-lisp-escaped-chars+
 	  (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (let ((request-type (hunchentoot:request-method hunchentoot:*request*)))
       (cond ((eq request-type :get) "" );; handle get request
             ((eq request-type :post)
+	     ;; (hunchentoot:log-message* :info "Headers: ~A" (headers-in hunchentoot:*request*))
+	     ;; (hunchentoot:log-message* :info "Text: ~A" (hunchentoot:raw-post-data :force-text t))
 	     ;;; Now we need to perform a signature verification
 	     (flet ((get-subheader-string (name subheaders)
 		      (string-trim "\"" (cdr (assoc name subheaders :test #'string-equal)))))
@@ -143,8 +145,9 @@
 				    (handler-bind ((dex:http-request-gone (generate-delete-reply-func "Public key gone for id "))
 						   (dex:http-request-not-found (generate-delete-reply-func "Public key not found for id ")))
 				      (dex:get keyid :headers
-					       '(("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))
-					       :force-string t))))
+					       '(("accept" . "application/activity+json, application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""))
+						     :force-string t
+						     :verbose nil))))
 		      (key (assoc :public-key userprofile))
 		      (pem (cdr (assoc :public-key-pem (cdr key))))
 		      (public-key (trivia:match
@@ -255,7 +258,7 @@
 (define-easy-handler (blog-outbox :uri "/ap/actor/blog/outbox"
                                 :default-request-type :get)
     ((page :parameter-type 'integer :init-form 1)) ;; Support pagination with a page parameter
-  (setf (hunchentoot:content-type*) "application/activity+json")
+  (setf (hunchentoot:content-type*) "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
   (let ((cl-json::+json-lisp-escaped-chars+
           (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (json:encode-json-to-string
@@ -303,7 +306,7 @@
 (define-easy-handler (outbox-post :uri "/ap/actor/blog/outbox/post"
                                 :default-request-type :get)
     ((id :parameter-type 'integer))
-  (setf (hunchentoot:content-type*) "application/activity+json")
+  (setf (hunchentoot:content-type*) "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
   (let* ((all-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog)))
          (post (find id all-posts :key #'id))
          (cl-json::+json-lisp-escaped-chars+
@@ -353,11 +356,11 @@
 	 (keyid "https://rayslava.com/ap/actor/blog#main-key"))
     (handler-bind ((dex:http-request-not-found #'dex:ignore-and-continue)
 		   (dex:http-request-not-implemented #'dex:ignore-and-continue))
-      (dex:post reply-url :headers `(("content-type" . "application/ld+json")
+      (dex:post reply-url :headers `(("content-type" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("host" . ,target-domain)
 				     ("date" . ,date)
 				     ("digest" . ,hash)
-				     ("accept" . "application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
+				     ("accept" . "application/activity+json, application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\"")
 				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
 			  :content message
 			  :verbose nil))))

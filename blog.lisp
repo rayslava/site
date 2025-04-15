@@ -169,10 +169,12 @@ TAGS is comma-separated string"
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
   (if (and id
-	   (member (header-in :accept *request*)
-		   '("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
-		     "application/activity+json")
-		   :test #'string-equal))
+	   (let ((accept-header (header-in :accept *request*)))
+	     (when (stringp accept-header)
+	       (some (lambda (target-type)
+		       (search target-type accept-header :test #'string-equal))
+		     '("application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""
+		       "application/activity+json")))))
       (progn
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
 	(fedi-note-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
