@@ -171,7 +171,8 @@ TAGS is comma-separated string"
   (if (and id
 	   (member (header-in :accept *request*)
 		   '("application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
-		     "application/activity+json")
+		     "application/activity+json"
+		     "application/ld+json")
 		   :test #'string-equal))
       (progn
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
