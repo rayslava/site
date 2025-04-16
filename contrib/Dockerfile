@@ -1,4 +1,4 @@
-FROM fukamachi/sbcl:2.5.1-ubuntu
+FROM fukamachi/sbcl:2.5.3-ubuntu
 LABEL maintainer "Slava Barinov <rayslava@gmail.com>"
 EXPOSE 4005 8080
 
