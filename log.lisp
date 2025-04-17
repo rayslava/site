@@ -3,7 +3,6 @@
   (:use :cl :bordeaux-threads :trivial-gray-streams :asdf :local-time
    :hunchentoot :cl-who :site.db-manage :site.config)
   (:export
-   :*log-messages*
    :*log-info-stream*
    :*log-error-stream*
    :*log-access-stream*))
