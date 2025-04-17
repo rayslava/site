@@ -174,6 +174,7 @@ TAGS is comma-separated string"
 	       (some (lambda (target-type)
 		       (search target-type accept-header :test #'string-equal))
 		     '("application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""
+		       "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
 		       "application/activity+json")))))
       (progn
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
