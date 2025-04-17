@@ -17,7 +17,7 @@
 	       :cl-json-helper :trivial-gray-streams :bordeaux-threads
 	       :local-time)
   :components ((:file "log"
-		:depends-on "db-manage" "config")
+		:depends-on ("db-manage" "config"))
 	       (:file "site"
                 :depends-on ("static" "config" "log"))
                (:file "static"
