@@ -24,8 +24,9 @@
 write to appropriate stream."
   (bt:with-lock-held (*log-messages-lock*)
     (let* ((timestamp (local-time:format-timestring
-                       nil (local-time:now)
-                       :format '(:year "-" :month "-" :day " " :hour ":" :min ":" :sec)))
+		       nil (local-time:now)
+		       :format '((:year 4) "-" (:month 2) "-" (:day 2) " "
+				 (:hour 2) ":" (:min 2) ":" (:sec 2))))
            (formatted-message (format nil "[~A] [~A] ~A" timestamp (string-upcase (string level)) message)))
       ;; Buffer
       (setf (aref *log-messages* *log-message-index*) formatted-message)
@@ -43,20 +44,29 @@ write to appropriate stream."
          (format *message-log-file* "[UNKNOWN LEVEL ~A] ~A~%" level formatted-message))))))
 
 (defclass log-stream (trivial-gray-streams:fundamental-character-output-stream)
-  ((level :initarg :level :reader log-stream-level)))
+  ((level :initarg :level :reader log-stream-level)
+   (buffer :initform (make-string-output-stream) :accessor log-stream-buffer)))
 
-(defclass log-stream (fundamental-character-output-stream)
-  ((level :initarg :level :reader log-stream-level)))
+(defmethod stream-write-char ((stream log-stream) char)
+  (write-char char (log-stream-buffer stream))
+  (when (char= char #\Newline)
+    ;; Flush buffer into log
+    (let ((string (get-output-stream-string (log-stream-buffer stream))))
+      ;; Remove the newline from the end if needed
+      (setf string (string-trim '(#\Newline #\Return) string))
+      (add-log-message (log-stream-level stream) string)
+      ;; Reset buffer
+      (setf (slot-value stream 'buffer) (make-string-output-stream))))
+  char)
 
 (defmethod stream-write-string ((stream log-stream) string &optional start end)
-  (let* ((start (or start 0))
-         (end (or end (length string)))
-         (substring (subseq string start end)))
-    (add-log-message (log-stream-level stream) substring)
-    substring))
+  (loop for i from (or start 0) below (or end (length string))
+        do (stream-write-char stream (char string i)))
+  string)
 
 (defmethod stream-terpri ((stream log-stream))
-  (add-log-message (log-stream-level stream) "") nil)
+  (stream-write-char stream #\Newline)
+  nil)
 
 (defmethod stream-finish-output ((stream log-stream)) nil)
 
@@ -76,18 +86,18 @@ write to appropriate stream."
         (:title "Server Logs")
 	(:link :rel "stylesheet" :type "text/css" :href "/main.css")
 	(:link :rel "stylesheet" :type "text/css" :href "/log.css")
-       (:body
-        (:h1 "Server Logs")
-        (:button :class "refresh-btn" :onclick "location.reload();" "Refresh Logs")
-        (:div :class "log-container"
-              (bt:with-lock-held (*log-messages-lock*)
-                (let ((logs (loop for i from 0 below (fill-pointer *log-messages*)
-				  for msg = (aref *log-messages* i)
-				  when msg collect msg)))
-                  (dolist (log (reverse logs))
-                    (let ((class (cond
-                                   ((search "[ERROR]" log) "error")
-                                   ((search "[INFO]" log) "info")
-                                   ((search "[ACCESS]" log) "access")
-                                   (t ""))))
-                      (htm (:div :class (format nil "log-entry ~A" class) (str log))))))))))))))
+	(:body
+	 (:h1 "Server Logs")
+	 (:button :class "refresh-btn" :onclick "location.reload();" "Refresh Logs")
+	 (:div :class "log-container"
+	       (bt:with-lock-held (*log-messages-lock*)
+		 (let ((logs (loop for i from 0 below (fill-pointer *log-messages*)
+				   for msg = (aref *log-messages* i)
+				   when msg collect msg)))
+		   (dolist (log (reverse logs))
+		     (let ((class (cond
+				    ((search "[ERROR]" log) "error")
+				    ((search "[INFO]" log) "info")
+				    ((search "[ACCESS]" log) "access")
+				    (t ""))))
+		       (htm (:div :class (format nil "log-entry ~A" class) (str log))))))))))))))
