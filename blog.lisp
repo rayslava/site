@@ -190,7 +190,7 @@ TAGS is comma-separated string"
 			       :default-request-type :get)
     ()
   (let ((cl-who::*empty-tag-end* :xml))
-    (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent t)
+    (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent nil)
       (:rss :|version| "2.0"
 	    (:channel
 	     (:title "rayslava's blog")
