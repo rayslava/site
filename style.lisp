@@ -83,8 +83,7 @@
   (setf (hunchentoot:content-type*) "text/css")
   (css
    `(("body"
-      :font-family "monospace"
-      :background-color "#f0f0f0")
+      :font-family "monospace")
      (".log-container"
       :padding "10px"
       :background-color "#fff"
