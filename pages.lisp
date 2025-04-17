@@ -31,6 +31,8 @@
 					   "List actions (this page)"))
 				  (:li (:a :href "/admin?action=pull"
 					   "Pull fresh from deploy"))
+				  (:li (:a :href "/admin/logs"
+					   "Show server logs"))
 				  (:li (:a :href "/admin?action=refresh"
 					   "Recompile and reload .lisp files"))
 				  (:li (:a :href "/admin/statics"
@@ -44,6 +46,44 @@
 			     (:a :href "/admin?action=list" "back to list")))
 			  (t (with-html-output (*standard-output* nil)
 			       (:a :href "/admin?action=list" "List actions"))))))))))
+
+
+;; Handler function for the logs page
+(define-easy-handler (staticlist :uri "/admin/logs"
+				 :default-request-type :get)
+    ()
+  (with-http-authentication
+      (no-cache)
+    (with-html-output-to-string (*standard-output* nil :prologue t)
+      (:html
+       (:head
+        (:title "Server Logs")
+	(:link :rel "stylesheet" :type "text/css" :href "/main.css")
+        (:style "
+          body { font-family: monospace; background-color: #f0f0f0; }
+          .log-container { padding: 10px; background-color: #fff; border-radius: 5px; }
+          .log-entry { margin: 5px 0; padding: 5px; border-bottom: 1px solid #eee; }
+          .error { color: red; }
+          .info { color: blue; }
+          .access { color: green; }
+          .refresh-btn { padding: 10px; background-color: #4CAF50; color: white;
+                         border: none; cursor: pointer; margin: 10px 0; }
+        "))
+       (:body
+        (:h1 "Server Logs")
+        (:button :class "refresh-btn" :onclick "location.reload();" "Refresh Logs")
+        (:div :class "log-container"
+              (bt:with-lock-held (*log-messages-lock*)
+                (let ((logs (loop for i from 0 below (fill-pointer *log-messages*)
+				  for msg = (aref *log-messages* i)
+				  when msg collect msg)))
+                  (dolist (log (reverse logs))
+                    (let ((class (cond
+                                   ((search "[ERROR]" log) "error")
+                                   ((search "[INFO]" log) "info")
+                                   ((search "[ACCESS]" log) "access")
+                                   (t ""))))
+                      (htm (:div :class (format nil "log-entry ~A" class) (str log)))))))))))))
 
 					; Main page goes here
 (define-easy-handler (about-page :uri "/about"

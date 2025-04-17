@@ -1341,6 +1341,5 @@ of solving tricky tasks but it rather expensive."))
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3953856584")))
 
-
 ;;; Push new posts to activitypub if needed
-  (maybe-deliver-new-posts site.blog::*blog-posts*)
+(maybe-deliver-new-posts site.blog::*blog-posts*)

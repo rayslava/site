@@ -14,9 +14,12 @@
   :depends-on (:hunchentoot :cl-who :ht-simple-ajax :cl-css
 	       :cl-json :local-time :dyna :zs3 :jonathan :trivial-mimes
 	       :ironclad :asn1 :trivia :cl-base64 :uuid :quri :cl-ppcre
-	       :cl-json-helper)
-  :components ((:file "site"
-                :depends-on ("static" "config"))
+	       :cl-json-helper :trivial-gray-streams :bordeaux-threads
+	       :local-time)
+  :components ((:file "log"
+		:depends-on "db-manage" "config")
+	       (:file "site"
+                :depends-on ("static" "config" "log"))
                (:file "static"
 		:depends-on ("config" "db-manage"))
 	       (:file "config")

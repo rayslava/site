@@ -2,8 +2,8 @@
 ;; (declaim (optimize (debug 3)))
 
 (defpackage :site
-  (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site.static :site.config :site.db-manage)
+  (:use :cl :hunchentoot :cl-who :ht-simple-ajax :asdf
+   :site.static :site.config :site.log :site.db-manage)
   (:export :start-server :stop-server :refresh :sh
 	   :*ajax-processor* :say-hi))
 
@@ -79,8 +79,8 @@
   (setf *lisp-warnings-log-level* :info)
   (setq *hunchentoot-server*
 	(start (make-instance 'easy-acceptor :port port
-			      :access-log-destination *access-log-file*
-			      :message-log-destination *message-log-file*))))
+			      :access-log-destination *log-access-stream*
+			      :message-log-destination *log-error-stream*))))
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"

@@ -4,8 +4,8 @@
 
 (in-package :site.styles)
 
-(define-easy-handler (main :uri "/main.css"
-			   :default-request-type :get)
+(define-easy-handler (maincss :uri "/main.css"
+			      :default-request-type :get)
     ()
   (setf (hunchentoot:content-type*) "text/css")
   (css
@@ -46,8 +46,8 @@
      (".social-link" :padding "4px" :display "inline-block")
      ("hr" :border "none" :border-bottom "1px solid silver"))))
 
-(define-easy-handler (blog :uri "/blog.css"
-			   :default-request-type :get)
+(define-easy-handler (blogcss :uri "/blog.css"
+			      :default-request-type :get)
     ()
   (setf (hunchentoot:content-type*) "text/css")
   (css
@@ -76,3 +76,33 @@
      ("@media (prefers-color-scheme: dark)"
       (".year-split h3" :color "#555;")
       ("h1, h2, h3, h4" :color "#999")))))
+
+(define-easy-handler (logcss :uri "/log.css"
+			     :default-request-type :get)
+    ()
+  (setf (hunchentoot:content-type*) "text/css")
+  (css
+   `(("body"
+      :font-family "monospace"
+      :background-color "#f0f0f0")
+     (".log-container"
+      :padding "10px"
+      :background-color "#fff"
+      :border-radius "5px")
+     (".log-entry"
+      :margin "5px 0"
+      :padding "5px"
+      :border-bottom "1px solid #eee")
+     (".error"
+      :color "red")
+     (".info"
+      :color "blue")
+     (".access"
+      :color "green")
+     (".refresh-btn"
+      :padding "10px"
+      :background-color "#4CAF50"
+      :color "white"
+      :border "none"
+      :cursor "pointer"
+      :margin "10px 0"))))

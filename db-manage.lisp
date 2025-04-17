@@ -1,5 +1,5 @@
 (defpackage :site.db-manage
-  (:use :cl :hunchentoot :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
+  (:use :cl :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
   (:export :init-static-handlers :with-http-authentication))
 
 (in-package :site.db-manage)
