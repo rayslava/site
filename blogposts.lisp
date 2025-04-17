@@ -1299,5 +1299,48 @@ to tell."))
 	   (:meta :property "og:url"
 		  :content "https://rayslava.com/blog?id=3947747119")))
 
+(defblogpost 3953856584 "On Cursor"
+  (:div
+   (:p "At last my "
+       (:a :href "https://www.cursor.com" "Cursor")
+       " trial expired and I can briefly summarize my experience. I've tried to use it
+ for the "
+       (:a :href "https://en.wikipedia.org/wiki/Vibe_coding" "vibe coding")
+       " but it turns out my coding is somehow incompatible with Cursor's expectations
+ or something like that.")
+   (:p "It turns out to be totally unusable for me: starting from its inability of
+adding files to the context automatically and finishing with absolutely
+inappropriate hallucinations on even the simplest code.")
+   (:p "First, having my expectations rather high, I tried to apply it to my pet
+project in Rust, but the IDE wasn't able to process it correctly and generated
+parts of code which just won't compile. After that I assumed that maybe just
+Rust support is not so good and switched to the web-interface part. But even in
+a tiny htmx web app with a bunch of simple js files it has been adding useless
+functions and attempting to rewrite places totally unrelated to the task.")
+   (:p "As a last attempt I tried to use it for minor fixes in the code of my
+site (which is implemented in Common Lisp) but again I could get nothing useful
+out of it.")
+   (:p "Additional pain was chromium inside it: I spent about an hour trying to sign in
+into the service. There was no errors in UI, no messages, no nothing, just the
+\"Login\" button had no effect. At last I started the IDE from shell and found
+that it somehow discovered a random proxy server (no idea how and why) and
+tried to access the Cursor APIs via this server. Interestingly, OpenAI and
+Anthropic APIs were accessed without it, so the login into ChatGPT and Claude
+succeeded.")
+   (:p "So at the moment I'm giving up with the Cursor, maybe will check it in some
+time if it survives. For now I can recommend "
+       (:a :href "https://aider.chat/" "aider") " and "
+       (:a :href "https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview" "Claude Code")
+       ". The former one became my daily supporting tool and the latter one is capable
+of solving tricky tasks but it rather expensive."))
+  :tags '("en" "dev" "ai" "fedi")
+  :meta  ((:meta :property "og:title" :content "On Cursor")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Checked the Cursor IDE ")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3953856584")))
+
+
 ;;; Push new posts to activitypub if needed
-(maybe-deliver-new-posts site.blog::*blog-posts*)
+  (maybe-deliver-new-posts site.blog::*blog-posts*)
