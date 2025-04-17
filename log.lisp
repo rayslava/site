@@ -91,4 +91,4 @@ write to appropriate stream."
                                    ((search "[INFO]" log) "info")
                                    ((search "[ACCESS]" log) "access")
                                    (t ""))))
-                      (htm (:div :class (format nil "log-entry ~A" class) (str log)))))))))))))
+                      (htm (:div :class (format nil "log-entry ~A" class) (str log))))))))))))))
