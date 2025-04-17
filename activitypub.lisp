@@ -471,9 +471,15 @@ are processed as plain text, not as in HTML"
   (let* ((post-id (format nil "https://rayslava.com/blog?id=~A" (id post)))
 	 (date  (local-time:format-timestring nil (local-time:universal-to-timestamp (id post))
 					      :format '(:year "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) "Z")))
-	 (langtag (cond ((member "ru" (tags post) :test #'string=) '(("@language" . "ru")))
-			((member "en" (tags post) :test #'string=) '(("@language" . "en")))
-			(t nil)))
+	 (lang (cond ((member "ru" (tags post) :test #'string=) "ru")
+		     ((member "en" (tags post) :test #'string=) "en")
+		     (t nil)))
+	 (langtag (if lang `(("@language" . ,lang))
+		      nil))
+	 (content (cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
+	 (contentMap (if langtag
+			 `("contentMap" . ((,lang . ,content)))
+			 nil))
 	 (message `(("@context" . ,(if langtag
 				       `("https://www.w3.org/ns/activitystreams" ,langtag)
 				       "https://www.w3.org/ns/activitystreams"))
@@ -482,7 +488,8 @@ are processed as plain text, not as in HTML"
 		    ("published" . ,date)
 		    ("actor" . "https://rayslava.com/ap/actor/blog")
 		    ("attributedTo" . "https://rayslava.com/ap/actor/blog")
-		    ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
+		    ("content" . ,content)
+		    ,contentMap
 		    ("to" . "https://www.w3.org/ns/activitystreams#Public")
 		    ,(when (and (slot-boundp post 'attachment)
 				(eq (slot-value (attachment post) 'att-type) 'image))
