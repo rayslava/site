@@ -185,26 +185,24 @@ TAGS is comma-separated string"
 		    (show-post id)
 		    (list-posts tags))))))
 
-;;; The RSS feed
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (let ((cl-who::*html-mode* :xml)
-	(cl-who::*empty-tag-end* :xml)
-	(cl-who::*empty-attribute-syntax* nil))
-    (define-easy-handler (rss-page :uri "/rss"
-				   :default-request-type :get)
-	()
-      (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent nil)
-	(:rss :|version| "2.0"
-	      (:channel
-	       (:title "rayslava's blog")
-	       (:link "http://rayslava.com")
-	       (:description "Blog feed" :br)
-	       (dolist (post *blog-posts*)
-		 (let ((title (subject post))
-		       (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
-		       (description (post post)))
-		   (cl-who:htm (:item
-				(cl-who:htm (:title (cl-who:str title))
-					    (:link (cl-who:str link))
-					    (:pubDate (cl-who:str (format-timestring nil (universal-to-timestamp (id post)) :format +rfc-1123-format+)))
-					    (:description (cl-who:str (funcall description))))))))))))))
+;;; RSS page should forcibly be in xml mode
+(setf (cl-who:html-mode) :xml)
+(define-easy-handler (rss-page :uri "/rss"
+			       :default-request-type :get)
+    ()
+  (cl-who:with-html-output-to-string (s nil :prologue "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" :indent nil)
+    (:rss :|version| "2.0"
+	  (:channel
+	   (:title "rayslava's blog")
+	   (:link "http://rayslava.com")
+	   (:description "Blog feed" :br)
+	   (dolist (post *blog-posts*)
+	     (let ((title (subject post))
+		   (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
+		   (description (post post)))
+	       (cl-who:htm (:item
+			    (cl-who:htm (:title (cl-who:str title))
+					(:link (cl-who:str link))
+					(:pubDate (cl-who:str (format-timestring nil (universal-to-timestamp (id post)) :format +rfc-1123-format+)))
+					(:description (cl-who:str (funcall description))))))))))))
+(setf (cl-who:html-mode) :html5)
