@@ -186,7 +186,8 @@ TAGS is comma-separated string"
 		    (list-posts tags))))))
 
 ;;; RSS page should forcibly be in xml mode
-(setf (cl-who:html-mode) :xml)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (cl-who:html-mode) :xml))
 (define-easy-handler (rss-page :uri "/rss"
 			       :default-request-type :get)
     ()
@@ -195,7 +196,7 @@ TAGS is comma-separated string"
 	  (:channel
 	   (:title "rayslava's blog")
 	   (:link "http://rayslava.com")
-	   (:description "Blog feed" :br)
+	   (:description "Blog feed")
 	   (dolist (post *blog-posts*)
 	     (let ((title (subject post))
 		   (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
@@ -205,4 +206,5 @@ TAGS is comma-separated string"
 					(:link (cl-who:str link))
 					(:pubDate (cl-who:str (format-timestring nil (universal-to-timestamp (id post)) :format +rfc-1123-format+)))
 					(:description (cl-who:str (funcall description))))))))))))
-(setf (cl-who:html-mode) :html5)
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (setf (cl-who:html-mode) :html5))
