@@ -69,7 +69,7 @@
 	     " under " (:a :href "https://sbcl.org" "sbcl")
 	     " on " (:a :href "http://gentoo.org" "Gentoo Linux")
 	     " installed on AWS t4g.nano instance")
-	    (:p "If you are courious about how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") " or " (:a :href "https://lor.sh/@rayslava" :rel "me" "Mastodon") ".")
+	    (:p "If you are courious about how it's made, you are free to look through sources at " (:a :href "http://github.com/rayslava/site" "github") " or " (:a :href "https://mitra.do.rayslava.com/@rayslava" :rel "me" "Fedi") ".")
 	    (:p "I also created an almost useful page with my contacts at " (:a :href "/contacts" "/contacts") " :)")
      	    (:script :type "text/javascript" :src "/jscl.js")))))
 
