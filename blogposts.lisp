@@ -1341,5 +1341,98 @@ of solving tricky tasks but it rather expensive."))
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3953856584")))
 
+(defblogpost 3957158361 "On Compact Rust Code"
+  (:div
+   (:p "A while ago there was quite a discussion about Rust binary size and some
+people made their point that Rust binaries are huge while C allows you to get a
+really tiny one.")
+
+   (:p "But lately I've been experimenting with the Rust for embedded targets and
+had several deep dives into binary size minimization techniques. It turns out
+that if you don't extensively use the features that require much run-time
+support and all the convenience provided by standard library, even current
+stable " (:code "rustc") "does not generate too much useless code.")
+
+   (:p "Moreover that: using aggressive size optimizations and some linker-based
+tricks make it possible to achieve the hundred-bytes-level sizes.")
+
+   (:p "So I've got some inspiration from the " (:a :href "
+https://github.com/kmcallister/tiny-rust-demo" "tiny-rust-demo") " by Keegan
+ McAllister and some inspiration from the " (:a :href "
+https://github.com/antirez/kilo" "kilo") " by Antirez and tried to implement a
+ small editor in Rust.")
+
+   (:p "The result is " (:a :href "https://github.com/rayslava/based" "based")":
+my first Linux application (not the GNU/Linux one) that resembles some of emacs
+keybindings (since I use emacs daily it was the easiest way to go) fits into 32
+KiB and only requires Linux kernel to run.")
+
+   (:p "During the process I tried to use Claude Code extensively but it seems
+that true vibe coding does not work very good for this level of applications
+though it helps with tests really much. Need to use it a bit more to make some
+conclusion but currently it seems a very useful (rather expensive though) tool
+for developer. At least I'll definitely use it at work: it helps to reduce the
+volume of boilerplate and automates some dull tasks.")
+
+   (:p "Not sure if anyone needs one more editor, but coincidentally MS released
+their " (:a :href "https://github.com/microsoft/edit" "edit") " this week as
+well. And yes, it's in Rust too, and yes, it has no external dependencies
+too. It's ~300 KiB, not 30 KiB though. But it's more like full-featured editor,
+not just a PoC.")
+
+   (:p "So the approach works and is already adopted by corporations.")
+   (:small "There is a " (:a :href "/blog?id=3957158362" "russian version") " of this
+  post"))
+  :tags '("en" "dev" "ai" "rust")
+  :meta  ((:meta :property "og:title" :content "On Compact Rust Code")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Created one more editor")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3957158361")))
+
+(defblogpost 3957158362 "О компактном коде на Rust"
+  (:div
+   (:p "Некоторое время назад мне попадались обсуждения размеров бинарников на
+Rust. Некоторые утверждали, что исполняемые файлы на Rust слишком большие, в то
+время как на C можно получить реально крошечные бинарники, поэтому этот ваш
+раст не нужо́н.")
+   (:p "Однако в последние пару недель я экспериментировал с Rust для embedded и
+немного погрузился в техники минимизации размера бинарников. Оказалось, что
+если не особо использовать функции, требующие поддержки от рантайма, и все
+удобства стандартной библиотеки, то даже текущий стабильный" (:code "rustc") "не генерирует слишком много лишнего кода. ")
+   (:p "Более того, при использовании агрессивной оптимизации размера и некоторых
+трюков на уровне линкера, можно добиться размеров на уровне сотен байт.")
+   (:p "Я вдохновился проектом " (:a :href "https://github.com/kmcallister/tiny-rust-demo" "tiny-rust-demo")
+       "от Keegan McAllister и " (:a :href "https://github.com/antirez/kilo" "kilo") "от
+ Antirez'а,и попробовал реализовать небольшой редактор на Rust.")
+   (:p "Результат — " (:a :href "https://github.com/rayslava/based" "based")". Моё
+ первое Linux-приложение (именно Linux, не GNU/Linux),которое имитирует
+ некоторое количество emacs'овых клавиш (так как в emacs'е я живу, это был
+ самый простой путь). Программа умещается в 32 КБ и требует только ядра Linux
+ для запуска. ")
+   (:p "В процессе я активно использовал Claude Code, но, похоже, «вайб-кодинг» не
+очень хорошо работает на уровне таких приложений — хотя при написании тестов он
+очень сильно помогает. Нужно ещё немного поработать с ним, чтобы сделать
+окончательные выводы, но пока это кажется очень полезным (хоть и довольно
+дорогим) инструментом для разработчика. По крайней мере, на работе я точно буду
+его использовать: он прямо драматически уменьшая объём бойлерплейта и
+автоматизирует некоторые скучные задачи.")
+   (:p "Не уверен, нужен ли миру ещё один редактор, но по совпадению на этой неделе
+Microsoft выпустила свой" (:a :href "https://github.com/microsoft/edit" "edit")".")
+   (:p "И да, он тоже написан на Rust и тоже не имеет внешних зависимостей. Правда, он
+весит ~300 КБ, а не 30 КБ. Но это уже вполне полноценный редактор, а не просто
+proof-of-concept.")
+   (:p "Так что подход работает и уже используется корпорациями.")
+   (:small "There is an " (:a :href "/blog?id=3957158361" "english version") " of this post"))
+  :tags '("ru" "dev" "ai" "rust")
+  :meta  ((:meta :property "og:title" :content "О компактном коде на Rust")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Написал ещё один редактор")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3957158362")))
+
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
