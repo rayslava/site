@@ -1172,7 +1172,6 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	   (:meta :property "og:url"
 		  :content "https://rayslava.com/blog?id=3920346397")))
 
-
 (defblogpost 3923400325 "Скрестил Gogs, Drone и MinIO внутри k8s"
   (:div
    (:h1 "Завязка")
@@ -1433,6 +1432,27 @@ proof-of-concept.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3957158362")))
 
+
+(defblogpost 3959677319 "On Mail Service"
+  (:div
+   (:p "Stumbled upon the " (:a :href "https://ignorethecode.net/blog/2025/06/11/stop_uploading_your_data_to_google/"
+				"post by Lukas Mathis")
+       " about self-hosting and services and remembered that I've been planning my
+ migration to own mail server for quite a while already.")
+   (:p "So I checked the mail services once again and in the end set up Proton mail as
+a main service for mail, also switched it to my domain so if I plan to change
+the service I'm not losing my address. Like for the case if I lose my Google
+account.")
+   (:p "The configuration was very easy and started working right away, guys from
+Proton did a great job here.")
+   (:p "So now I'm rayslava at rayslava.com, and my GPG keys need an update."))
+  :tags '("en" "site" "mail" "fedi")
+  :meta  ((:meta :property "og:title" :content "On Mail Service")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Migrated to Proton set up for own domain")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3959677319")))
 
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
