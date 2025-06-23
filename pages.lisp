@@ -127,7 +127,7 @@ Mem:~A
 
 (define-easy-handler (contacts-page :uri "/contacts"
 				    :default-request-type :get)
-    ()
+		     ()
   (with-html-output-to-string (*standard-output* nil :prologue t)
     (:html
      (:head (:title "Contacts")
@@ -137,12 +137,9 @@ Mem:~A
      (:body (:h2 "Contacts")
 	    (:p "If you want to contact me you may want to:"
 		(:ul
-		 (:li "Write me a letter to my GMail: " (:span :id "mail-addr" (:b "rayslava") (:em "[at]") (:b "gmail.com"))
+		 (:li "Write me a letter: " (:span :id "mail-addr" (:b "rayslava") (:em "[at]") (:b "rayslava.com"))
 		      (:p "By the way you can use PGP to write me something personal. Public key can be found at " (:a :href "http://pgp.mit.edu:11371/pks/lookup?search=rayslava&op=index" "pgp.mit.edu")))
-		 (:li "Chat me via jabber: "
-		      (:a :href "xmpp:rayslava@rayslava.com?message;type=chat" "rayslava@rayslava.com"))
-		 (:li "Follow my personal " (:a :href "http://point.im" "Point.im") " blog at "
-		      (:a :href "xmpp:point@point.im?message;type=chat;body=S%20@rayslava" "point.im"))))
+		 (:li "Follow my personal " (:a :href "https://mitra.do.rayslava.com/@rayslava" "Fediverse") " blog.")))
 	    (:p "Also here are several social profiles:"
 		(:div :class "social-link"
 		      (:iframe
@@ -163,7 +160,7 @@ Mem:~A
 			       :width "120" :height "20" :allowTransparency "true")))
      (:script :type "text/javascript" :src "/jscl.js")
      (:script :type "text/javascript" "!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');")
-     (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@gmail.com\\\"> rayslava@gmail.com<\/a>\")")))))
+     (:script :type "text/x-common-lisp" "(setf (jscl::oget (#j:document:getElementById \"mail-addr\") \"innerHTML\") \"<a href=\\\"mailto:rayslava@rayslava.com\\\"> rayslava@rayslava.com<\/a>\")")))))
 
 (define-easy-handler (about-git-page :uri "/about_git"
 				    :default-request-type :get)
