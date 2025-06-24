@@ -15,7 +15,7 @@
 	       :cl-json :local-time :dyna :zs3 :jonathan :trivial-mimes
 	       :ironclad :asn1 :trivia :cl-base64 :uuid :quri :cl-ppcre
 	       :cl-json-helper :trivial-gray-streams :bordeaux-threads
-	       :local-time)
+	       :local-time :slynk)
   :components ((:file "log"
 		:depends-on ("db-manage" "config"))
 	       (:file "site"
