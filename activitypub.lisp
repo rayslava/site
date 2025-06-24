@@ -354,16 +354,27 @@
 								 :sha256
 								 (ironclad:ascii-string-to-byte-array message)))))
 	 (keyid "https://rayslava.com/ap/actor/blog#main-key"))
-    (handler-bind ((dex:http-request-not-found #'dex:ignore-and-continue)
-		   (dex:http-request-not-implemented #'dex:ignore-and-continue))
-      (dex:post reply-url :headers `(("content-type" . "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
-				     ("host" . ,target-domain)
-				     ("date" . ,date)
-				     ("digest" . ,hash)
-				     ("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
-				     ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
-			  :content message
-			  :verbose nil))))
+    (handler-case
+        (dex:post reply-url :headers `(("content-type" . "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+				       ("host" . ,target-domain)
+				       ("date" . ,date)
+				       ("digest" . ,hash)
+				       ("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+				       ("Signature" . ,(generate-signed-header keyid target-inbox target-domain date hash)))
+			    :content message
+			    :verbose nil)
+      (dex:http-request-not-found (e)
+        (hunchentoot:log-message* :info "Actor inbox not found (404): ~A (~A)" actor e)
+        nil)
+      (dex:http-request-forbidden (e)
+        (hunchentoot:log-message* :info "Actor inbox forbidden (403): ~A (~A)" actor e)
+        nil)
+      (dex:http-request-gone (e)
+        (hunchentoot:log-message* :info "Actor inbox gone (410): ~A (~A)" actor e)
+        nil)
+      (error (e)
+        (hunchentoot:log-message* :warning "Failed to send signed message to ~A: ~A" actor e)
+        nil))))
 
 ;;; Static storage procedure
 (defclass activitypub-subscriber ()
@@ -515,7 +526,11 @@ to corresponding actor"
 				 (sxql:where (:< :lastpost (id post))))))
     (mapcar #'(lambda (subscriber)
 		(send-signed (actor subscriber) (fedi-post-create post))
-		(update-lastpost subscriber (id post)))
+		(update-lastpost subscriber (id post))
+		(hunchentoot:log-message*
+		 :info "Delivered post ~A to ~A~%"
+		 (id post)
+		 (actor subscriber)))
 	    unnotified)
     (length unnotified)))
 
