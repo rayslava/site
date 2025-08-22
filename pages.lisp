@@ -84,16 +84,31 @@
 	    (:link :rel "alternate"  :type "application/rss+xml" :title "rayslava" :href "/rss")
 	    (:meta :http-equiv "Content-Type" :content "text/html; charset=utf-8")
 	    (:meta :name "viewport" :content "initial-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=0"))
-     (:body (:h1 "About me")
-	    (:div
-	     (:p "Hi, I'm Slava Barinov, a software engineer specializing in
+     (:body (:div :class "about"
+		  (:h1 "About me")
+		  (:p "Hi, I'm Slava Barinov, a software engineer specializing in
  developer tooling and toolchains. I was born in 1988 in a tiny town near
  Vladimir, Russia.")
-	     (:p "Most of my production experience includes C and C++ but I'm switching to Rust
+		  (:p "Most of my production experience includes C and C++ but I'm switching to Rust
 lately together with the industry drifting in that direction.")
-	     (:p "Should you want to contact me, my contacts are available at "
-		 (:a :href "/contacts" "/contacts") " page."))
-     	    (:script :type "text/javascript" :src "/jscl.js")))))
+		  (:p "Should you want to contact me, my contacts are available at "
+		      (:a :href "/contacts" "/contacts") " page.")
+		  (:h1 "Work")
+		  (:ul
+		   (:li "Over a decade in Samsung Electronics working mostly on toolchains and low-level
+system software for mobile devices, TVs, and home appliances.")
+		   (:li "Now I'm with Woven by Toyota and working on build systems and automotive software"))
+		  (:h1 "Hobby")
+		  (:ul
+		   (:li "Diving: I love underwater time and watching the marine life")
+		   (:li "Moto travel: from time to time I like to find a place not too near to home and ride "
+			(:a :href "/i/bikepost_ter_22_camp.jpg"
+			    :class "hover-preview"
+			    :data-preview "/i/bikepost_ter_22_camp.jpg"
+			    "there") ".")))
+	    (:div :id "preview-box" :class "preview")
+     	    (:script :type "text/javascript" :src "/jscl.js")
+	    (:script :type "text/x-common-lisp" :src "/preview.lisp")))))
 
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
