@@ -87,8 +87,14 @@
      (:body (:div :class "about"
 		  (:h1 "About me")
 		  (:p "Hi, I'm Slava Barinov, a software engineer specializing in
- developer tooling and toolchains. I was born in 1988 in a tiny town near
- Vladimir, Russia.")
+ developer tooling and toolchains. I was born in 1988 in a tiny "
+		      (:a :class "hover-map"
+			  :data-lat "55.99999"
+			  :data-lng "40.33103"
+			  :data-zoom "16"
+			  :href "https://www.openstreetmap.org/#map=16/55.99999/40.33103"
+			  "town")
+		      " near Vladimir, Russia.")
 		  (:p "Most of my production experience includes C and C++ but I'm switching to Rust
 lately together with the industry drifting in that direction.")
 		  (:p "Should you want to contact me, my contacts are available at "
@@ -105,8 +111,10 @@ system software for mobile devices, TVs, and home appliances.")
 			(:a :href "/i/bikepost_ter_22_camp.jpg"
 			    :class "hover-preview"
 			    :data-preview "/i/bikepost_ter_22_camp.jpg"
-			    "there") ".")))
+			    "there")
+			".")))
 	    (:div :id "preview-box" :class "preview")
+	    (:div :id "map-preview-box" :class "preview")
      	    (:script :type "text/javascript" :src "/jscl.js")
 	    (:script :type "text/x-common-lisp" :src "/preview.lisp")))))
 

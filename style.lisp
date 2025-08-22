@@ -45,6 +45,23 @@
      ("#preview-box"
       :color "var(--link-color)"
       :border "1px solid currentColor")
+     ("#map-preview-box"
+      :position "absolute"
+      :display "none"
+      :border "1px solid currentColor"
+      :color "var(--link-color, #0077cc)"
+      :background "inherit"
+      :padding "4px"
+      :z-index "1000"
+      :width "350px"
+      :height "300px"
+      )
+     ("#map-preview-box iframe"
+      :width "100%"
+      :height "100%"
+      :border "0"
+      :display "block"
+      )
 
      ("@media screen and (max-width: 720px)"
       ("body"
