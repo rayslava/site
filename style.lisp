@@ -26,6 +26,25 @@
       :text-underline-offset "3px;"
       :-webkit-text-underline-offset "3px;")
      ("a:hover" :color "#c00")
+     ("div.about"
+      :margin "0 auto"
+      :max-width "700px"
+      :padding "1rem")
+     (".preview"
+      :position "absolute"
+      :display "none"
+      :border "1px solid #333"
+      :background "transparent"
+      :padding "4px"
+      :z-index "1000"
+      :max-width "300px")
+     (".preview img"
+      :max-width "100%"
+      :height "auto"
+      :display "block")
+     ("#preview-box"
+      :color "var(--link-color)"
+      :border "1px solid currentColor")
 
      ("@media screen and (max-width: 720px)"
       ("body"

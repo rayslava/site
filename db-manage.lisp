@@ -58,6 +58,8 @@
 		      (mapcar (lambda (e)
 				(htm (:tr (:td
 					   (:a :href (format nil "/i/~A" (filename e))
+					       :class "hover-preview"
+					       :data-preview (format nil "/i/~A" (filename e))
 					       (fmt "~A" (filename e))))
 					  (:td (fmt "~A" (beautify-attrs (attr e))))
 					  (:td (:a :href (concatenate 'string "/admin/do-delete?victim=" (s3name e))
@@ -66,7 +68,9 @@
 			       (site.db-storage:list-available-statics)
 			       #'string-lessp
 			       :key #'filename)))
-		     (:script :type "text/javascript" :src "/jscl.js")))))))
+		     (:div :id "preview-box" :class "preview")
+		     (:script :type "text/javascript" :src "/jscl.js")
+		     (:script :type "text/x-common-lisp" :src "/preview.lisp")))))))
 
 (define-easy-handler (upload-req :uri "/admin/upload"
 				 :default-request-type :get)
