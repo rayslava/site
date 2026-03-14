@@ -12,7 +12,7 @@
   "Create new blog post inside *blog-posts* with ID, POST and TAGS"
   `(setf *blog-posts*
 	 (merge 'list
-		*blog-posts*
+		(remove-if (lambda (p) (eql (id p) ,id)) *blog-posts*)
 		(list (make-instance 'blog-post
 				     :id ,id
 				     :subject ,subject
