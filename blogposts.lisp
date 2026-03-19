@@ -1454,5 +1454,60 @@ Proton did a great job here.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3959677319")))
 
+(defblogpost 3982914106 "On soundcore P31i"
+  (:div
+   (:h1 "Why")
+   (:p "My previous noname TWS earbuds from AliExpress are dead after five years of
+usage (a different story) so I had to find the new ones.")
+
+   (:p "After brief Amazon check I found the" (:a :href "https://www.soundcore.com/products/d1202-p31i-wirless-earbuds-with-anc" "soundcore P31i") "in the \"Best sellers list\". So I just ordered it as a replacement.")
+   (:h1 "What")
+   (:p "After a week of usage I can say that it definitely worth its price.")
+   (:h2 "Price")
+   (:p "This time I payed for it ~¥5000 (~$30) and I did expect it to connect to my
+phone and be capable of playing sound which it indeed does.")
+   (:h2 "Sound")
+   (:p "Of course you can't listen to music as you can't in any earbuds: almost no
+bass (despite the equalizer), weird treble, no isolation, tiny dynamic
+range (given you don't have silence outside), basically the same quality as in
+AirPods, I tried to use before.")
+   (:p "Anyway, it works perfectly for podcasts, videos, games, learning apps (I use it for playing me Japanese phrases right now).")
+   (:h2 "Features")
+   (:p "It has an app (with AI of course!) that is ~600 MiB for iPhone and can configure controls and modes.")
+   (:p "Controls are touches and series of touches, right and left device are distinguished, long and short touches are separate actions, so nothing to blame here.")
+   (:p "Also there's equalizer, sound limiters and some other basic features.")
+   (:p "Of course there's an AI tool but I didn't accept the license agreement so can say nothing about it. The ad says about translations and some unique™ features© that no one have seen before.")
+   (:h2 "ANC")
+   (:p "ANC works unexpectedly well. I didn't expect that it's possible in earbuds (at
+least in AirPods Pro it does not work at all for me) but here it's capable of
+reducing external noises quite a bit! It required a test in the app to
+configure, but then it makes it possible to listen to podcast even standing on
+railway station with all the announcements.")
+   (:h2 "Usability")
+   (:p "The standard box has several sets of gum fillers, as usual, none of them fits
+my ear, but the biggest one at least does not fall out immediately. If you can
+use other devices, you'll be able to use this one, I suppose.")
+   (:p "Touch control works just fine, I expected less from the thirty-bucks-device, it
+correctly splits short and long touches and multi-taps.")
+   (:p "Turns on fast, Bluetooth connects almost immediately (at least with iPhone),
+the battery lasts for a&#x2026; Well&#x2026; It was a one week so I didn't
+spend the whole charge yet.")
+   (:p "The box with charger is rather small and fits almost any pocket I can imagine.")
+   (:p "I guess, the difference between the left and right device will be noticeable in
+a year or two, so now it's not reasonable to estimate the battery life.")
+   (:h1 "Overall")
+   (:p "For now it's a perfect deal and the device will serve me for next five years or so, I guess.")
+   (:p "The only problem: app is too fat. I don't think anyone will use these speech
+recognition features and other things like that, so at the very least I'd
+expect the minimal app.")
+   (:p "But anyway this is 4.5/5 overall, 0.5 down for the huge app."))
+  :tags '("en" "site" "mail" "fedi")
+  :meta  ((:meta :property "og:title" :content "On Mail Service")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Migrated to Proton set up for own domain")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3982914106")))
+
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
