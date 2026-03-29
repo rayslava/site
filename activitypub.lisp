@@ -469,7 +469,7 @@
 					 (remove-if-not (lambda (a) (eq (att-type a) 'image))
 							(attachment post)))))
 		       (when image-atts (prepare-image-attachments image-atts)))))
-    message))
+    message)))
 
 (defun fedi-post-create (post)
   "Produces new json 'Create' activity from the `post'
