@@ -1501,13 +1501,38 @@ a year or two, so now it's not reasonable to estimate the battery life.")
 recognition features and other things like that, so at the very least I'd
 expect the minimal app.")
    (:p "But anyway this is 4.5/5 overall, 0.5 down for the huge app."))
-  :tags '("en" "site" "mail" "fedi")
+  :tags '("en" "hw" "sound" "fedi")
   :meta  ((:meta :property "og:title" :content "On Mail Service")
 	  (:meta :property "og:type" :content "article")
 	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
-	  (:meta :property "og:description" :content "Migrated to Proton set up for own domain")
+	  (:meta :property "og:description" :content "Purchased the new earbuds")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3982914106")))
+
+(defblogpost 3983769442 "On Xteink X4"
+  (:div
+   (:p "Unexpectedly I found an interesting setup.")
+
+   (:p "There's a reader named " (:a :href "https://www.xteink.com/" "Xteink X4")". From the hardware point of view it's just an ESP32-S3 with a simple e-ink
+display, and a case with a couple of buttons. Key points here are:")
+   (:ul
+    (:li "Price of ~$50 USD on AliExpress")
+    (:li "Vendor doesn't try to lock you in!"))
+   (:p "You just get a usable hardware for a reasonable price. When you attach it to
+your PC, kernel just detects the usual" (:tt "/dev/ttyACM0") "with the standard ESP32-compatible proto.")
+   (:p "And here begins the magic: there's a custom firmware named " (:a :href "https://github.com/crosspoint-reader/crosspoint-reader" "Crosspoint") "which does support usual " (:tt ".epub")". And it has OPDS support but there's also a ready-to-use " (:a :href "https://github.com/crosspoint-reader/calibre-plugins" "Calibre plugin") "for seamless integration.")
+   (:p "Then you just " (:a :href "https://github.com/silascoder/calibre-recipes" "connect") "your Calibre to your " (:a :href "https://www.wallabag.it/" "Wallabag") "which, in turn, has integration with almost everything that used to be
+Pocket-compatible. For example you can connect it to" (:a :href "https://tt-rss.org/" "ttrss") "for RSS streams or use some mobile apps.")
+   (:p "In the end we get a cheap, light, compatible pocket reader for every day carry with more or less automated newsfeed. And yes, if you want to read books there, " (:a :href "https://github.com/koreader/koreader-sync-server" "KOReader Sync Server") "is supported as well."))
+  :attachment (:type 'image :url "https://rayslava.com/i/xteink1.jpg")
+  :attachment (:type 'image :url "https://rayslava.com/i/xteink2.jpg")
+  :tags '("en" "hw" "eink" "fedi")
+  :meta  ((:meta :property "og:title" :content "On Xteink X4")
+	  (:meta :property "og:type" :content "article")
+	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
+	  (:meta :property "og:description" :content "Created a usable news reader")
+	  (:meta :property "og:url"
+		 :content "https://rayslava.com/blog?id=3983769442")))
 
 ;;; Push new posts to activitypub if needed
 (maybe-deliver-new-posts site.blog::*blog-posts*)
