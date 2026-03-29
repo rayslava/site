@@ -102,7 +102,7 @@
      ("#apubinfo" :padding "4px" :font-size "80%" :float "right")
      ("#timeinfo" :padding "4px" :font-size "80%" :float "right")
      (".text-with-image span" :display "inline-block" :height "1em" :width "auto" :vertical-align "middle")
-     (".text-with-image img" :height "100%" :width "auto" :display "block")
+     (".text-with-image img" :height "100%" :width "auto" :display "inline-block")
      (".year-split" :border-bottom "1px solid;"
 		    :border-image "linear-gradient(to right, #ccc, transparent) 1;"
 		    :margin-bottom "0.3rem;"
