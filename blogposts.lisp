@@ -1102,25 +1102,6 @@ who came for vaccination during 45 minutes I spent in clinic.")
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3892386892")))
 
-
-(defblogpost 3889071954 "Базовая поддержка ActivityPub стабилизирована"
-  (:div
-   (:p "Итого я добавил подписку-отписку, учёт лайков и бустов, технические ответы на
-   все сообщения, которые мне присылают сервера из федерации (постоянно говорят
-   УДОЛИ), чтобы они успокоились и не долбили запросами, и складывание
-   неизвестных запросов в БД, чтобы можно было покопаться когда-нибудь потом,
-   сейчас по логам всё спокойно, поэтому пока всё так и оставлю.")
-   (:p "Дальше можно будет сделать несколько улучшений по-мелочи, вроде возможности
-   прикладывать картинки и правильно цеплять ссылки, но в целом то, что сейчас
-   уже работает, пока меня устроит."))
-  :tags '("ru" "site" "fedi")
-  :meta  ((:meta :property "og:title" :content "Базовая поддержка ActivityPub стабилизирована")
-	  (:meta :property "og:type" :content "article")
-	  (:meta :property "article:author" :content "https://www.facebook.com/rayslava")
-	  (:meta :property "og:description" :content "AcitivityPub в моём бложике теперь поддерживается на базовом уровне, и пока думаю так её и оставить")
-	  (:meta :property "og:url"
-		 :content "https://rayslava.com/blog?id=3889071954")))
-
 (defblogpost 3906122500 "Diving logbook template"
   (:div
    (:p "My first diving logbook is over (50 registered dives, yay &#x1F389;), so I had to find
