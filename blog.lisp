@@ -8,26 +8,34 @@
 
 (defvar *blog-posts* '() "List of all blog posts sorted by ID")
 
-(defmacro defblogpost (id subject post &key meta tags attachment)
+(defmacro defblogpost (id subject post &rest kwargs)
   "Create new blog post inside *blog-posts* with ID, POST and TAGS"
-  `(setf *blog-posts*
-	 (merge 'list
-		(remove-if (lambda (p) (eql (id p) ,id)) *blog-posts*)
-		(list (make-instance 'blog-post
-				     :id ,id
-				     :subject ,subject
-				     :post (lambda ()
-					     (with-html-output-to-string (*standard-output* nil :prologue nil)
-					       (:div :class "blog-post"
-						     ,post)))
-				     ,@(when meta `(:meta
-						    (lambda ()
-						      (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
-				     ,@(when attachment `(:attachment
-							  (make-instance 'blog-post-attachment
-									 :att-type ,(getf attachment :type)
-									 :url ,(getf attachment :url))))
-				     ,@(when tags `(:tags ,tags)))) #'less)))
+  (let ((attachments (loop for (key val) on kwargs by #'cddr
+                           when (eq key :attachment)
+                           collect val))
+        (tags (getf kwargs :tags))
+        (meta (getf kwargs :meta)))
+    `(setf *blog-posts*
+	   (merge 'list
+		  (remove-if (lambda (p) (eql (id p) ,id)) *blog-posts*)
+		  (list (make-instance 'blog-post
+				       :id ,id
+				       :subject ,subject
+				       :post (lambda ()
+					       (with-html-output-to-string (*standard-output* nil :prologue nil)
+					         (:div :class "blog-post"
+						       ,post)))
+				       ,@(when meta `(:meta
+						      (lambda ()
+						        (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
+				       ,@(when attachments
+                                           `(:attachment
+                                             (list ,@(mapcar (lambda (att)
+                                                               `(make-instance 'blog-post-attachment
+                                                                               :att-type ,(getf att :type)
+                                                                               :url ,(getf att :url)))
+                                                             attachments))))
+				       ,@(when tags `(:tags ,tags)))) #'less))))
 
 
 (setf (html-mode) :html5)
@@ -83,9 +91,9 @@ TAGS is comma-separated string"
 	 (taglist (tags post))
 	 (text (post post))
 	 (meta (meta post))
-	 (att (if (slot-boundp post 'attachment)
-		  (attachment post)
-		  nil))
+	 (atts (if (slot-boundp post 'attachment)
+		   (attachment post)
+		   nil))
 	 (timestamp (universal-to-timestamp (id post)))
 	 (datetime-tag (format-timestring nil timestamp :format '((:year 4) "-" (:month 2) "-" (:day 2) "T" (:hour 2) ":" (:min 2) ":" (:sec 2) :gmt-offset-hhmm)))
 	 (posted-at (format-timestring nil timestamp :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))
@@ -100,13 +108,14 @@ TAGS is comma-separated string"
 		  (:article
 		   (:h2 (format t "~a" subject))
 		   (format t "~a" (funcall text))
-		   (when att
+		   (when atts
 		     (htm
 		      (:div
 		       :id "attachment"
-		       (cond ((eq (slot-value att 'att-type) 'image)
-			      (htm (:img :src (url att))))
-			     (t)))))
+		       (dolist (att atts)
+			 (cond ((eq (slot-value att 'att-type) 'image)
+				(htm (:img :src (url att))))
+			       (t))))))
 		   (htm (:div
 			 :id "postinfo"
 			 (:nav

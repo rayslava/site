@@ -435,13 +435,15 @@
 			       ("lastpost" . ,oldposts)))
     (save-dyna item)))
 
-(defun prepare-image-url (url)
-  "Produces new json object with url `url' of type Image"
-  (let* ((message `("attachment" . ((("id" . ,url)
-				     ("type" . "Document")
-				     ("mediaType" . "image/jpeg")
-				     ("url" . ,url))))))
-    message))
+(defun prepare-image-attachments (atts)
+  "Produces attachment json from a list of blog-post-attachment objects"
+  `("attachment" . ,(mapcar (lambda (att)
+                               (let ((u (url att)))
+                                 `(("id" . ,u)
+                                   ("type" . "Document")
+                                   ("mediaType" . "image/jpeg")
+                                   ("url" . ,u))))
+                             atts)))
 
 (defun prepare-fedi-object (post type)
   "Produces new json object from the `post' of type `type'"
@@ -463,9 +465,10 @@
 				 ("attributedTo" . "https://rayslava.com/ap/actor/blog")
 				 ("content" . ,(cl-ppcre:regex-replace-all "\\s*\\\n\\s*" (funcall (post post)) " "))
 				 ("to" . "https://www.w3.org/ns/activitystreams#Public")))
-		    ,(when (and (slot-boundp post 'attachment)
-				(eq (slot-value (attachment post) 'att-type) 'image))
-		       (prepare-image-url (url (attachment post)))))))
+		    ,(let ((image-atts (when (slot-boundp post 'attachment)
+					 (remove-if-not (lambda (a) (eq (att-type a) 'image))
+							(attachment post)))))
+		       (when image-atts (prepare-image-attachments image-atts)))))
     message))
 
 (defun fedi-post-create (post)
@@ -502,9 +505,10 @@ are processed as plain text, not as in HTML"
 		    ("content" . ,content)
 		    ,contentMap
 		    ("to" . "https://www.w3.org/ns/activitystreams#Public")
-		    ,(when (and (slot-boundp post 'attachment)
-				(eq (slot-value (attachment post) 'att-type) 'image))
-		       (prepare-image-url (url (attachment post)))))))
+		    ,(let ((image-atts (when (slot-boundp post 'attachment)
+					 (remove-if-not (lambda (a) (eq (att-type a) 'image))
+							(attachment post)))))
+		       (when image-atts (prepare-image-attachments image-atts)))))
     message))
 
 (defun fedi-note-create (post)

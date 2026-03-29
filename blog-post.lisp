@@ -45,8 +45,8 @@
 	 :documentation "Metadata to be embedded into head of html. A cl-who S-form.")
    (attachment :accessor attachment
 	       :initarg :attachment
-	       :type blog-post-attachment
-	       :documentation "Attachment data to follow the html and to be attached to ActivityPub post.")
+	       :type list
+	       :documentation "List of blog-post-attachment objects to follow the html and to be attached to ActivityPub post.")
    (post :accessor post
 	 :initarg :post
 	 :initform (error "Must supply a POST")
