@@ -1500,10 +1500,10 @@ display, and a case with a couple of buttons. Key points here are:")
     (:li "Price of ~$50 USD on AliExpress")
     (:li "Vendor doesn't try to lock you in!"))
    (:p "You just get a usable hardware for a reasonable price. When you attach it to
-your PC, kernel just detects the usual" (:tt "/dev/ttyACM0") "with the standard ESP32-compatible proto.")
+your PC, kernel just detects the usual " (:tt "/dev/ttyACM0") " with the standard ESP32-compatible proto.")
    (:p "And here begins the magic: there's a custom firmware named " (:a :href "https://github.com/crosspoint-reader/crosspoint-reader" "Crosspoint") " which does support usual " (:tt ".epub")". And it has OPDS support but there's also a ready-to-use " (:a :href "https://github.com/crosspoint-reader/calibre-plugins" "Calibre plugin") " for seamless integration.")
-   (:p "Then you just " (:a :href "https://github.com/silascoder/calibre-recipes" "connect") " your Calibre to your " (:a :href "https://www.wallabag.it/" "Wallabag") "which, in turn, has integration with almost everything that used to be
-Pocket-compatible. For example you can connect it to" (:a :href "https://tt-rss.org/" "ttrss") " for RSS streams or use some mobile apps.")
+   (:p "Then you just " (:a :href "https://github.com/silascoder/calibre-recipes" "connect") " your Calibre to your " (:a :href "https://www.wallabag.it/" "Wallabag") " which, in turn, has integration with almost everything that used to be
+Pocket-compatible. For example you can connect it to " (:a :href "https://tt-rss.org/" "ttrss") " for RSS streams or use some mobile apps.")
    (:p "In the end we get a cheap, light, compatible pocket reader for every day carry with more or less automated newsfeed. And yes, if you want to read books there, " (:a :href "https://github.com/koreader/koreader-sync-server" "KOReader Sync Server") " is supported as well."))
   :attachment (:type 'image :url "https://rayslava.com/i/xteink1.jpg")
   :attachment (:type 'image :url "https://rayslava.com/i/xteink2.jpg")
