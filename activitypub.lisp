@@ -509,7 +509,7 @@ are processed as plain text, not as in HTML"
 					 (remove-if-not (lambda (a) (eq (att-type a) 'image))
 							(attachment post)))))
 		       (when image-atts (prepare-image-attachments image-atts)))))
-    message))
+    message)))
 
 (defun fedi-note-create (post)
   "Produces new json from the `post'"
