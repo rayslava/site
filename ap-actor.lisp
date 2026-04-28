@@ -139,11 +139,11 @@
          (cl-json::+json-lisp-escaped-chars+
            (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (if (and post (member "fedi" (tags post) :test #'equal))
-        (json:encode-json-to-string
+        (cl-json:encode-json-alist-to-string
          (prepare-fedi-object post "Create"))
         (progn
           (setf (hunchentoot:return-code*) hunchentoot:+http-not-found+)
-          (json:encode-json-to-string '(("error" . "Post not found")))))))
+          (cl-json:encode-json-alist-to-string '(("error" . "Post not found")))))))
 
 (defun generate-accept (request)
   "Produce an Accept activity wrapping REQUEST, as a JSON string."

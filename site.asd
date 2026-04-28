@@ -85,7 +85,11 @@
                (:file "test-ap-objects" :depends-on ("package"))
                (:file "test-ap-actor" :depends-on ("package" "test-blog-registry"))
                (:file "test-ap-inbox" :depends-on ("package" "test-ap-events"))
-               (:file "test-ap-delivery" :depends-on ("package" "test-crypto" "test-ap-inbox")))
+               (:file "test-ap-delivery" :depends-on ("package" "test-crypto" "test-ap-inbox"))
+               (:file "test-integration-http"
+                      :depends-on ("package" "test-ap-inbox"
+                                             "test-ap-signature-pem"
+                                             "test-blog-registry")))
   :perform (test-op (op c)
              (uiop:symbol-call :fiveam :run!
                                (uiop:find-symbol* :all-tests :site.tests))))
