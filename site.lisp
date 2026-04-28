@@ -68,9 +68,19 @@
     (setq *hunchentoot-server* nil)))
 
 (defun start-server (&optional (port *server-port*) (adminpass *admin-password*))
-  "Starts the server"
+  "Start the hunchentoot server. Orchestrates deferred initialization:
+loads RSA keys, configures AWS, creates DynamoDB tables and the S3 bucket
+if they do not already exist, then installs the dispatch table and starts
+listening on PORT."
   (when *hunchentoot-server*
     (stop-server))
+  (site.config:load-activitypub-keys!)
+  (when (site.config:aws-credentials-available-p)
+    (site.config:configure-aws!)
+    (site.config:initialize-dyna!)
+    (site.db-storage:ensure-static-storage!)
+    (site.activitypub:ensure-activitypub-storage!)
+    (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts)))
   (setup-dispatch-table)
   (setf *admin-password* adminpass)
   (setf *log-lisp-errors-p* t)

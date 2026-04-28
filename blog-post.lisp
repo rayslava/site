@@ -1,6 +1,6 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog-post
-  (:use :cl :asdf :site)
+  (:use :cl :asdf)
   (:export :blog-post :att-type :url :defblogpost :id :tags :post :attachment
 	   :less :print-object :subject :meta :attachment-type
    :blog-post-attachment :image))

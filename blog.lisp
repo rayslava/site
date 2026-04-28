@@ -1,64 +1,42 @@
 ;;; A personal blog engine main file
 (defpackage :site.blog
   (:use :cl :hunchentoot :cl-who :ht-simple-ajax
-	:asdf :site :local-time :site.activitypub :site.blog-post)
+	:asdf :local-time :site.activitypub :site.blog-post
+        :site.blog-registry)
   (:export :defblogpost))
 
 (in-package :site.blog)
 
-(defvar *blog-posts* '() "List of all blog posts sorted by ID")
-
 (defmacro defblogpost (id subject post &rest kwargs)
-  "Create new blog post inside *blog-posts* with ID, POST and TAGS"
+  "Register a new blog post. Expands to a call into site.blog-registry,
+replacing any existing post with the same id."
   (let ((attachments (loop for (key val) on kwargs by #'cddr
                            when (eq key :attachment)
                            collect val))
         (tags (getf kwargs :tags))
         (meta (getf kwargs :meta)))
-    `(setf *blog-posts*
-	   (merge 'list
-		  (remove-if (lambda (p) (eql (id p) ,id)) *blog-posts*)
-		  (list (make-instance 'blog-post
-				       :id ,id
-				       :subject ,subject
-				       :post (lambda ()
-					       (with-html-output-to-string (*standard-output* nil :prologue nil)
-					         (:div :class "blog-post"
-						       ,post)))
-				       ,@(when meta `(:meta
-						      (lambda ()
-						        (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
-				       ,@(when attachments
-                                           `(:attachment
-                                             (list ,@(mapcar (lambda (att)
-                                                               `(make-instance 'blog-post-attachment
-                                                                               :att-type ,(getf att :type)
-                                                                               :url ,(getf att :url)))
-                                                             attachments))))
-				       ,@(when tags `(:tags ,tags)))) #'less))))
+    `(site.blog-registry:register-post
+      (make-instance 'blog-post
+                     :id ,id
+                     :subject ,subject
+                     :post (lambda ()
+                             (with-html-output-to-string (*standard-output* nil :prologue nil)
+                               (:div :class "blog-post"
+                                     ,post)))
+                     ,@(when meta `(:meta
+                                    (lambda ()
+                                      (with-html-output-to-string (*standard-output* nil) (htm ,@meta)))))
+                     ,@(when attachments
+                         `(:attachment
+                           (list ,@(mapcar (lambda (att)
+                                             `(make-instance 'blog-post-attachment
+                                                             :att-type ,(getf att :type)
+                                                             :url ,(getf att :url)))
+                                           attachments))))
+                     ,@(when tags `(:tags ,tags))))))
 
 
 (setf (html-mode) :html5)
-
-;;; Creating class system to use for blog posts
-
-(defun split-by-comma (string)
-  "Returns a list of substrings of string
-divided by comma each.
-Note: Two consecutive spaces will be seen as
-if there were an empty string between them."
-  (loop for i = 0 then (1+ j)
-	as j = (position #\Comma string :start i)
-	collect (string-trim '(#\Space #\Tab #\Newline) (subseq string i j))
-	while j))
-
-(defun posts-by-tags (tags)
-  "Returns only posts containing tags
-TAGS is comma-separated string"
-  (let ((taglist (split-by-comma tags)))
-    (remove-if (lambda (post)
-		 (set-difference taglist (tags post) :test #'equal))
-	       *blog-posts*)))
 
 (defun blog-page-head ()
   "Common head part for all blog pages"
@@ -86,7 +64,7 @@ TAGS is comma-separated string"
 									    :format '((:hour 2) ":" (:min 2) " " (:year 4) "-" (:month 2) "-" (:day 2) " " :gmt-offset-hhmm))))))))))))))
 
 (defun show-post (id)
-  (let* ((post (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*)))
+  (let* ((post (find-post-by-id id))
 	 (subject (subject post))
 	 (taglist (tags post))
 	 (text (post post))
@@ -141,7 +119,7 @@ TAGS is comma-separated string"
   (let* ((postlist (sort (copy-list
                           (if tags
                               (posts-by-tags tags)
-                              *blog-posts*))
+                              (all-posts)))
                          #'> :key #'id))
          (current-year nil))
     (with-html-output-to-string (*standard-output* nil :prologue nil)
@@ -187,7 +165,7 @@ TAGS is comma-separated string"
 		       "application/activity+json")))))
       (progn
 	(setf (hunchentoot:content-type*) (header-in :accept *request*))
-	(fedi-note-create (car (member-if (lambda (e) (eql (id e) id)) *blog-posts*))))
+	(fedi-note-create (find-post-by-id id)))
       (with-html-output-to-string (*standard-output* nil :prologue t)
 	(format t "~a"
 		(if id
@@ -206,7 +184,7 @@ TAGS is comma-separated string"
 	   (:title "rayslava's blog")
 	   (:link "http://rayslava.com")
 	   (:description "Blog feed")
-	   (dolist (post *blog-posts*)
+	   (dolist (post (all-posts))
 	     (let ((title (subject post))
 		   (link (format nil "http://rayslava.com/blog?id=~a" (id post)))
 		   (description (post post)))

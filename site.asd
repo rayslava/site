@@ -16,22 +16,25 @@
 	       :ironclad :asn1 :trivia :cl-base64 :uuid :quri :cl-ppcre
 	       :cl-json-helper :trivial-gray-streams :bordeaux-threads
 	       :local-time :slynk)
+  :in-order-to ((test-op (test-op :site/tests)))
   :components ((:file "log"
 		:depends-on ("db-manage" "config"))
 	       (:file "site"
-                :depends-on ("static" "config" "log"))
+                :depends-on ("static" "config" "log" "blog-registry" "activitypub" "db-storage"))
                (:file "static"
 		:depends-on ("config" "db-manage"))
 	       (:file "config")
 	       (:file "blog-post")
+	       (:file "blog-registry"
+		:depends-on ("blog-post"))
 	       (:file "blog"
-		:depends-on ("activitypub" "blog-post"))
+		:depends-on ("activitypub" "blog-post" "blog-registry"))
 	       (:file "pages"
 		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
 		:depends-on ("site"))
 	       (:file "blogposts"
-		:depends-on ("blog" "activitypub"))
+		:depends-on ("blog" "activitypub" "blog-registry"))
 	       (:file "lj"
 		:depends-on ("blogposts"))
 	       (:file "db-storage"
@@ -40,4 +43,17 @@
 		:depends-on ("db-storage"))
 	       (:file "crypto")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto" "blog-post"))))
+		:depends-on ("config" "crypto" "blog-post" "blog-registry"))))
+
+(defsystem :site/tests
+  :name "site/tests"
+  :description "Test suite for site"
+  :depends-on (:site :fiveam)
+  :pathname "tests"
+  :components ((:file "package")
+               (:file "main" :depends-on ("package"))
+               (:file "test-crypto" :depends-on ("package"))
+               (:file "test-blog-registry" :depends-on ("package")))
+  :perform (test-op (op c)
+             (uiop:symbol-call :fiveam :run!
+                               (uiop:find-symbol* :all-tests :site.tests))))

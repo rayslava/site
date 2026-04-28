@@ -5,12 +5,13 @@
 ;;; (local-time:timestamp-to-universal (local-time:encode-timestamp 0 0 00 10 21 12 2020 :timezone (local-time:find-timezone-by-location-name "Europe/Moscow")))
 
 (defpackage :site.blogposts
-  (:use :site.blog :cl :cl-css :cl-who :site.activitypub :site.blog-post))
+  (:use :site.blog :cl :cl-css :cl-who :site.activitypub :site.blog-post
+        :site.blog-registry))
 
 (in-package :site.blogposts)
 
 ;;; Perform a cleanup unless we want duplication
-(setf site.blog::*blog-posts* nil)
+(site.blog-registry:clear-posts)
 
 (defblogpost 3649655845 "On blog creation"
   (:div
@@ -1515,5 +1516,5 @@ Pocket-compatible. For example you can connect it to " (:a :href "https://tt-rss
 	  (:meta :property "og:url"
 		 :content "https://rayslava.com/blog?id=3983769442")))
 
-;;; Push new posts to activitypub if needed
-(maybe-deliver-new-posts site.blog::*blog-posts*)
+;;; Delivery of new posts to ActivityPub subscribers is deferred to
+;;; start-server; at load time we cannot assume DynamoDB is reachable.

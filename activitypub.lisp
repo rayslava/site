@@ -1,9 +1,10 @@
 (defpackage :site.activitypub
   (:use :cl :hunchentoot :cl-who :cl-json
-	:asdf :site :dyna.table-operation :dyna
-	:site.db-manage :site.config :site.crypto :site.blog-post)
+	:asdf :dyna.table-operation :dyna
+	:site.db-manage :site.config :site.crypto :site.blog-post
+        :site.blog-registry)
   (:shadowing-import-from :cl-json-helper :json-bool)
-  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create))
+  (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create :ensure-activitypub-storage!))
 
 (in-package :site.activitypub)
 
@@ -179,7 +180,7 @@
 							     (sxql:where (:= :actor actor)))))
 			  (save-dyna subscriber)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
-			  (maybe-deliver-new-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog))))))
+			  (maybe-deliver-new-posts (all-posts)))))
 		     ((string= "Undo" (cdr (assoc :type request-obj)))
 		      (let* ((object (cdr (assoc :object request-obj))))
 			(cond ((string= "Follow" (cdr (assoc :type object)))
@@ -265,7 +266,7 @@
      (generate-outbox-collection page))))
 
 (defun generate-outbox-collection (page)
-  (let* ((all-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog)))
+  (let* ((all-posts (site.blog-registry:all-posts))
          (fedi-posts (sort
                       (remove-if-not #'(lambda (post)
                                        (member "fedi" (tags post) :test #'equal))
@@ -307,8 +308,7 @@
                                 :default-request-type :get)
     ((id :parameter-type 'integer))
   (setf (hunchentoot:content-type*) "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
-  (let* ((all-posts (symbol-value (find-symbol "*BLOG-POSTS*" :site.blog)))
-         (post (find id all-posts :key #'id))
+  (let* ((post (site.blog-registry:find-post-by-id id))
          (cl-json::+json-lisp-escaped-chars+
            (remove #\/ cl-json::+json-lisp-escaped-chars+ :key #'car)))
     (if (and post (member "fedi" (tags post) :test #'equal))
@@ -407,9 +407,8 @@
     (print-unreadable-object (subscriber out :type t)
       (format out "File '~A' with last post provided ~A ~A" actor lastpost attr))))
 
-;;; Create DynamoDB table if one doesn't exist
-(when (not (table-exist-p 'activitypub-subscriber))
-  (create-dyna-table 'activitypub-subscriber))
+;;; DynamoDB table creation is deferred to ensure-activitypub-storage!,
+;;; called from site:start-server. This lets the system load without AWS.
 
 (defgeneric unsubscribe (subscriber)
   (:documentation "Unsubscribe the subscriber from blog."))
@@ -631,10 +630,6 @@ version to corresponding actor"
     (error (e) ; Catch all errors
       -1)))
 
-;;; Create DynamoDB table if one doesn't exist
-(when (not (table-exist-p 'activitypub-event))
-  (create-dyna-table 'activitypub-event))
-
 (defun direct-replies (id)
   "Get comments for `id' which came as replies"
   (let* ((response
@@ -686,6 +681,10 @@ version to corresponding actor"
           (push nested-reply flat-replies))))
     (nreverse flat-replies)))
 
-;;; Create DynamoDB table if one doesn't exist
-(when (not (table-exist-p 'activitypub-event))
-  (create-dyna-table 'activitypub-event))
+(defun ensure-activitypub-storage! ()
+  "Create DynamoDB tables for ActivityPub subscribers and events if missing.
+Must be called after configure-aws! + initialize-dyna!. Safe to call repeatedly."
+  (unless (table-exist-p 'activitypub-subscriber)
+    (create-dyna-table 'activitypub-subscriber))
+  (unless (table-exist-p 'activitypub-event)
+    (create-dyna-table 'activitypub-event)))

@@ -8,7 +8,8 @@
    :s3name
    :upload-file
    :compute-s3-name
-   :delete-static))
+   :delete-static
+   :ensure-static-storage!))
 
 (in-package :site.db-storage)
 
@@ -83,10 +84,11 @@
 			      ("filename" . ,name)))
     (delete-s3-file s3name)))
 
-;;; We have to create the bucket if there is no one
-(when (not (bucket-exists-p *static-bucket*))
-  (create-bucket *static-bucket* :location *aws-region*))
-
-;;; The same to DynamoDB table
-(when (not (table-exist-p 'static-file))
-  (create-dyna-table 'static-file))
+(defun ensure-static-storage! ()
+  "Create the S3 bucket and DynamoDB table for static files if missing.
+Must be called after configure-aws! and initialize-dyna! — both require
+AWS credentials. Safe to call repeatedly."
+  (unless (bucket-exists-p *static-bucket*)
+    (create-bucket *static-bucket* :location *aws-region*))
+  (unless (table-exist-p 'static-file)
+    (create-dyna-table 'static-file)))
