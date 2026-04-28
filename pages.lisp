@@ -121,6 +121,7 @@ system software for mobile devices, TVs, and home appliances.")
 (define-easy-handler (robots-page :uri "/robots.txt"
 				  :default-request-type :get)
     ()
+  (setf (hunchentoot:content-type*) "text/plain")
   (string "Host: rayslava.com
 User-agent: *
 Allow: /me

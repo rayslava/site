@@ -8,7 +8,9 @@
 (define-easy-handler (masto-lookup :uri "/api/v1/accounts/lookup/"
 				   :default-request-type :get)
     ((acct :parameter-type 'string))
-  (setf (hunchentoot:content-type*) "application/jrd+json")
+  ;; Mastodon's REST API speaks application/json — not jrd+json, which is
+  ;; the JSON Resource Descriptor media type used by WebFinger.
+  (setf (hunchentoot:content-type*) "application/json")
   (cond ((or (equalp acct "blog")
 	     (equalp acct "blog@rayslava.com"))
 	 (let ((cl-json::+json-lisp-escaped-chars+

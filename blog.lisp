@@ -173,8 +173,10 @@ replacing any existing post with the same id."
 		    (list-posts tags))))))
 
 ;;; RSS feed rendering lives in site.rss so the cl-who html-mode flip
-;;; stays contained. The handler here is just plumbing.
+;;; stays contained. The handler is plumbing + Content-Type: feed readers
+;;; and browsers rely on application/rss+xml to identify the response.
 (define-easy-handler (rss-page :uri "/rss"
 			       :default-request-type :get)
     ()
+  (setf (hunchentoot:content-type*) "application/rss+xml; charset=utf-8")
   (site.rss:build-rss-feed (all-posts)))

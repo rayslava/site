@@ -102,13 +102,35 @@ the test."
               (dex:response-status e)
               (gethash "content-type" (dex:response-headers e))))))
 
+;;;; Content-Type assertions are tight because ActivityPub consumers
+;;;; (Mastodon, Pleroma, Misskey) reject peers whose actor endpoint does
+;;;; not advertise application/activity+json, and reject POSTed activities
+;;;; unless they carry application/ld+json with the activitystreams
+;;;; profile parameter. We also check RFC 6415 / RFC 7033 for webfinger.
+
+(defun ct-content-type-is (expected-media-type ct)
+  "T iff CT's media type equals EXPECTED-MEDIA-TYPE exactly (case-insensitive),
+ignoring any parameters after the first ';'."
+  (when ct
+    (let ((semi (position #\; ct)))
+      (string-equal expected-media-type
+                    (string-trim '(#\Space) (subseq ct 0 semi))))))
+
+(defun ct-has-as-profile-p (ct)
+  "T iff CT carries the ActivityStreams profile parameter. The spec
+allows either http:// or https:// form of the profile URI."
+  (when ct
+    (or (search "profile=\"https://www.w3.org/ns/activitystreams\"" ct)
+        (search "profile=\"http://www.w3.org/ns/activitystreams\"" ct))))
+
 (test int-actor-blog-returns-activity-json
-  "GET /ap/actor/blog returns 200 with application/activity+json and an
-alist whose type is Person."
+  "GET /ap/actor/blog returns 200, advertises application/activity+json
+exactly, and decodes to a Person actor with a publicKey."
   (with-integration-server
     (multiple-value-bind (body status ct) (int-get "/ap/actor/blog")
       (is (= 200 status))
-      (is-true (search "application/activity+json" ct))
+      (is-true (ct-content-type-is "application/activity+json" ct)
+               "Content-Type media type must be application/activity+json (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "Person" (cdr (assoc :type decoded))))
         (is (equal "https://rayslava.com/ap/actor/blog"
@@ -116,50 +138,57 @@ alist whose type is Person."
         (is-true (assoc :public-key decoded))))))
 
 (test int-webfinger-returns-jrd-json
-  "/.well-known/webfinger?resource=acct:blog@rayslava.com returns
-application/jrd+json with the expected subject."
+  "GET /.well-known/webfinger returns 200 with Content-Type
+application/jrd+json (RFC 7033)."
   (with-integration-server
     (multiple-value-bind (body status ct)
         (int-get "/.well-known/webfinger?resource=acct:blog@rayslava.com")
       (is (= 200 status))
-      (is-true (search "application/jrd+json" ct))
+      (is-true (ct-content-type-is "application/jrd+json" ct)
+               "webfinger Content-Type must be application/jrd+json (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "acct:blog@rayslava.com" (cdr (assoc :subject decoded))))))))
 
-(test int-masto-lookup-returns-profile
-  "/api/v1/accounts/lookup/?acct=blog returns a minimal Mastodon account."
+(test int-masto-lookup-returns-json
+  "GET /api/v1/accounts/lookup returns 200 with application/json.
+Mastodon's REST API contract is application/json, not jrd+json."
   (with-integration-server
     (multiple-value-bind (body status ct)
         (int-get "/api/v1/accounts/lookup/?acct=blog")
       (is (= 200 status))
-      (is-true (search "application/jrd+json" ct))
+      (is-true (ct-content-type-is "application/json" ct)
+               "masto lookup Content-Type must be application/json (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "rayslava" (cdr (assoc :username decoded))))))))
 
-(test int-outbox-empty-is-well-formed-collection
-  "With no posts registered, /ap/actor/blog/outbox returns a valid
-OrderedCollection with totalItems=0."
+(test int-outbox-advertises-activitystreams-profile
+  "GET /ap/actor/blog/outbox returns 200 with application/ld+json AND
+the activitystreams profile parameter (required by the AP spec)."
   (with-integration-server
     (multiple-value-bind (body status ct)
         (int-get "/ap/actor/blog/outbox")
       (is (= 200 status))
-      (is-true (search "application/ld+json" ct))
+      (is-true (ct-content-type-is "application/ld+json" ct)
+               "outbox media type must be application/ld+json (got ~S)" ct)
+      (is-true (ct-has-as-profile-p ct)
+               "outbox Content-Type must carry the activitystreams profile (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "OrderedCollection" (cdr (assoc :type decoded))))
         (is (= 0 (cdr (assoc :total-items decoded))))))))
 
 (test int-outbox-post-not-found
-  "/ap/actor/blog/outbox/post?id=999 returns 404 when no matching post."
+  "/ap/actor/blog/outbox/post?id=999 returns 404 with a JSON error body."
   (with-integration-server
     (multiple-value-bind (body status ct)
         (int-get "/ap/actor/blog/outbox/post?id=999")
-      (declare (ignore ct))
       (is (= 404 status))
+      (is-true (ct-content-type-is "application/ld+json" ct)
+               "404 body should still be JSON-typed so federation peers can parse it (got ~S)" ct)
       (is-true (search "Post not found" body)))))
 
 (test int-outbox-post-returns-fedi-post
   "When a fedi-tagged post exists, /ap/actor/blog/outbox/post?id=X
-returns a JSON Create activity for it."
+returns a JSON Create activity with the activitystreams profile."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
@@ -170,12 +199,16 @@ returns a JSON Create activity for it."
     (multiple-value-bind (body status ct)
         (int-get "/ap/actor/blog/outbox/post?id=3700000000")
       (is (= 200 status))
-      (is-true (search "application/ld+json" ct))
+      (is-true (ct-content-type-is "application/ld+json" ct)
+               "outbox-post media type must be application/ld+json (got ~S)" ct)
+      (is-true (ct-has-as-profile-p ct)
+               "outbox-post must carry the activitystreams profile (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "Create" (cdr (assoc :type decoded))))))))
 
 (test int-rss-returns-xml
-  "/rss returns an XML RSS 2.0 feed."
+  "/rss returns an XML RSS 2.0 feed with application/rss+xml
+Content-Type (or text/xml as a loose fallback)."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
@@ -184,15 +217,18 @@ returns a JSON Create activity for it."
                     :tags '("en")
                     :post (lambda () "<p>body</p>")))
     (multiple-value-bind (body status ct) (int-get "/rss")
-      (declare (ignore ct))
       (is (= 200 status))
+      (is-true (or (ct-content-type-is "application/rss+xml" ct)
+                   (ct-content-type-is "application/xml" ct)
+                   (ct-content-type-is "text/xml" ct))
+               "RSS feed must advertise an XML media type (got ~S)" ct)
       (is-true (search "<?xml version=\"1.0\"" body))
       (is-true (or (search "<rss version=\"2.0\">" body)
                    (search "<rss version='2.0'>" body)))
       (is-true (search "first" body)))))
 
 (test int-blog-page-lists-posts
-  "/blog returns HTML listing the registered posts."
+  "/blog returns text/html listing the registered posts."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
@@ -202,12 +238,12 @@ returns a JSON Create activity for it."
                     :post (lambda () "<p>body</p>")))
     (multiple-value-bind (body status ct) (int-get "/blog")
       (is (= 200 status))
-      ;; Hunchentoot default content-type for string responses is text/html.
-      (is-true (search "text/html" ct))
+      (is-true (ct-content-type-is "text/html" ct)
+               "HTML pages must advertise text/html (got ~S)" ct)
       (is-true (search "Integration-listed" body)))))
 
 (test int-blog-post-page-renders
-  "/blog?id=N returns the single-post HTML rendering."
+  "/blog?id=N returns text/html single-post rendering."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
@@ -217,14 +253,15 @@ returns a JSON Create activity for it."
                     :post (lambda () "<p>body bits</p>")))
     (multiple-value-bind (body status ct)
         (int-get "/blog?id=3700000000")
-      (declare (ignore ct))
       (is (= 200 status))
+      (is-true (ct-content-type-is "text/html" ct)
+               "single-post Content-Type must be text/html (got ~S)" ct)
       (is-true (search "One-post" body))
       (is-true (search "<article>" body)))))
 
 (test int-blog-page-content-negotiation-returns-note
-  "A request for /blog?id=N with accept: application/activity+json
-returns a Note JSON, not HTML."
+  "A request for /blog?id=N with Accept: application/activity+json
+returns a Note JSON AND a matching Content-Type."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
@@ -234,25 +271,32 @@ returns a Note JSON, not HTML."
                     :post (lambda () "<p>body</p>")))
     (multiple-value-bind (body status ct)
         (int-get "/blog?id=3700000000" :accept "application/activity+json")
-      (declare (ignore ct))
       (is (= 200 status))
+      ;; Handler echoes the client's Accept value as Content-Type, which
+      ;; is unusual but acceptable so long as it is not text/html.
+      (is-false (ct-content-type-is "text/html" ct)
+                "content-negotiated response must not be HTML (got ~S)" ct)
+      (is-true (search "application/activity+json" ct)
+               "Content-Type should advertise activity+json (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "Note" (cdr (assoc :type decoded))))))))
 
 (test int-about-page
-  "/about returns HTML."
+  "/about returns text/html."
   (with-integration-server
     (multiple-value-bind (body status ct) (int-get "/about")
       (is (= 200 status))
-      (is-true (search "text/html" ct))
+      (is-true (ct-content-type-is "text/html" ct)
+               "/about Content-Type must be text/html (got ~S)" ct)
       (is-true (search "About" body)))))
 
 (test int-robots-txt
-  "/robots.txt returns the expected user-agent directives."
+  "/robots.txt returns text/plain (the canonical robots.txt type)."
   (with-integration-server
     (multiple-value-bind (body status ct) (int-get "/robots.txt")
-      (declare (ignore ct))
       (is (= 200 status))
+      (is-true (ct-content-type-is "text/plain" ct)
+               "robots.txt Content-Type must be text/plain (got ~S)" ct)
       (is-true (search "User-agent: *" body))
       (is-true (search "/blog" body)))))
 
