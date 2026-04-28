@@ -159,8 +159,24 @@ Must be called before any S3 operations."
   (unless *credentials*
     (setf *credentials* (make-instance 'environment-credentials))))
 
+(defun %find-dyna-class (package-name symbol-name)
+  "Resolve a dyna-backed class symbol at runtime without forcing the
+package to exist at compile time. Returns NIL if either the package or
+the class is absent."
+  (let ((pkg (find-package package-name)))
+    (when pkg
+      (let ((sym (find-symbol symbol-name pkg)))
+        (when sym (find-class sym nil))))))
+
 (defun initialize-dyna! ()
-  "Create the DynamoDB client. Requires configure-aws! first if AWS mode."
+  "Create the DynamoDB client and install it on any dyna-backed classes
+that were defined before *dyna* had a value.
+
+dyna's <dyna-table-class> evaluates (:dyna *dyna*) at class-definition
+time and caches the result on the class. With lazy init — *dyna* is NIL
+until we reach here — every class captured NIL. Reinitialize-instance
+re-runs the class init protocol with the *current* *dyna* value, which
+fixes the slot in place. This function is idempotent."
   (unless *credentials*
     (setf *credentials* (make-instance 'environment-credentials)))
   (setf *dyna*
@@ -168,4 +184,10 @@ Must be called before any S3 operations."
             (dyna:make-dyna :credentials (cons (access-key *credentials*)
                                                (secret-key *credentials*))
                             :region *aws-region*)
-            (dyna:make-dyna :region "local"))))
+            (dyna:make-dyna :region "local")))
+  (dolist (spec '(("SITE.DB-STORAGE"   "STATIC-FILE")
+                  ("SITE.ACTIVITYPUB"  "ACTIVITYPUB-SUBSCRIBER")
+                  ("SITE.ACTIVITYPUB"  "ACTIVITYPUB-EVENT")))
+    (let ((class (%find-dyna-class (first spec) (second spec))))
+      (when class
+        (reinitialize-instance class :dyna '(*dyna*))))))

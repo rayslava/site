@@ -118,3 +118,38 @@ and returns :EPHEMERAL."
   ;; generalized boolean rather than erroring.
   (let ((result (site.config:aws-credentials-available-p)))
     (is (or (null result) (not (null result))))))
+
+(test config-initialize-dyna-rebinds-classes
+  "initialize-dyna! must update the :dyna slot on every dyna-backed
+table class, because dyna caches the value at class-definition time
+and the classes were defined while *dyna* was still NIL (lazy init).
+
+Regression test for a production 500: without this rebinding, the
+first call to table-exist-p after start-server raised 'NIL is not of
+type DYNA' because the class held a captured NIL."
+  (let ((saved-dyna site.config:*dyna*)
+        (saved-creds site.config:*credentials*))
+    (unwind-protect
+         (progn
+           ;; Put *dyna* back in a known state — NIL — to simulate
+           ;; what the classes captured when first defined.
+           (setf site.config:*dyna* nil
+                 site.config:*credentials* nil)
+           (site.config:initialize-dyna!)
+           ;; After initialize-dyna!, *dyna* is bound and the classes'
+           ;; cached :dyna value matches.
+           (is-true site.config:*dyna*)
+           (dolist (spec '(("SITE.DB-STORAGE"   "STATIC-FILE")
+                           ("SITE.ACTIVITYPUB"  "ACTIVITYPUB-SUBSCRIBER")
+                           ("SITE.ACTIVITYPUB"  "ACTIVITYPUB-EVENT")))
+             (let* ((pkg (find-package (first spec)))
+                    (sym (and pkg (find-symbol (second spec) pkg)))
+                    (class (and sym (find-class sym nil))))
+               (is-true class "class ~A:~A must exist" (first spec) (second spec))
+               (when class
+                 ;; dyna.table:table-dyna reads the captured slot.
+                 (is-true (dyna.table:table-dyna class)
+                          "class ~A must have a non-NIL :dyna after initialize-dyna!"
+                          (second spec))))))
+      (setf site.config:*dyna* saved-dyna
+            site.config:*credentials* saved-creds))))
