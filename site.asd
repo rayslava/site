@@ -27,8 +27,10 @@
 	       (:file "blog-post")
 	       (:file "blog-registry"
 		:depends-on ("blog-post"))
+	       (:file "rss"
+		:depends-on ("blog-post" "blog-registry"))
 	       (:file "blog"
-		:depends-on ("activitypub" "blog-post" "blog-registry"))
+		:depends-on ("activitypub" "blog-post" "blog-registry" "rss"))
 	       (:file "pages"
 		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
@@ -42,8 +44,11 @@
 	       (:file "db-manage"
 		:depends-on ("db-storage"))
 	       (:file "crypto")
+	       (:file "ap-signature"
+		:depends-on ("crypto"))
+	       (:file "storage")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto" "blog-post" "blog-registry"))))
+		:depends-on ("config" "crypto" "ap-signature" "blog-post" "blog-registry" "storage"))))
 
 (defsystem :site/tests
   :name "site/tests"
@@ -53,7 +58,10 @@
   :components ((:file "package")
                (:file "main" :depends-on ("package"))
                (:file "test-crypto" :depends-on ("package"))
-               (:file "test-blog-registry" :depends-on ("package")))
+               (:file "test-blog-registry" :depends-on ("package"))
+               (:file "test-storage-memory" :depends-on ("package"))
+               (:file "test-ap-signature" :depends-on ("package" "test-crypto"))
+               (:file "test-rss" :depends-on ("package")))
   :perform (test-op (op c)
              (uiop:symbol-call :fiveam :run!
                                (uiop:find-symbol* :all-tests :site.tests))))

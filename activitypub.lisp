@@ -2,7 +2,7 @@
   (:use :cl :hunchentoot :cl-who :cl-json
 	:asdf :dyna.table-operation :dyna
 	:site.db-manage :site.config :site.crypto :site.blog-post
-        :site.blog-registry)
+        :site.blog-registry :site.ap-signature)
   (:shadowing-import-from :cl-json-helper :json-bool)
   (:export :maybe-deliver-new-posts :reactions-number :direct-replies :get-all-replies :flatten-replies :fedi-note-create :fedi-post-create :ensure-activitypub-storage!))
 
@@ -110,63 +110,38 @@
             ((eq request-type :post)
 	     ;; (hunchentoot:log-message* :info "Headers: ~A" (headers-in hunchentoot:*request*))
 	     ;; (hunchentoot:log-message* :info "Text: ~A" (hunchentoot:raw-post-data :force-text t))
-	     ;;; Now we need to perform a signature verification
-	     (flet ((get-subheader-string (name subheaders)
-		      (string-trim "\"" (cdr (assoc name subheaders :test #'string-equal)))))
-	       (let* ((http-headers (headers-in hunchentoot:*request*))
-		      (signature-line (cdr (assoc :signature http-headers)))
-		      (lines (cl-ppcre:split "," signature-line))
-		      (line-parts (reduce 'nconc
-					  (mapcar (lambda (l)
-						    (coerce
-						     (nth-value 1
-								(cl-ppcre:scan-to-strings "(\\w*)=(.*\\\")$" l))
-						     'list))
-						  lines)))
-		      (signature-parts
-			(loop for (head . tail) on line-parts by #'cddr
-			      collect (cons head (car tail))))
-		      (keyid (get-subheader-string "keyid" signature-parts))
-		      (headers (get-subheader-string "headers" signature-parts))
-		      (signature (base64:base64-string-to-usb8-array
-				  (get-subheader-string "signature" signature-parts)))
-		      (checked-headers (with-output-to-string (s)
-					 (mapcar #'(lambda (hdr)
-						     (format s "~%~A: ~A"
-							     hdr
-							     (cdr
-							      (assoc (intern (string-upcase hdr) :keyword)
-								     http-headers))))
-						 (cdr (cl-ppcre:split " " headers)))
-					 s))
-		      (message-to-check (concatenate 'string
-						     "(request-target): post /ap/actor/blog/inbox"
-						     checked-headers))
-		      (userprofile (cl-json:decode-json-from-string
-				    (handler-bind ((dex:http-request-gone (generate-delete-reply-func "Public key gone for id "))
-						   (dex:http-request-not-found (generate-delete-reply-func "Public key not found for id ")))
-				      (dex:get keyid :headers
-					       '(("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
-						     :force-string t
-						     :verbose nil))))
-		      (key (assoc :public-key userprofile))
-		      (pem (cdr (assoc :public-key-pem (cdr key))))
-		      (public-key (trivia:match
-				      (asn1:decode
-				       (base64:base64-string-to-usb8-array
-					(cl-ppcre:regex-replace-all "\\n"
-								    (cl-ppcre:regex-replace-all ".*----\\n" pem "") "")))
-				    ((asn1:rsa-public-key-info n e)
-				     (ironclad:make-public-key :rsa :n n :e e)))))
-		 (unless
-		     (rsassa-pkcs1-v1_5-verify public-key
-					       (ironclad:ascii-string-to-byte-array message-to-check)
-					       signature
-					       :sha256)
-		   (hunchentoot:log-message* :info "Signature verification failed for ~A" keyid)
-		   (setf (return-code*) hunchentoot:+http-authorization-required+)
-		   (format nil "Signature verification failed~%")
-		   (return-from blog-inbox))))
+	     ;;; Signature verification - see site.ap-signature for parsing and
+	     ;;; message-building. The dex:get for the signer's public key stays
+	     ;;; here so handler-bind can short-circuit 410/404 into a Delete reply.
+	     (let* ((http-headers (headers-in hunchentoot:*request*))
+		    (sig (parse-signature-header (cdr (assoc :signature http-headers))))
+		    (keyid (signature-keyid sig))
+		    (covered (cl-ppcre:split " " (signature-headers sig)))
+		    (message-to-check
+		      (build-signed-message "post" "/ap/actor/blog/inbox"
+					    http-headers covered))
+		    (userprofile
+		      (cl-json:decode-json-from-string
+		       (handler-bind ((dex:http-request-gone
+					(generate-delete-reply-func "Public key gone for id "))
+				      (dex:http-request-not-found
+					(generate-delete-reply-func "Public key not found for id ")))
+			 (dex:get keyid
+				  :headers '(("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
+				  :force-string t
+				  :verbose nil))))
+		    (pem (cdr (assoc :public-key-pem
+				     (cdr (assoc :public-key userprofile)))))
+		    (public-key (extract-public-key-from-actor-pem pem)))
+	       (unless (rsassa-pkcs1-v1_5-verify
+			public-key
+			(ironclad:ascii-string-to-byte-array message-to-check)
+			(signature-bytes sig)
+			:sha256)
+		 (hunchentoot:log-message* :info "Signature verification failed for ~A" keyid)
+		 (setf (return-code*) hunchentoot:+http-authorization-required+)
+		 (format nil "Signature verification failed~%")
+		 (return-from blog-inbox)))
 	     ;;; Now the actual request can be processed
              (let* ((data-string (hunchentoot:raw-post-data :force-text t))
                     (request-obj (cl-json:decode-json-from-string data-string)))
