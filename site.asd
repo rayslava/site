@@ -67,7 +67,10 @@
                (:file "test-ap-signature-pem" :depends-on ("package"))
                (:file "test-rss" :depends-on ("package"))
                (:file "test-config" :depends-on ("package"))
-               (:file "test-blog-render" :depends-on ("package" "test-blog-registry")))
+               (:file "test-blog-render" :depends-on ("package" "test-blog-registry"))
+               (:file "test-ap-events" :depends-on ("package"))
+               (:file "test-ap-subscribers" :depends-on ("package" "test-ap-events"))
+               (:file "test-db-storage" :depends-on ("package" "test-ap-events")))
   :perform (test-op (op c)
              (uiop:symbol-call :fiveam :run!
                                (uiop:find-symbol* :all-tests :site.tests))))
