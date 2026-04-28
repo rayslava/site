@@ -20,7 +20,7 @@
   :components ((:file "log"
 		:depends-on ("db-manage" "config"))
 	       (:file "site"
-                :depends-on ("static" "config" "log" "blog-registry" "activitypub" "db-storage"))
+                :depends-on ("static" "config" "log" "blog-registry" "ap-inbox" "db-storage"))
                (:file "static"
 		:depends-on ("config" "db-manage"))
 	       (:file "config")
@@ -30,13 +30,13 @@
 	       (:file "rss"
 		:depends-on ("blog-post" "blog-registry"))
 	       (:file "blog"
-		:depends-on ("activitypub" "blog-post" "blog-registry" "rss"))
+		:depends-on ("ap-inbox" "blog-post" "blog-registry" "rss"))
 	       (:file "pages"
 		:depends-on ("site" "blog" "db-manage"))
 	       (:file "style"
 		:depends-on ("site"))
 	       (:file "blogposts"
-		:depends-on ("blog" "activitypub" "blog-registry"))
+		:depends-on ("blog" "ap-inbox" "blog-registry"))
 	       (:file "lj"
 		:depends-on ("blogposts"))
 	       (:file "db-storage"
@@ -47,10 +47,21 @@
 	       (:file "ap-signature"
 		:depends-on ("crypto"))
 	       (:file "storage")
-	       (:file "activitypub"
-		:depends-on ("config" "crypto" "ap-signature" "blog-post" "blog-registry" "storage"))
+	       (:file "ap-core"
+		:depends-on ("config" "storage" "crypto" "ap-signature"
+		             "blog-post" "blog-registry" "db-manage"))
+	       (:file "ap-objects"
+		:depends-on ("ap-core" "blog-post"))
+	       (:file "ap-replies"
+		:depends-on ("ap-core" "storage"))
+	       (:file "ap-delivery"
+		:depends-on ("ap-core" "ap-objects" "ap-signature" "crypto" "config" "storage"))
+	       (:file "ap-actor"
+		:depends-on ("ap-core" "ap-objects" "config" "blog-registry"))
+	       (:file "ap-inbox"
+		:depends-on ("ap-core" "ap-replies" "ap-delivery" "ap-actor" "ap-signature" "crypto" "blog-registry"))
 	       (:file "storage-dyna"
-		:depends-on ("storage" "activitypub" "db-storage" "config"))))
+		:depends-on ("storage" "ap-core" "db-storage" "config"))))
 
 (defsystem :site/tests
   :name "site/tests"
@@ -70,7 +81,11 @@
                (:file "test-blog-render" :depends-on ("package" "test-blog-registry"))
                (:file "test-ap-events" :depends-on ("package"))
                (:file "test-ap-subscribers" :depends-on ("package" "test-ap-events"))
-               (:file "test-db-storage" :depends-on ("package" "test-ap-events")))
+               (:file "test-db-storage" :depends-on ("package" "test-ap-events"))
+               (:file "test-ap-objects" :depends-on ("package"))
+               (:file "test-ap-actor" :depends-on ("package" "test-blog-registry"))
+               (:file "test-ap-inbox" :depends-on ("package" "test-ap-events"))
+               (:file "test-ap-delivery" :depends-on ("package" "test-crypto" "test-ap-inbox")))
   :perform (test-op (op c)
              (uiop:symbol-call :fiveam :run!
                                (uiop:find-symbol* :all-tests :site.tests))))

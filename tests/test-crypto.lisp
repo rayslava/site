@@ -25,11 +25,18 @@
       (is-false (site.crypto:rsassa-pkcs1-v1_5-verify pub tampered sig :sha256)))))
 
 (test crypto-verify-rejects-wrong-key
-  "Signature from key A must not verify against public key B."
+  "Signature from key A must not verify against public key B. Depending
+on the relative moduli of the two random keypairs, the verifier may
+either return NIL or signal 'signature representative out of range' —
+both count as rejection for our purposes."
   (multiple-value-bind (priv-a pub-a) (generate-rsa-keypair)
     (declare (ignore pub-a))
     (multiple-value-bind (priv-b pub-b) (generate-rsa-keypair)
       (declare (ignore priv-b))
       (let* ((msg (ironclad:ascii-string-to-byte-array "cross-key check"))
-             (sig (site.crypto:rsassa-pkcs1-v1_5-sign priv-a msg :sha256)))
-        (is-false (site.crypto:rsassa-pkcs1-v1_5-verify pub-b msg sig :sha256))))))
+             (sig (site.crypto:rsassa-pkcs1-v1_5-sign priv-a msg :sha256))
+             (rejected
+               (handler-case
+                   (not (site.crypto:rsassa-pkcs1-v1_5-verify pub-b msg sig :sha256))
+                 (error () t))))
+        (is-true rejected)))))
