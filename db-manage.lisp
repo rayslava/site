@@ -24,17 +24,18 @@
 	      (getf attrlist :tags)))))
 
 (defmacro defstatic-handler (url)
-  "Create handler for static file stored in S3"
+  "Create a handler that looks up the requested static file by hashed name
+and redirects to its public URL. Lookup and URL formatting both go
+through site.storage so the active backend decides where files live."
   `(lambda ()
      (let* ((full-url (request-uri* *request*))
-	    (static-name (subseq full-url (length ,url)))
-	    (s3objs (select-dyna 'static-file
-				 (sxql:where
-				  (:= :s3name (compute-s3-name static-name))))))
-       (if (= (length s3objs) 1)
-	   (redirect (format-link (s3name (car s3objs))))
-	   (progn (setf (return-code*) +http-not-found+)
-		  (abort-request-handler))))))
+            (static-name (subseq full-url (length ,url)))
+            (row (site.storage:static-find-by-s3name
+                  (compute-s3-name static-name))))
+       (if row
+           (redirect (site.storage:static-public-url (getf row :s3name)))
+           (progn (setf (return-code*) +http-not-found+)
+                  (abort-request-handler))))))
 
 (defun init-static-handlers ()
   (mapcar (lambda (url) (push
@@ -44,33 +45,35 @@
   (print (format nil "~A ~A" "Static handlers created, current table: " *dispatch-table*)))
 
 (define-easy-handler (staticlist :uri "/admin/statics"
-				 :default-request-type :get)
+                                 :default-request-type :get)
     ()
   (with-http-authentication
       (no-cache)
     (with-html-output-to-string (*standard-output* nil :prologue t)
       (:html
        (:head (:title "List of available static files")
-	      (:link :rel "stylesheet" :type "text/css" :href "/main.css")
-	      (:body (:h2 "Statics")
-		     (:table
-		      (:tr (:td "Filename") (:td "Attrs"))
-		      (mapcar (lambda (e)
-				(htm (:tr (:td
-					   (:a :href (format nil "/i/~A" (filename e))
-					       :class "hover-preview"
-					       :data-preview (format nil "/i/~A" (filename e))
-					       (fmt "~A" (filename e))))
-					  (:td (fmt "~A" (beautify-attrs (attr e))))
-					  (:td (:a :href (concatenate 'string "/admin/do-delete?victim=" (s3name e))
-						   (fmt "~A ~A" "del " (filename e)))))))
-			      (stable-sort
-			       (site.db-storage:list-available-statics)
-			       #'string-lessp
-			       :key #'filename)))
-		     (:div :id "preview-box" :class "preview")
-		     (:script :type "text/javascript" :src "/jscl.js")
-		     (:script :type "text/x-common-lisp" :src "/preview.lisp")))))))
+              (:link :rel "stylesheet" :type "text/css" :href "/main.css"))
+       (:body (:h2 "Statics")
+              (:table
+               (:tr (:td "Filename") (:td "Attrs"))
+               (dolist (e (stable-sort
+                           (site.db-storage:list-available-statics)
+                           #'string-lessp
+                           :key (lambda (row) (getf row :filename))))
+                 (let ((fn (getf e :filename))
+                       (sn (getf e :s3name))
+                       (at (getf e :attr)))
+                   (htm (:tr (:td
+                              (:a :href (format nil "/i/~A" fn)
+                                  :class "hover-preview"
+                                  :data-preview (format nil "/i/~A" fn)
+                                  (fmt "~A" fn)))
+                             (:td (fmt "~A" (beautify-attrs at)))
+                             (:td (:a :href (concatenate 'string "/admin/do-delete?victim=" sn)
+                                      (fmt "~A ~A" "del " fn))))))))
+              (:div :id "preview-box" :class "preview")
+              (:script :type "text/javascript" :src "/jscl.js")
+              (:script :type "text/x-common-lisp" :src "/preview.lisp"))))))
 
 (define-easy-handler (upload-req :uri "/admin/upload"
 				 :default-request-type :get)

@@ -43,52 +43,34 @@
     (print-unreadable-object (file out :type t)
       (format out "File '~A' ~A" filename attr))))
 
-(defmethod store-ref-to-dynamodb (file static-file)
-  "Store the static file reference to DynamoDB taking data from `file' object"
-  (save-dyna file))
-
 (defun compute-s3-name (name)
   "Generate the md5 hash of `name' for S3 storage"
   (ironclad:byte-array-to-hex-string
    (ironclad:digest-sequence :md5 (ironclad:ascii-string-to-byte-array name))))
 
 (defun upload-file (file &optional attr)
-  "Upload `file' into S3 and create `static-file' record for it in DynamoDB"
+  "Upload FILE and register a static-file record pointing at it.
+Blob and metadata both flow through site.storage so the dev/local
+backend can keep everything in-tree without touching AWS."
   (let* ((name (getf attr :filename))
-	 (key (compute-s3-name name))
-	 (response (put-file file *static-bucket* key
-			     :public t :content-type (mime file))))
-    (if (not (eq (http-code response) 200))
-	(format nil "Couldn't upload :(")
-	(let ((obj (make-instance 'static-file :filename name :s3name key)))
-	  (when attr
-	    (setf (attr obj)
-		  (to-json attr)))
-	  (save-dyna obj)))))
-
-(defun delete-s3-file (file-hash)
-  "Delete `file-hash' from S3"
-  (delete-object *static-bucket* file-hash))
+         (key (compute-s3-name name)))
+    (if (not (site.storage:static-blob-put key file (mime file)))
+        (format nil "Couldn't upload :(")
+        (site.storage:static-save
+         (list :filename name
+               :s3name key
+               :attr (when attr (to-json attr)))))))
 
 (defun list-available-statics ()
-  "Request list of files from DynamoDB and return as list"
-  (select-dyna 'static-file))
+  "Return all registered static files as plists (:s3name :filename :attr)."
+  (site.storage:static-list))
 
 (defun delete-static (s3name)
-  "Delete object with `s3name' from DynamoDB and S3"
-  (let ((name (filename (car (dyna:select-dyna 'static-file
-					       (sxql:where (:= :s3name s3name)))))))
-    (dyna::delete-item *dyna*
-		       :table-name "statics"
-		       :key `(("s3name" . ,s3name)
-			      ("filename" . ,name)))
-    (delete-s3-file s3name)))
+  "Delete the object with S3NAME from both metadata store and blob store."
+  (site.storage:static-delete s3name))
 
 (defun ensure-static-storage! ()
-  "Create the S3 bucket and DynamoDB table for static files if missing.
-Must be called after configure-aws! and initialize-dyna! — both require
-AWS credentials. Safe to call repeatedly."
-  (unless (bucket-exists-p *static-bucket*)
-    (create-bucket *static-bucket* :location *aws-region*))
-  (unless (table-exist-p 'static-file)
-    (create-dyna-table 'static-file)))
+  "Provision the metadata and blob stores for whichever backend is active.
+Safe to call repeatedly."
+  (site.storage:ensure-bucket)
+  (site.storage:ensure-static-table))

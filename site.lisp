@@ -69,18 +69,24 @@
 
 (defun start-server (&optional (port *server-port*) (adminpass *admin-password*))
   "Start the hunchentoot server. Orchestrates deferred initialization:
-loads RSA keys, configures AWS, creates DynamoDB tables and the S3 bucket
-if they do not already exist, then installs the dispatch table and starts
-listening on PORT."
+picks a storage backend, loads RSA keys, configures AWS if credentials
+are present, provisions tables and buckets, then installs the dispatch
+table and starts listening on PORT."
   (when *hunchentoot-server*
     (stop-server))
-  (site.config:load-activitypub-keys!)
-  (when (site.config:aws-credentials-available-p)
-    (site.config:configure-aws!)
-    (site.config:initialize-dyna!)
-    (site.db-storage:ensure-static-storage!)
-    (site.activitypub:ensure-activitypub-storage!)
-    (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts)))
+  (let ((backend-kind (site.storage:detect-backend)))
+    (setf site.storage:*backend* (site.storage:make-backend backend-kind))
+    (site.config:load-activitypub-keys!
+     :generate-if-missing (not (eq backend-kind :dyna)))
+    (when (eq backend-kind :dyna)
+      (site.config:configure-aws!)
+      (site.config:initialize-dyna!))
+    (site.storage:ensure-bucket)
+    (site.storage:ensure-static-table)
+    (site.storage:ensure-subscriber-table)
+    (site.storage:ensure-event-table)
+    (when (eq backend-kind :dyna)
+      (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts))))
   (setup-dispatch-table)
   (setf *admin-password* adminpass)
   (setf *log-lisp-errors-p* t)

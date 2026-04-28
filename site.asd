@@ -40,15 +40,17 @@
 	       (:file "lj"
 		:depends-on ("blogposts"))
 	       (:file "db-storage"
-		:depends-on ("config"))
+		:depends-on ("config" "storage"))
 	       (:file "db-manage"
-		:depends-on ("db-storage"))
+		:depends-on ("db-storage" "storage"))
 	       (:file "crypto")
 	       (:file "ap-signature"
 		:depends-on ("crypto"))
 	       (:file "storage")
 	       (:file "activitypub"
-		:depends-on ("config" "crypto" "ap-signature" "blog-post" "blog-registry" "storage"))))
+		:depends-on ("config" "crypto" "ap-signature" "blog-post" "blog-registry" "storage"))
+	       (:file "storage-dyna"
+		:depends-on ("storage" "activitypub" "db-storage" "config"))))
 
 (defsystem :site/tests
   :name "site/tests"

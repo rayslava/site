@@ -147,13 +147,10 @@
                     (request-obj (cl-json:decode-json-from-string data-string)))
 	       (cond ((string= "Follow" (cdr (assoc :type request-obj)))
 		      (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
-		      (let* ((actor (cdr (assoc :actor request-obj)))
-			     (attr `(("subscribed" . ,(hunchentoot:rfc-1123-date))))
-			     (subscriber (make-instance 'activitypub-subscriber :actor actor
-										:attr (cl-json:encode-json-to-string attr))))
-			(when (not (nth-value 0 (select-dyna 'activitypub-subscriber
-							     (sxql:where (:= :actor actor)))))
-			  (save-dyna subscriber)
+		      (let ((actor (cdr (assoc :actor request-obj)))
+			    (attr `(("subscribed" . ,(hunchentoot:rfc-1123-date)))))
+			(unless (site.storage:subscriber-find actor)
+			  (site.storage:subscriber-save actor attr)
 			  (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
 			  (maybe-deliver-new-posts (all-posts)))))
 		     ((string= "Undo" (cdr (assoc :type request-obj)))
@@ -176,35 +173,22 @@
 							   request-obj)))))
 		     ((or (string= "Like" (cdr (assoc :type request-obj)))
 			  (string= "Announce" (cdr (assoc :type request-obj))))
-		      (let* ((event-type (cdr (assoc :type request-obj)))
-			     (id (cdr (assoc :id request-obj)))
-			     (actor (cdr (assoc :actor request-obj)))
-			     (object-id (cdr (assoc :object request-obj)))
-			     (event-body data-string)
-			     (event (make-instance 'activitypub-event
-						   :id id
-						   :object-id object-id
-						   :published 0
-						   :event-type event-type
-						   :event event-body)))
-			(save-dyna event)
+		      (let ((event-type (cdr (assoc :type request-obj)))
+			    (id (cdr (assoc :id request-obj)))
+			    (actor (cdr (assoc :actor request-obj)))
+			    (object-id (cdr (assoc :object request-obj))))
+			(site.storage:event-save
+			 (list :id id :object-id object-id :published 0
+			       :event-type event-type :event data-string))
 			(hunchentoot:log-message* :info "Received like for ~A from ~A" object-id actor))
 		      (cl-json:encode-json-to-string '(("status" . "ok"))))
 		     ((string= "Delete" (cdr (assoc :type request-obj)))
-		      (let* ((event-type (cdr (assoc :type request-obj)))
-			     (id (cdr (assoc :id request-obj)))
-			     (actor (cdr (assoc :actor request-obj)))
-			     (object-id (cdr (assoc :object request-obj)))
-			     (event-body data-string)
-			     (event (make-instance 'activitypub-event
-						   :id id
-						   :object-id object-id
-						   :published 0
-						   :event-type event-type
-						   :event event-body)))
-			;;; Don't even want to save the event into DB, since no idea what to do with them
-			; (save-dyna event)
-			(hunchentoot:log-message* :info "Received delete request for ~A from ~A" object-id actor))
+		      (let ((actor (cdr (assoc :actor request-obj)))
+			    (object-id (cdr (assoc :object request-obj))))
+			;; We intentionally do not persist Delete events — no useful
+			;; action to take, and the actor may already be gone.
+			(declare (ignore actor))
+			(hunchentoot:log-message* :info "Received delete request for ~A" object-id))
 		      (cl-json:encode-json-to-string '(("status" . "ok"))))
 		     (t (progn
 			  (hunchentoot:log-message* :info "Unexpected verified request of type ~A received from ~A, placing into database~%Dump: ~A~%"
@@ -219,16 +203,11 @@
 				 (published (if pubstr
 						(local-time:timestamp-to-universal (local-time:parse-timestring pubstr))
 						0))
-				 (reply-str (cdr (assoc :in-reply-to apub-object)))
-				 (event-body data-string)
-				 (event (make-instance 'activitypub-event
-						       :id id
-						       :object-id object-id
-						       :published published
-						       :event-type event-type
-						       :event event-body
-						       :reply-to reply-str)))
-			    (save-dyna event))
+				 (reply-str (cdr (assoc :in-reply-to apub-object))))
+			    (site.storage:event-save
+			     (list :id id :object-id object-id :published published
+				   :event-type event-type :event data-string
+				   :reply-to reply-str)))
 			  (cl-json:encode-json-to-string '(("status" . "ok"))))))))))))
 
 (define-easy-handler (blog-outbox :uri "/ap/actor/blog/outbox"
@@ -389,25 +368,12 @@
   (:documentation "Unsubscribe the subscriber from blog."))
 
 (defmethod unsubscribe ((subscriber activitypub-subscriber))
-  "Delete the `subscriber' from DynamoDB and stop pushing messages"
-  (let ((item (car (select-dyna 'activitypub-subscriber
-				(sxql:where (:= :actor (actor subscriber)))))))
-    (when item
-      (let ((oldposts (lastpost item)))
-	(delete-item *dyna* :table-name "activitypub-subscribers"
-			    :key `(("actor" . ,(actor item))
-				   ("lastpost" . ,oldposts)))))))
+  "Delete the `subscriber' from storage and stop pushing messages."
+  (site.storage:subscriber-delete (actor subscriber)))
 
 (defmethod update-lastpost ((subscriber activitypub-subscriber) newlastpost)
-  "Update lastpost number in DynamoDB to `newlastpost' for `subscriber'"
-  (let* ((item (car (select-dyna 'activitypub-subscriber
-				 (sxql:where (:= :actor (actor subscriber))))))
-	 (oldposts (lastpost item)))
-    (setf (lastpost item) newlastpost)
-    (delete-item *dyna* :table-name "activitypub-subscribers"
-			:key `(("actor" . ,(actor item))
-			       ("lastpost" . ,oldposts)))
-    (save-dyna item)))
+  "Update lastpost number in storage for `subscriber'."
+  (site.storage:subscriber-update-lastpost (actor subscriber) newlastpost))
 
 (defun prepare-image-attachments (atts)
   "Produces attachment json from a list of blog-post-attachment objects"
@@ -498,18 +464,14 @@ are processed as plain text, not as in HTML"
     (cl-json:encode-json-alist-to-string (prepare-fedi-object post "Update"))))
 
 (defun maybe-deliver-new-post (post)
-  "Find all the subscribers who didn't recieve the `post' yet and push the post
-to corresponding actor"
-  (let ((unnotified (select-dyna 'activitypub-subscriber
-				 (sxql:where (:< :lastpost (id post))))))
-    (mapcar #'(lambda (subscriber)
-		(send-signed (actor subscriber) (fedi-post-create post))
-		(update-lastpost subscriber (id post))
-		(hunchentoot:log-message*
-		 :info "Delivered post ~A to ~A~%"
-		 (id post)
-		 (actor subscriber)))
-	    unnotified)
+  "Find all the subscribers who haven't received POST yet and push it."
+  (let ((unnotified (site.storage:subscriber-all-with-lastpost< (id post))))
+    (dolist (row unnotified)
+      (let ((actor (getf row :actor)))
+        (send-signed actor (fedi-post-create post))
+        (site.storage:subscriber-update-lastpost actor (id post))
+        (hunchentoot:log-message*
+         :info "Delivered post ~A to ~A~%" (id post) actor)))
     (length unnotified)))
 
 (defun maybe-deliver-new-posts (posts)
@@ -523,13 +485,10 @@ to corresponding actor"
       (maybe-deliver-new-post post))))
 
 (defun maybe-update-post (post)
-  "Find all the subscribers who recieved the `post' already and push the new
-version to corresponding actor"
-  (let ((notified (select-dyna 'activitypub-subscriber
-			       (sxql:where (:>= :lastpost (id post))))))
-    (mapcar #'(lambda (subscriber)
-		(send-signed (actor subscriber) (fedi-post-update post)))
-	    notified)
+  "Find subscribers who already received POST and push the updated version."
+  (let ((notified (site.storage:subscriber-all-with-lastpost>= (id post))))
+    (dolist (row notified)
+      (send-signed (getf row :actor) (fedi-post-update post)))
     (length notified)))
 
 ;;; Static storage procedure
@@ -585,38 +544,25 @@ version to corresponding actor"
       (format out "ActivityPub event '~A' of type ~A published at ~A" id event-type published))))
 
 (defun dislike (likeid)
-  "Delete the Like or Announce event from DynamoDB"
-  (let ((item (car (select-dyna 'activitypub-event (sxql:where (:= :id likeid))))))
-    (when item
-      (delete-item *dyna* :table-name "activitypub-events"
-			  :key `(("id" . ,(id item))
-				 ("published" . 0))))))
+  "Delete the Like or Announce event from storage."
+  (site.storage:event-delete likeid))
 
 (defun reactions-number (id reaction-type)
-  "Get number of reactions `reaction-type' (Like or Announce) for post with `id'"
-  (handler-case
-      (let ((counts
-              (nth-value 1 (scan *dyna* :table-name "activitypub-events"
-					:filter-expression "objectid = :id AND eventtype = :type"
-					:expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
-								       (":type" . ,reaction-type))
-					:select "COUNT"))))
-        (cdr (assoc "count" (cdr counts) :test #'string-equal)))
-    (error (e) ; Catch all errors
-      -1)))
+  "Count reactions of REACTION-TYPE (Like or Announce) for post ID."
+  (site.storage:event-count-by-object-and-type
+   (format nil "https://rayslava.com/blog?id=~A" id)
+   reaction-type))
 
 (defun direct-replies (id)
-  "Get comments for `id' which came as replies"
-  (let* ((response
-	   (nth-value 1 (scan *dyna* :table-name "activitypub-events"
-				     :filter-expression "replyto = :id AND eventtype = :type"
-				     :expression-attribute-values `((":id" . ,(format nil "https://rayslava.com/blog?id=~A" id))
-								    (":type" . "Create")))))
-	 (replies (cdr (assoc "items" (cdr response) :test #'string-equal)))
-	 (result nil))
-    (dolist (reply-obj replies result)
-      (let*  ((reply (cl-json:decode-json-from-string (cdr (assoc "s"
-								  (cddr (assoc "event" (cdr reply-obj) :test #'string-equal)) :test #'string-equal))))
+  "Get comments for ID that arrived as Create replies. The storage facade
+returns plists with :event holding the raw JSON string; we decode each
+and pull out the ActivityStreams fields."
+  (let ((result nil)
+        (replies (site.storage:event-scan-by-reply-and-type
+                  (format nil "https://rayslava.com/blog?id=~A" id)
+                  "Create")))
+    (dolist (reply-row replies result)
+      (let*  ((reply (cl-json:decode-json-from-string (getf reply-row :event)))
 	      (object (cdr (assoc :object reply)))
 	      (actor (cdr (assoc :attributed-to object)))
 	      (url (cdr (assoc :url object)))
