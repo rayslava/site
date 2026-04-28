@@ -89,7 +89,8 @@
                (:file "test-integration-http"
                       :depends-on ("package" "test-ap-inbox"
                                              "test-ap-signature-pem"
-                                             "test-blog-registry")))
+                                             "test-blog-registry"
+                                             "test-rss")))
   :perform (test-op (op c)
              (uiop:symbol-call :fiveam :run!
                                (uiop:find-symbol* :all-tests :site.tests))))

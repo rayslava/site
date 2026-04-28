@@ -207,15 +207,16 @@ returns a JSON Create activity with the activitystreams profile."
         (is (equal "Create" (cdr (assoc :type decoded))))))))
 
 (test int-rss-returns-xml
-  "/rss returns an XML RSS 2.0 feed with application/rss+xml
-Content-Type (or text/xml as a loose fallback)."
+  "/rss returns an RSS 2.0 feed: XML media type, well-formed XML over
+the wire (the ultimate test — if cxml can't parse this, no feed reader
+will), and the post body present in CDATA form."
   (with-integration-server
     (site.blog-registry:register-post
      (make-instance 'site.blog-post:blog-post
                     :id 3700000000
-                    :subject "first"
+                    :subject "first & only"
                     :tags '("en")
-                    :post (lambda () "<p>body</p>")))
+                    :post (lambda () "<p>line<br>more</p>")))
     (multiple-value-bind (body status ct) (int-get "/rss")
       (is (= 200 status))
       (is-true (or (ct-content-type-is "application/rss+xml" ct)
@@ -223,9 +224,12 @@ Content-Type (or text/xml as a loose fallback)."
                    (ct-content-type-is "text/xml" ct))
                "RSS feed must advertise an XML media type (got ~S)" ct)
       (is-true (search "<?xml version=\"1.0\"" body))
-      (is-true (or (search "<rss version=\"2.0\">" body)
-                   (search "<rss version='2.0'>" body)))
-      (is-true (search "first" body)))))
+      (is-true (rss-well-formed-p body)
+               "served /rss body must be well-formed XML:~%~A" body)
+      (is-true (search "first &amp; only" body)
+               "ampersand in title must be entity-escaped over the wire")
+      (is-true (search "<![CDATA[" body)
+               "post body must be wrapped in CDATA"))))
 
 (test int-blog-page-lists-posts
   "/blog returns text/html listing the registered posts."
