@@ -23,7 +23,7 @@
 	:initform (error "Must supply an URL")
 	:documentation "Url leading to attachment")))
 
-(defmethod print-object ((att blog-post-attachment) (output stream))
+(defmethod print-object ((att blog-post-attachment) output)
   (format output "Blog attachment from: ~a" (url att)))
 
 (defclass blog-post ()
@@ -52,7 +52,7 @@
 	 :initform (error "Must supply a POST")
 	 :documentation "Function which returns a post")))
 
-(defmethod print-object ((post blog-post) (output stream))
+(defmethod print-object ((post blog-post) output)
   (format output "Blog post ID:~d (~a)" (id post) (tags post)))
 
 (defmethod less ((fst blog-post) (snd blog-post))

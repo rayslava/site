@@ -15,7 +15,7 @@
 	       :cl-json :local-time :dyna :zs3 :jonathan :trivial-mimes
 	       :ironclad :asn1 :trivia :cl-base64 :uuid :quri :cl-ppcre
 	       :cl-json-helper :trivial-gray-streams :bordeaux-threads
-	       :local-time :slynk)
+	       :local-time :slynk :dexador :sxql)
   :in-order-to ((test-op (test-op :site/tests)))
   :components ((:file "log"
 		:depends-on ("db-manage" "config"))

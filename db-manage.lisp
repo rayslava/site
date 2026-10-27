@@ -1,13 +1,23 @@
 (defpackage :site.db-manage
   (:use :cl :site.config :site.db-storage :hunchentoot :cl-who :jonathan :dyna)
-  (:export :init-static-handlers :with-http-authentication))
+  (:export :init-static-handlers :with-http-authentication :admin-credentials-p))
 
 (in-package :site.db-manage)
 (setf (html-mode) :html5)
 
+(defun admin-credentials-p (username password)
+  "True when USERNAME and PASSWORD are the admin's. Always false without an
+admin password. Compares digests in constant time."
+  (flet ((digest (s)
+	   (ironclad:digest-sequence
+	    :sha256 (flex:string-to-octets s :external-format :utf-8))))
+    (and (stringp *admin-password*) (stringp username) (stringp password)
+	 (string= username *admin-login*)
+	 (ironclad:constant-time-equal (digest password) (digest *admin-password*)))))
+
 (defmacro with-http-authentication (&rest body)
   `(multiple-value-bind (username password) (hunchentoot:authorization)
-     (cond ((and (string= username *admin-login*) (string= password *admin-password*))
+     (cond ((admin-credentials-p username password)
             ,@body)
            (t (hunchentoot:require-authorization *admin-login-message*)))))
 

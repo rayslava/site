@@ -153,3 +153,19 @@ type DYNA' because the class held a captured NIL."
                           (second spec))))))
       (setf site.config:*dyna* saved-dyna
             site.config:*credentials* saved-creds))))
+
+(test config-admin-credentials
+  "Admin pages accept only the configured login and password, and nothing
+at all when no password is configured."
+  (let ((saved site.config:*admin-password*))
+    (unwind-protect
+         (progn
+           (setf site.config:*admin-password* "s3cret")
+           (is-true (site.db-manage:admin-credentials-p "admin" "s3cret"))
+           (is-false (site.db-manage:admin-credentials-p "admin" "s3cre"))
+           (is-false (site.db-manage:admin-credentials-p "root" "s3cret"))
+           (is-false (site.db-manage:admin-credentials-p nil nil))
+           (setf site.config:*admin-password* nil)
+           (is-false (site.db-manage:admin-credentials-p "admin" "adminpassword"))
+           (is-false (site.db-manage:admin-credentials-p "admin" nil)))
+      (setf site.config:*admin-password* saved))))

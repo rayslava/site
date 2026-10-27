@@ -20,7 +20,9 @@
 (defun refresh-load-time-config ()
   "Some config values are computed when config.lisp is loaded, which for
 the executable means at image build time. Recompute them for this run."
-  (setf site.config:*admin-password* (env "ADMIN_PASSWORD" "adminpassword"))
+  (setf site.config:*admin-password* (env "ADMIN_PASSWORD"))
+  (unless site.config:*admin-password*
+    (format *error-output* "~&ADMIN_PASSWORD is not set, the admin pages are disabled~%"))
   (setf site.config:*default-static-path*
 	(concatenate 'string (namestring (sb-posix:getcwd)) "/" "static")))
 

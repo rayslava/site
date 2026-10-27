@@ -28,10 +28,8 @@
 
 (defvar *admin-password*
   (let ((envpass (asdf::getenv "ADMIN_PASSWORD")))
-    (if envpass
-	envpass
-	"adminpassword"))
-  "Admin page password")
+    (and envpass (string/= envpass "") envpass))
+  "Admin page password from ADMIN_PASSWORD; NIL disables the admin pages")
 
 (defvar *access-log-file* *error-output*
   "Server access log file")
