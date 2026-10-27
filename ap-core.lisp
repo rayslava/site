@@ -26,6 +26,7 @@
            :generate-accept
            :generate-signed-header
            :send-signed
+           :signed-get-headers
            :*http-send-fn*
            :*fetch-key-fn*
            :handle-inbox-activity

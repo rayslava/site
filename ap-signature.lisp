@@ -157,7 +157,9 @@ deliveries from peers are still accepted."
 (defun public-https-url-p (url &key (resolve *resolve-fn*))
   "True when URL is https on a dotted host name whose addresses are all
 public. Keeps key fetches away from the compose services (single-label
-names), loopback and the cloud metadata address."
+names), loopback and the cloud metadata address. Only IPv4 is checked:
+SBCL resolves IPv4 only, so the HTTP client cannot reach IPv6-only hosts
+either."
   (let* ((uri (and (stringp url) (ignore-errors (quri:uri url))))
          (host (and uri (quri:uri-host uri))))
     (and host

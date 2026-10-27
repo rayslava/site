@@ -31,6 +31,32 @@
 		     hash))
 	    :sha256))))
 
+(defparameter *key-id* "https://rayslava.com/ap/actor/blog#main-key"
+  "keyId of the site's actor key, sent with every signed request")
+
+(defun signed-get-headers (url &key (date (hunchentoot:rfc-1123-date)))
+  "Headers for a GET of URL signed with the site's key, as servers with
+authorized fetch (e.g. mastodon.social) require before serving actors."
+  (let* ((uri (quri:uri url))
+	 (port (quri:uri-port uri))
+	 (host (if (member port '(nil 80 443))
+		   (quri:uri-host uri)
+		   (format nil "~A:~A" (quri:uri-host uri) port)))
+	 (target (format nil "~A~@[?~A~]"
+			 (or (quri:uri-path uri) "/") (quri:uri-query uri))))
+    `(("host" . ,host)
+      ("date" . ,date)
+      ("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\"")
+      ("signature" .
+       ,(format nil "keyId=\"~A\",algorithm=\"rsa-sha256\",headers=\"(request-target) host date\",signature=\"~A\""
+		*key-id*
+		(base64:usb8-array-to-base64-string
+		 (rsassa-pkcs1-v1_5-sign
+		  site.config:*activitypub-private-key*
+		  (ironclad:ascii-string-to-byte-array
+		   (format nil "(request-target): get ~A~%host: ~A~%date: ~A" target host date))
+		  :sha256)))))))
+
 (defvar *http-send-fn*
   (lambda (url &key headers content)
     (dex:post url :headers headers :content content :verbose nil))
@@ -52,7 +78,7 @@ logged but never raised, so delivery-loop callers can proceed."
                              (ironclad:digest-sequence
                               :sha256
                               (ironclad:ascii-string-to-byte-array message)))))
-	 (keyid "https://rayslava.com/ap/actor/blog#main-key"))
+	 (keyid *key-id*))
     (handler-case
         (funcall *http-send-fn*
                  reply-url

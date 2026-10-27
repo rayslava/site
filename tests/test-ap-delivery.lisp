@@ -172,3 +172,33 @@ caller's storage backend and HTTP sender."
       (join-delivery-threads)
       ;; Accept, then the post
       (is (= 2 (length calls))))))
+
+(test ap-delivery-signed-get-headers-verify
+  "signed-get-headers signs (request-target) host date with the site's
+key, in a form the inbox verifier (and Mastodon) can check."
+  (let ((saved-priv site.config:*activitypub-private-key*))
+    (unwind-protect
+         (multiple-value-bind (priv pub) (generate-rsa-keypair)
+           (setf site.config:*activitypub-private-key* priv)
+           (dolist (case '(("https://social.example/users/alice#main-key"
+                            "social.example" "get /users/alice")
+                           ("https://social.example:8443/actor?id=1"
+                            "social.example:8443" "get /actor?id=1")))
+             (destructuring-bind (url host target) case
+               (let* ((headers (site.activitypub:signed-get-headers url))
+                      (sig (site.ap-signature:parse-signature-header
+                            (cdr (assoc "signature" headers :test #'string=))))
+                      (message (format nil "(request-target): ~A~%host: ~A~%date: ~A"
+                                       target host
+                                       (cdr (assoc "date" headers :test #'string=)))))
+                 (is (equal host (cdr (assoc "host" headers :test #'string=))))
+                 (is (equal "https://rayslava.com/ap/actor/blog#main-key"
+                            (site.ap-signature:signature-keyid sig)))
+                 (is (equal "(request-target) host date"
+                            (site.ap-signature:signature-headers sig)))
+                 (is-true (site.crypto:rsassa-pkcs1-v1_5-verify
+                           pub
+                           (ironclad:ascii-string-to-byte-array message)
+                           (site.ap-signature:signature-bytes sig)
+                           :sha256))))))
+      (setf site.config:*activitypub-private-key* saved-priv))))

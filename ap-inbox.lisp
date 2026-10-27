@@ -101,9 +101,14 @@ through site.storage, so this is unit-testable with a memory backend."
      (cl-json:encode-json-to-string '(("status" . "ok"))))))
 
 (defvar *fetch-key-fn*
+  ;; public-https-url-p checks the address before this fetch resolves the
+  ;; host again; certificate verification (:insecure nil) is what stops a
+  ;; DNS rebind to an internal address, since internal services cannot
+  ;; present a certificate for the signer's host
   (lambda (keyid)
     (dex:get keyid
-             :headers '(("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
+             :insecure nil
+             :headers (signed-get-headers keyid)
              :force-string t
              :max-redirects 0
              :verbose nil))
