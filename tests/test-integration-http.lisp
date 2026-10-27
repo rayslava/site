@@ -276,14 +276,33 @@ returns a Note JSON AND a matching Content-Type."
     (multiple-value-bind (body status ct)
         (int-get "/blog?id=3700000000" :accept "application/activity+json")
       (is (= 200 status))
-      ;; Handler echoes the client's Accept value as Content-Type, which
-      ;; is unusual but acceptable so long as it is not text/html.
-      (is-false (ct-content-type-is "text/html" ct)
-                "content-negotiated response must not be HTML (got ~S)" ct)
-      (is-true (search "application/activity+json" ct)
-               "Content-Type should advertise activity+json (got ~S)" ct)
+      (is-true (ct-content-type-is "application/activity+json" ct)
+               "Content-Type should be activity+json (got ~S)" ct)
       (let ((decoded (cl-json:decode-json-from-string body)))
         (is (equal "Note" (cdr (assoc :type decoded))))))))
+
+(test int-blog-page-content-type-does-not-echo-accept
+  "A multi-type Accept header must not come back as the Content-Type."
+  (with-integration-server
+    (site.blog-registry:register-post
+     (make-instance 'site.blog-post:blog-post
+                    :id 3700000000
+                    :subject "fedi-note"
+                    :tags '("en" "fedi")
+                    :post (lambda () "<p>body</p>")))
+    (multiple-value-bind (body status ct)
+        (int-get "/blog?id=3700000000"
+                 :accept "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\", text/html;q=0.1")
+      (declare (ignore body))
+      (is (= 200 status))
+      (is-true (ct-content-type-is "application/activity+json" ct))
+      (is (null (search "text/html" ct))))))
+
+(test int-blog-missing-post-is-404
+  "/blog?id=N for an unknown post returns 404, as HTML and as ActivityPub."
+  (with-integration-server
+    (is (= 404 (nth-value 1 (int-get "/blog?id=1"))))
+    (is (= 404 (nth-value 1 (int-get "/blog?id=1" :accept "application/activity+json"))))))
 
 (test int-about-page
   "/about returns text/html."

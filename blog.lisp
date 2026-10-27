@@ -155,22 +155,26 @@ replacing any existing post with the same id."
 				:default-request-type :get)
     ((id :parameter-type 'integer)
      (tags :parameter-type 'string))
-  (if (and id
-	   (let ((accept-header (header-in :accept *request*)))
-	     (when (stringp accept-header)
-	       (some (lambda (target-type)
-		       (search target-type accept-header :test #'string-equal))
-		     '("application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""
-		       "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
-		       "application/activity+json")))))
-      (progn
-	(setf (hunchentoot:content-type*) (header-in :accept *request*))
-	(fedi-note-create (find-post-by-id id)))
-      (with-html-output-to-string (*standard-output* nil :prologue t)
-	(format t "~a"
-		(if id
-		    (show-post id)
-		    (list-posts tags))))))
+  (cond
+    ((and id (not (find-post-by-id id)))
+     (setf (return-code*) +http-not-found+)
+     (format nil "Post ~A not found~%" id))
+    ((and id
+	  (let ((accept-header (header-in :accept *request*)))
+	    (when (stringp accept-header)
+	      (some (lambda (target-type)
+		      (search target-type accept-header :test #'string-equal))
+		    '("application/ld+json; profile=\"http://www.w3.org/ns/activitystreams\""
+		      "application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""
+		      "application/activity+json")))))
+     (setf (hunchentoot:content-type*) "application/activity+json")
+     (fedi-note-create (find-post-by-id id)))
+    (t
+     (with-html-output-to-string (*standard-output* nil :prologue t)
+       (format t "~a"
+	       (if id
+		   (show-post id)
+		   (list-posts tags)))))))
 
 ;;; RSS feed rendering lives in site.rss so the cl-who html-mode flip
 ;;; stays contained. The handler is plumbing + Content-Type: feed readers
