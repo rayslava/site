@@ -75,7 +75,7 @@ FROM ${RUNTIME_IMAGE} AS runtime
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates libssl3t64 libzstd1 zlib1g curl file git \
     && rm -rf /var/lib/apt/lists/* \
-    && useradd --system --uid 10001 --home-dir /site/var site \
+    && useradd --system --uid 101 --user-group --home-dir /site/var site \
     && mkdir -p /site/var && chown site:site /site/var \
     && git config --system --add safe.directory /opt/site.git
 WORKDIR /site
@@ -84,6 +84,8 @@ COPY --from=build /build/site-server /usr/local/bin/site-server
 COPY contrib/entrypoint.sh /usr/local/bin/site-entrypoint
 COPY static /site/static
 COPY --from=jscl /jscl/dist/jscl.js /site/static/jscl.js
+# uid 101 is nginx's worker user, so the admin refresh action can delete
+# nginx's cache files when the cache volume is mounted (NGINX_CACHE)
 USER site
 # /site/var is meant to be a volume: the git checkout for the admin
 # pull/refresh actions and its compiled fasls

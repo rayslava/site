@@ -169,3 +169,25 @@ at all when no password is configured."
            (is-false (site.db-manage:admin-credentials-p "admin" "adminpassword"))
            (is-false (site.db-manage:admin-credentials-p "admin" nil)))
       (setf site.config:*admin-password* saved))))
+
+(test site-purge-nginx-cache
+  "purge-nginx-cache deletes every file under NGINX_CACHE, keeps the
+directories, and does nothing when NGINX_CACHE is unset."
+  (let* ((saved (uiop:getenv "NGINX_CACHE"))
+         (root (uiop:ensure-directory-pathname
+                (format nil "/tmp/site-test-cache-~A/" (random 1000000))))
+         (files (list (merge-pathnames "a/43/1f689b37f5e96db1c81c003b9236543a" root)
+                      (merge-pathnames "b/01/0123456789abcdef" root))))
+    (unwind-protect
+         (progn
+           (dolist (f files)
+             (ensure-directories-exist f)
+             (with-open-file (s f :direction :output) (write-string "cached" s)))
+           (setf (uiop:getenv "NGINX_CACHE") "")
+           (is (null (site::purge-nginx-cache)))
+           (setf (uiop:getenv "NGINX_CACHE") (namestring root))
+           (is (= 2 (site::purge-nginx-cache)))
+           (is (notany #'probe-file files))
+           (is-true (uiop:directory-exists-p (merge-pathnames "a/43/" root))))
+      (setf (uiop:getenv "NGINX_CACHE") (or saved ""))
+      (uiop:delete-directory-tree root :validate t :if-does-not-exist :ignore))))

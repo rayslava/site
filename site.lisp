@@ -103,6 +103,22 @@ table and starts listening on PORT."
 	   (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts))))))
     *hunchentoot-server*))
 
+(defun purge-nginx-cache ()
+  "Delete the files in NGINX_CACHE (nginx's proxy cache, shared through a
+volume) so refreshed pages are served right away. Returns the number of
+files deleted, NIL when NGINX_CACHE is not set."
+  (let ((dir (uiop:getenv "NGINX_CACHE"))
+	(count 0))
+    (when (and dir (string/= dir ""))
+      (uiop:collect-sub*directories
+       (uiop:ensure-directory-pathname dir) t t
+       (lambda (subdir)
+	 (dolist (file (uiop:directory-files subdir))
+	   ;; nginx may remove a file at the same time
+	   (when (ignore-errors (delete-file file))
+	     (incf count)))))
+      count)))
+
 (defun refresh ()
   "This function should be used by user for regenerating caches"
   (with-html-output (*standard-output* nil)
@@ -112,7 +128,10 @@ table and starts listening on PORT."
 		     (progn
 		       (asdf:operate 'compile-op :site)
 		       (asdf:operate 'load-op :site)
-		       (setup-dispatch-table))
+		       (setup-dispatch-table)
+		       (let ((purged (purge-nginx-cache)))
+			 (when purged
+			   (format t "nginx cache cleared: ~A files~%" purged))))
 		   (error (e)
 		     (format t "Refresh failed: ~A~%" e))))))
 	  (s (make-array '(0) :element-type 'base-char
