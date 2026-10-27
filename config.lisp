@@ -134,7 +134,7 @@ to the `activitypub/` subdirectory of the current working directory."
 (defmethod print-object ((credentials environment-credentials) out)
   (print-unreadable-object (credentials out :type t)
     (if (loaded credentials)
-	(format out "Environment credentials ~A:~A" (access-key credentials) (secret-key credentials))
+	(format out "Environment credentials (set)")
 	(format out "Empty credentials (envvars not set up)"))))
 
 (defvar *credentials* nil "AWS credentials, populated by configure-aws!")

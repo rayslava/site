@@ -137,13 +137,24 @@ handler-case (which would silently drop the send)."
   "Undo(Like) deletes the event row, dropping the count."
   (with-quiet-http-and-memory
     (site.activitypub:handle-inbox-activity
-     (like-activity "e1" 42 "https://alice.example/actor")
+     (like-activity "https://alice.example/actor#likes/1" 42 "https://alice.example/actor")
      "{\"type\":\"Like\"}")
     (is (= 1 (site.activitypub:reactions-number 42 "Like")))
     (site.activitypub:handle-inbox-activity
-     (undo-like-activity "e1" "https://alice.example/actor")
+     (undo-like-activity "https://alice.example/actor#likes/1" "https://alice.example/actor")
      "{}")
     (is (= 0 (site.activitypub:reactions-number 42 "Like")))))
+
+(test ap-inbox-undo-like-from-another-server-is-ignored
+  "Undo(Like) cannot remove a reaction recorded for another server's actor."
+  (with-quiet-http-and-memory
+    (site.activitypub:handle-inbox-activity
+     (like-activity "https://alice.example/actor#likes/1" 42 "https://alice.example/actor")
+     "{\"type\":\"Like\"}")
+    (site.activitypub:handle-inbox-activity
+     (undo-like-activity "https://alice.example/actor#likes/1" "https://evil.example/actor")
+     "{}")
+    (is (= 1 (site.activitypub:reactions-number 42 "Like")))))
 
 (test ap-inbox-delete-is-no-op
   "A Delete activity returns ok without persisting anything."

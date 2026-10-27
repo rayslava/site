@@ -26,6 +26,7 @@
            :generate-signed-header
            :send-signed
            :*http-send-fn*
+           :*fetch-key-fn*
            :handle-inbox-activity
            :ensure-activitypub-storage!
            :dislike))

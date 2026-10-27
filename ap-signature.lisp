@@ -13,7 +13,15 @@
    :signature-headers
    :signature-bytes
    :build-signed-message
-   :extract-public-key-from-actor-pem))
+   :extract-public-key-from-actor-pem
+   :signature-covers-required-p
+   :digest-matches-p
+   :parse-http-date
+   :date-fresh-p
+   :public-https-url-p
+   :*resolve-fn*
+   :same-host-p
+   :signer-matches-actor-p))
 
 (in-package :site.ap-signature)
 
@@ -85,6 +93,96 @@ return an ironclad :RSA public-key object."
                                     "")))
     ((asn1:rsa-public-key-info n e)
      (ironclad:make-public-key :rsa :n n :e e))))
+
+(defparameter *required-signed-headers* '("(request-target)" "host" "date" "digest")
+  "Headers an inbox signature must cover: without date and digest a
+signature could be replayed or reused for another body.")
+
+(defun signature-covers-required-p (covered-header-names)
+  "True when the signer's `headers` list includes every required header."
+  (every (lambda (name) (member name covered-header-names :test #'string-equal))
+         *required-signed-headers*))
+
+(defun digest-matches-p (digest-header body)
+  "True when DIGEST-HEADER (\"SHA-256=<base64>\", possibly among other
+comma-separated algorithms) carries the SHA-256 of the octet vector BODY."
+  (let ((expected (base64:usb8-array-to-base64-string
+                   (ironclad:digest-sequence :sha256 body))))
+    (and digest-header
+         (some (lambda (part)
+                 (let ((sep (position #\= part)))
+                   (and sep
+                        (string-equal "SHA-256" (string-trim " " (subseq part 0 sep)))
+                        (string= expected (string-trim " " (subseq part (1+ sep)))))))
+               (cl-ppcre:split "," digest-header)))))
+
+(defun parse-http-date (string)
+  "Universal time of an HTTP date like \"Tue, 07 Jun 2022 20:51:35 GMT\",
+or NIL when STRING is not one."
+  (cl-ppcre:register-groups-bind ((#'parse-integer day) month
+                                  (#'parse-integer year hour minute second))
+      ("^\\w{3}, (\\d{1,2}) (\\w{3}) (\\d{4}) (\\d{2}):(\\d{2}):(\\d{2}) GMT$"
+       (or string ""))
+    (let ((m (position month '("Jan" "Feb" "Mar" "Apr" "May" "Jun"
+                               "Jul" "Aug" "Sep" "Oct" "Nov" "Dec")
+                       :test #'string-equal)))
+      (and m (ignore-errors
+              (encode-universal-time second minute hour day (1+ m) year 0))))))
+
+(defun date-fresh-p (date-header &key (now (get-universal-time))
+                                      (max-age (* 12 3600)) (max-future 3600))
+  "True when DATE-HEADER is at most MAX-AGE seconds old and at most
+MAX-FUTURE seconds ahead of NOW. The limits are Mastodon's, so retried
+deliveries from peers are still accepted."
+  (let ((time (parse-http-date date-header)))
+    (and time (<= (- now max-age) time (+ now max-future)))))
+
+(defun private-ipv4-p (address)
+  "True for loopback, private, link-local, CGNAT and unspecified addresses."
+  (let ((a (aref address 0)) (b (aref address 1)))
+    (or (= a 0) (= a 10) (= a 127)
+        (and (= a 100) (<= 64 b 127))
+        (and (= a 169) (= b 254))
+        (and (= a 172) (<= 16 b 31))
+        (and (= a 192) (= b 168)))))
+
+(defun resolve-ipv4 (host)
+  "IPv4 addresses of HOST as octet vectors, NIL when it does not resolve."
+  (ignore-errors
+   (sb-bsd-sockets:host-ent-addresses (sb-bsd-sockets:get-host-by-name host))))
+
+(defvar *resolve-fn* 'resolve-ipv4
+  "Function of a host name returning its IPv4 addresses; tests replace it.")
+
+(defun public-https-url-p (url &key (resolve *resolve-fn*))
+  "True when URL is https on a dotted host name whose addresses are all
+public. Keeps key fetches away from the compose services (single-label
+names), loopback and the cloud metadata address."
+  (let* ((uri (and (stringp url) (ignore-errors (quri:uri url))))
+         (host (and uri (quri:uri-host uri))))
+    (and host
+         (equal "https" (quri:uri-scheme uri))
+         (find #\. host)
+         (not (find #\: host))
+         (let ((addresses (funcall resolve host)))
+           (and addresses (notany #'private-ipv4-p addresses))))))
+
+(defun same-host-p (url-a url-b)
+  "True when both URLs parse and name the same host."
+  (let ((a (and (stringp url-a) (ignore-errors (quri:uri-host (quri:uri url-a)))))
+        (b (and (stringp url-b) (ignore-errors (quri:uri-host (quri:uri url-b))))))
+    (and a b (string-equal a b))))
+
+(defun signer-matches-actor-p (keyid key-document actor)
+  "True when the key behind KEYID belongs to ACTOR: same host, and the
+fetched KEY-DOCUMENT names ACTOR as the key's owner (or is ACTOR's own
+document). Without this any fediverse key could act for any actor."
+  (let* ((public-key (cdr (assoc :public-key key-document)))
+         (owner (or (cdr (assoc :owner public-key))
+                    (cdr (assoc :id key-document)))))
+    (and (stringp actor)
+         (same-host-p keyid actor)
+         (equal owner actor))))
 
 ;; verify-inbox-request is intentionally NOT extracted: the real handler
 ;; uses handler-bind around the key fetch to short-circuit on HTTP 410/404,

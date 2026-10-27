@@ -12,7 +12,7 @@
 
 (defmacro generate-delete-reply-func (message)
   `(lambda (args)
-     (let* ((data-string (hunchentoot:raw-post-data :force-text t))
+     (let* ((data-string (flex:octets-to-string body :external-format :utf-8))
 	    (request-obj (cl-json:decode-json-from-string data-string)))
        (if (string= "Delete" (cdr (assoc :type request-obj)))
 	   (progn
@@ -42,14 +42,17 @@ through site.storage, so this is unit-testable with a memory backend."
     ;; Undo: could be Undo Follow (unsubscribe), Undo Like/Announce (dislike).
     ((string= "Undo" (cdr (assoc :type request-obj)))
      (let* ((object (cdr (assoc :object request-obj))))
+       ;; Only the actor who sent the request can be unsubscribed, and only
+       ;; reactions from its own server can be removed
        (cond ((string= "Follow" (cdr (assoc :type object)))
 	      (unsubscribe (make-instance 'activitypub-subscriber
-                                          :actor (cdr (assoc :actor object))))
-	      (hunchentoot:log-message* :info "Unsubscribed user: ~A" (cdr (assoc :actor object)))
+                                          :actor (cdr (assoc :actor request-obj))))
+	      (hunchentoot:log-message* :info "Unsubscribed user: ~A" (cdr (assoc :actor request-obj)))
 	      (cl-json:encode-json-to-string '(("status" . "ok"))))
 	     ((or (string= "Like" (cdr (assoc :type object)))
 		  (string= "Announce" (cdr (assoc :type object))))
-	      (dislike (cdr (assoc :id object)))
+	      (when (same-host-p (cdr (assoc :id object)) (cdr (assoc :actor request-obj)))
+		(dislike (cdr (assoc :id object))))
 	      (hunchentoot:log-message* :info "Removed ~A for: ~A"
 					(cdr (assoc :type object))
 					(cdr (assoc :object object)))
@@ -97,6 +100,16 @@ through site.storage, so this is unit-testable with a memory backend."
 	      :reply-to reply-str)))
      (cl-json:encode-json-to-string '(("status" . "ok"))))))
 
+(defvar *fetch-key-fn*
+  (lambda (keyid)
+    (dex:get keyid
+             :headers '(("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
+             :force-string t
+             :max-redirects 0
+             :verbose nil))
+  "Function of KEYID returning the signer's actor document as a JSON
+string. Tests replace it to avoid the network.")
+
 (define-easy-handler (blog-inbox :uri "/ap/actor/blog/inbox"
 				 :default-request-type :post)
     ()
@@ -107,40 +120,55 @@ through site.storage, so this is unit-testable with a memory backend."
       (cond
         ((eq request-type :get) "")
         ((eq request-type :post)
-         ;; Signature verification — the dex:get for the signer's public key
-         ;; stays here so handler-bind can short-circuit 410/404 into a Delete
-         ;; reply. Parsing and message-building are pure and live in
+         ;; Signature verification — the key fetch stays here so
+         ;; handler-bind can short-circuit 410/404 into a Delete reply.
+         ;; Parsing, message-building and the checks are pure and live in
          ;; site.ap-signature.
          (let* ((http-headers (headers-in hunchentoot:*request*))
-                (sig (parse-signature-header (cdr (assoc :signature http-headers))))
-                (keyid (signature-keyid sig))
-                (covered (cl-ppcre:split " " (signature-headers sig)))
-                (message-to-check
-                  (build-signed-message "post" "/ap/actor/blog/inbox"
-                                        http-headers covered))
-                (userprofile
-                  (cl-json:decode-json-from-string
-                   (handler-bind ((dex:http-request-gone
-                                    (generate-delete-reply-func "Public key gone for id "))
-                                  (dex:http-request-not-found
-                                    (generate-delete-reply-func "Public key not found for id ")))
-                     (dex:get keyid
-                              :headers '(("accept" . "application/activity+json, application/ld+json; profile=\"https://www.w3.org/ns/activitystreams\""))
-                              :force-string t
-                              :verbose nil))))
-                (pem (cdr (assoc :public-key-pem
-                                 (cdr (assoc :public-key userprofile)))))
-                (public-key (extract-public-key-from-actor-pem pem)))
-           (unless (rsassa-pkcs1-v1_5-verify
-                    public-key
-                    (ironclad:ascii-string-to-byte-array message-to-check)
-                    (signature-bytes sig)
-                    :sha256)
-             (hunchentoot:log-message* :info "Signature verification failed for ~A" keyid)
-             (setf (return-code*) hunchentoot:+http-authorization-required+)
-             (format nil "Signature verification failed~%")
-             (return-from blog-inbox)))
-         ;; Signature verified; dispatch on activity type.
-         (let* ((data-string (hunchentoot:raw-post-data :force-text t))
-                (request-obj (cl-json:decode-json-from-string data-string)))
-           (handle-inbox-activity request-obj data-string)))))))
+                (body (or (hunchentoot:raw-post-data :force-binary t)
+                          (make-array 0 :element-type '(unsigned-byte 8))))
+                (sig-header (cdr (assoc :signature http-headers)))
+                (sig (and sig-header (ignore-errors (parse-signature-header sig-header))))
+                (keyid (and sig (signature-keyid sig)))
+                (covered (and sig (cl-ppcre:split " " (or (signature-headers sig) "")))))
+           (flet ((reject (reason)
+                    (hunchentoot:log-message* :info "Inbox request rejected (~A): ~A" keyid reason)
+                    (setf (return-code*) hunchentoot:+http-authorization-required+)
+                    (return-from blog-inbox (format nil "~A~%" reason))))
+             (cond ((null sig)
+                    (reject "Missing Signature header"))
+                   ((not (signature-covers-required-p covered))
+                    (reject "Signature must cover (request-target) host date digest"))
+                   ((not (date-fresh-p (cdr (assoc :date http-headers))))
+                    (reject "Date header is missing or out of range"))
+                   ((not (digest-matches-p (cdr (assoc :digest http-headers)) body))
+                    (reject "Digest does not match the body"))
+                   ((not (public-https-url-p keyid))
+                    (reject "keyId is not a public https URL")))
+             (let* ((message-to-check
+                      (build-signed-message "post" "/ap/actor/blog/inbox"
+                                            http-headers covered))
+                    (userprofile
+                      (cl-json:decode-json-from-string
+                       (handler-bind ((dex:http-request-gone
+                                        (generate-delete-reply-func "Public key gone for id "))
+                                      (dex:http-request-not-found
+                                        (generate-delete-reply-func "Public key not found for id ")))
+                         (funcall *fetch-key-fn* keyid))))
+                    (pem (cdr (assoc :public-key-pem
+                                     (cdr (assoc :public-key userprofile)))))
+                    (public-key (extract-public-key-from-actor-pem pem)))
+               (unless (rsassa-pkcs1-v1_5-verify
+                        public-key
+                        (ironclad:ascii-string-to-byte-array message-to-check)
+                        (signature-bytes sig)
+                        :sha256)
+                 (reject "Signature verification failed"))
+               ;; Signature verified; check the signer acts for itself and
+               ;; dispatch on activity type.
+               (let* ((data-string (flex:octets-to-string body :external-format :utf-8))
+                      (request-obj (cl-json:decode-json-from-string data-string)))
+                 (unless (signer-matches-actor-p keyid userprofile
+                                                 (cdr (assoc :actor request-obj)))
+                   (reject "Signing key does not belong to the activity's actor"))
+                 (handle-inbox-activity request-obj data-string))))))))))
