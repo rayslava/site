@@ -10,6 +10,7 @@
         :site.blog-registry :site.ap-signature)
   (:shadowing-import-from :cl-json-helper :json-bool)
   (:export :maybe-deliver-new-posts
+           :deliver-in-background
            :maybe-update-post
            :reactions-number
            :direct-replies

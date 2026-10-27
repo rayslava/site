@@ -114,3 +114,61 @@ posts to them, and advances their lastpost to the post's id."
                (site.activitypub:maybe-update-post post)
                (is (= 1 (length calls))))))
       (setf site.config:*activitypub-private-key* saved-priv))))
+
+(defun join-delivery-threads ()
+  "Wait for every background delivery thread to finish."
+  (dolist (thread (bt:all-threads))
+    (when (equal "ap-delivery" (bt:thread-name thread))
+      (bt:join-thread thread))))
+
+(test ap-delivery-in-background-uses-caller-context
+  "deliver-in-background runs FN in another thread that still sees the
+caller's storage backend and HTTP sender."
+  (let ((site.storage:*backend* (site.storage:make-backend :memory))
+        (saved-priv site.config:*activitypub-private-key*))
+    (unwind-protect
+         (progn
+           (multiple-value-bind (priv pub) (generate-rsa-keypair)
+             (declare (ignore pub))
+             (setf site.config:*activitypub-private-key* priv))
+           (site.storage:subscriber-save "https://a.example/actor" nil)
+           (let ((post (make-instance 'site.blog-post:blog-post
+                                      :id 3700000123
+                                      :subject "fedi post"
+                                      :tags '("fedi")
+                                      :post (lambda () "<p>body</p>"))))
+             (with-captured-http calls
+               (let ((thread (site.activitypub:deliver-in-background
+                              (lambda ()
+                                (site.activitypub:maybe-deliver-new-posts (list post))))))
+                 (is (not (eq thread (bt:current-thread))))
+                 (bt:join-thread thread))
+               (is (= 1 (length calls)))
+               (is (= 3700000123
+                      (getf (site.storage:subscriber-find "https://a.example/actor")
+                            :lastpost))))))
+      (setf site.config:*activitypub-private-key* saved-priv))))
+
+(test ap-delivery-in-background-survives-errors
+  "An error inside the background delivery is logged, not raised."
+  (with-captured-http calls
+    (let ((thread (site.activitypub:deliver-in-background
+                   (lambda () (error "remote server exploded")))))
+      (finishes (bt:join-thread thread)))
+    (is (null calls))))
+
+(test ap-inbox-follow-delivers-backlog-in-background
+  "A Follow sends the Accept inline and the backlog from a background thread."
+  (with-quiet-http-and-memory
+    (site.blog-registry:register-post
+     (make-instance 'site.blog-post:blog-post
+                    :id 3700000124
+                    :subject "fedi post"
+                    :tags '("fedi")
+                    :post (lambda () "<p>body</p>")))
+    (with-captured-http calls
+      (site.activitypub:handle-inbox-activity
+       (follow-activity "https://alice.example/actor") "{}")
+      (join-delivery-threads)
+      ;; Accept, then the post
+      (is (= 2 (length calls))))))

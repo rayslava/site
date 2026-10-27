@@ -29,7 +29,7 @@
 persistence). Returns the JSON reply string. All state changes go
 through site.storage, so this is unit-testable with a memory backend."
   (cond
-    ;; Follow: save subscriber, accept, deliver backlog.
+    ;; Follow: save subscriber, accept, deliver backlog in the background.
     ((string= "Follow" (cdr (assoc :type request-obj)))
      (send-signed (cdr (assoc :actor request-obj)) (generate-accept request-obj))
      (let ((actor (cdr (assoc :actor request-obj)))
@@ -37,7 +37,7 @@ through site.storage, so this is unit-testable with a memory backend."
        (unless (site.storage:subscriber-find actor)
 	 (site.storage:subscriber-save actor attr)
 	 (hunchentoot:log-message* :info "Accepted new follower: ~A. Sending the posts." actor)
-	 (maybe-deliver-new-posts (all-posts))))
+	 (deliver-in-background (lambda () (maybe-deliver-new-posts (all-posts))))))
      (cl-json:encode-json-to-string '(("status" . "ok"))))
     ;; Undo: could be Undo Follow (unsubscribe), Undo Like/Announce (dislike).
     ((string= "Undo" (cdr (assoc :type request-obj)))

@@ -85,18 +85,23 @@ table and starts listening on PORT."
     (site.storage:ensure-static-table)
     (site.storage:ensure-subscriber-table)
     (site.storage:ensure-event-table)
+    (setup-dispatch-table)
+    (setf *admin-password* adminpass)
+    (setf *log-lisp-errors-p* t)
+    (setf *log-lisp-backtraces-p* t)
+    (setf *log-lisp-warnings-p* t)
+    (setf *lisp-warnings-log-level* :info)
+    (setq *hunchentoot-server*
+	  (start (make-instance 'easy-acceptor :port port
+				:access-log-destination *log-access-stream*
+				:message-log-destination *log-error-stream*)))
+    ;; Deliver posts the followers have not seen yet without delaying startup
     (when (eq backend-kind :dyna)
-      (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts))))
-  (setup-dispatch-table)
-  (setf *admin-password* adminpass)
-  (setf *log-lisp-errors-p* t)
-  (setf *log-lisp-backtraces-p* t)
-  (setf *log-lisp-warnings-p* t)
-  (setf *lisp-warnings-log-level* :info)
-  (setq *hunchentoot-server*
-	(start (make-instance 'easy-acceptor :port port
-			      :access-log-destination *log-access-stream*
-			      :message-log-destination *log-error-stream*))))
+      (let ((*acceptor* *hunchentoot-server*))
+	(site.activitypub:deliver-in-background
+	 (lambda ()
+	   (site.activitypub:maybe-deliver-new-posts (site.blog-registry:all-posts))))))
+    *hunchentoot-server*))
 
 (defun refresh ()
   "This function should be used by user for regenerating caches"

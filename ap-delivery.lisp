@@ -98,6 +98,30 @@ subscribers who haven't seen it yet."
     (dolist (post fediposts)
       (maybe-deliver-new-post post))))
 
+(defvar *delivery-lock* (bt:make-lock "ap-delivery")
+  "Serializes background deliveries, so two runs never send the same
+post to a subscriber before its last-post mark is updated.")
+
+(defun deliver-in-background (fn)
+  "Run FN in a new thread, one delivery at a time, so requests and startup
+don't wait on remote servers. The thread sees the caller's storage
+backend, HTTP sender and acceptor (needed for logging). Returns the thread."
+  (let ((backend site.storage:*backend*)
+        (send-fn *http-send-fn*)
+        (acceptor (and (boundp 'hunchentoot:*acceptor*) hunchentoot:*acceptor*)))
+    (bt:make-thread
+     (lambda ()
+       (let ((site.storage:*backend* backend)
+             (*http-send-fn* send-fn)
+             (hunchentoot:*acceptor* acceptor))
+         (bt:with-lock-held (*delivery-lock*)
+           (handler-case (funcall fn)
+             (error (e)
+               (if acceptor
+                   (hunchentoot:log-message* :error "Background delivery failed: ~A" e)
+                   (format *error-output* "~&Background delivery failed: ~A~%" e)))))))
+     :name "ap-delivery")))
+
 (defun maybe-update-post (post)
   "Find subscribers who already received POST and push an Update activity."
   (let ((notified (site.storage:subscriber-all-with-lastpost>= (id post))))
