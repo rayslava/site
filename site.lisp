@@ -103,9 +103,13 @@ table and starts listening on PORT."
   (with-html-output (*standard-output* nil)
     (let ((in (make-string-input-stream
 	       (with-output-to-string (*standard-output* nil)
-		 (asdf:operate 'compile-op :site)
-		 (asdf:operate 'load-op :site)
-		 (setup-dispatch-table))))
+		 (handler-case
+		     (progn
+		       (asdf:operate 'compile-op :site)
+		       (asdf:operate 'load-op :site)
+		       (setup-dispatch-table))
+		   (error (e)
+		     (format t "Refresh failed: ~A~%" e))))))
 	  (s (make-array '(0) :element-type 'base-char
 			 :fill-pointer 0 :adjustable t)))
       (loop for line = (read-line in nil)

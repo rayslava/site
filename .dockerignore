@@ -1,0 +1,8 @@
+.git
+.github
+activitypub
+uploads
+tests/coverage*
+*.fasl
+contrib/lisp-site
+contrib/lisp-site.conf

@@ -61,7 +61,9 @@
 	       (:file "ap-inbox"
 		:depends-on ("ap-core" "ap-replies" "ap-delivery" "ap-actor" "ap-signature" "crypto" "blog-registry"))
 	       (:file "storage-dyna"
-		:depends-on ("storage" "ap-core" "db-storage" "config"))))
+		:depends-on ("storage" "ap-core" "db-storage" "config"))
+	       (:file "main"
+		:depends-on ("site" "config"))))
 
 (defsystem :site/tests
   :name "site/tests"
